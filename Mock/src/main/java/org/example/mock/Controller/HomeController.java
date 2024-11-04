@@ -7,6 +7,6 @@ public class HomeController {
     @GetMapping("/home")
     public String home() {
 
-        return "home"; // Đây là tên của file template (home.html) trong thư mục templates
+        return "candidate.html"; // Đây là tên của file template (home.html) trong thư mục templates
     }
 }
