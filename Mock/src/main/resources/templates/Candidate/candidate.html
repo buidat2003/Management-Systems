@@ -2,9 +2,97 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/css/candidate/candidate.css">
 </head>
 <body>
 
+<!-- Top Bar -->
+<div class="top-bar">
+    <div class="logo">
+        <h2 class="text-primary">ACE</h2>
+    </div>
+    <div class="navigation">
+        <a href="candidate.html" class="text-decoration-none mx-3">Home</a>
+        <a href="#" class="text-decoration-none mx-3">Jobs</a>
+        <a href="#" class="text-decoration-none mx-3">About</a>
+    </div>
+</div>
+
+<!-- Side Bar -->
+<!-- Side Bar -->
+<div class="sidebar">
+    <h4>All (6)</h4>
+    <a href="#" class="nav-item">
+        <span>Positions</span>
+        <i class="bi bi-chevron-right"></i>
+    </a>
+    <a href="#" class="nav-item">
+        <span>Types</span>
+        <i class="bi bi-chevron-right"></i>
+    </a>
+    <a href="#" class="nav-item">
+        <span>Departments</span>
+        <i class="bi bi-chevron-right"></i>
+    </a>
+</div>
+
+<!-- Content Area -->
+<div class="content">
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <span></span>
+        <nav>
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Job Cards -->
+    <div class="job-card">
+        <div class="job-details">
+            <h5>Java Developer</h5>
+            <span class="badge bg-primary">Full Time</span>
+            <span class="badge bg-danger">Urgent</span>
+            <p><i class="bi bi-bank"></i> Banking</p>
+            <p><i class="bi bi-geo-alt"></i> Hlaing, Yangon</p>
+            <p><i class="bi bi-currency-exchange"></i> Negotiable</p>
+            <p><i class="bi bi-people-fill"></i> 10 Posts</p>
+        </div>
+        <button class="btn btn-primary">Detail</button>
+    </div>
+
+    <div class="job-card">
+        <div class="job-details">
+            <h5>C++ Developer</h5>
+            <span class="badge bg-primary">Full Time</span>
+            <p><i class="bi bi-shop"></i> Retail</p>
+            <p><i class="bi bi-geo-alt"></i> Hlaing, Yangon</p>
+            <p><i class="bi bi-currency-exchange"></i> Negotiable</p>
+            <p><i class="bi bi-people-fill"></i> 6 Posts</p>
+        </div>
+        <button class="btn btn-primary">Detail</button>
+    </div>
+
+    <div class="job-card">
+        <div class="job-details">
+            <h5>Python Developer</h5>
+            <span class="badge bg-primary">Full Time</span>
+            <p><i class="bi bi-bank"></i> Banking</p>
+            <p><i class="bi bi-geo-alt"></i> Hlaing, Yangon</p>
+            <p><i class="bi bi-currency-exchange"></i> Negotiable</p>
+            <p><i class="bi bi-people-fill"></i> 8 Posts</p>
+        </div>
+        <button class="btn btn-primary">Detail</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
