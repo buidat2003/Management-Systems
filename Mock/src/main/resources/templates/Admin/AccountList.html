@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    body{
+      background-image: url("../Media/backgroundMock.jpg");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      width: 99%;
+      height: 100vh;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.19);
+      width: 98%;
+      padding: 10px 20px;
+      color: rgb(0, 0, 0);
+      text-align: center;
+      align-items: center;
+      align-self: center;
+    }
+
+
+    .navbar a {
+      color: rgb(0, 0, 0);
+      padding: 14px 20px;
+      text-decoration: none;
+    }
+
+    .navbar a:hover {
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .navbar .menu {
+      display: flex;
+      gap: 10px;
+    }
+
+
+    .navbar .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar .user-info img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+
+
+    /* Filters and Search */
+    .filters {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .filters select, .filters input[type="text"] {
+      padding: 5px;
+      font-size: 14px;
+    }
+
+    .filters select {
+      margin-right: 10px;
+    }
+
+    /* Table */
+    table {
+      width: 80%;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .actions button:hover {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+<div id="all" class="row">
+  <div class="navbar">
+
+    <a href="#"><img src="logo.png" alt="Logo" style="width: 40px;"></a>
+
+    <div class="menu">
+      <a href="#Recruiter">Recruiter</a>
+      <a href="#Manager">Manager</a>
+      <a href="#Manager">Interviewer</a>
+    </div>
+
+    <div class="user-info">
+      <span>Nguyễn Văn A</span>
+      <span>Recruiter</span>
+      <img src="user-avatar.png" alt="User Avatar">
+    </div>
+  </div>
+
+  <!--Filters and searchs-->
+  <div class="filters">
+    <div>
+      <label for="position">Position: </label>
+      <select id="position">
+        <option>All</option>
+        <option>Java Back-end</option>
+        <option>Business Analysis</option>
+        <!-- Add more options as needed -->
+      </select>
+
+      <label for="status">Status: </label>
+      <select id="status">
+        <option>All</option>
+        <option>Active</option>
+        <option>Inactive</option>
+      </select>
+
+      <label for="display">Display: </label>
+      <select id="display">
+        <option>5 lines</option>
+        <option>10 lines</option>
+        <option>15 lines</option>
+      </select>
+    </div>
+
+    <div>
+      <input type="text" id="search" placeholder="Search">
+      <button type="button">🔍</button>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>STT</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Current position</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>1</td>
+      <td>Hồ Văn Phong</td>
+      <td>phongvp@gmail.com</td>
+      <td>0987123456</td>
+      <td>Java Back-end</td>
+      <td>Active</td>
+      <td class="actions">
+        <button title="View">👁️</button>
+        <button title="Edit">✏️</button>
+        <button title="Delete">❌</button>
+      </td>
+    </tr>
+    <!-- Add more rows as needed -->
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
