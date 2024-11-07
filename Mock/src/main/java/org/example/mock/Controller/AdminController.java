@@ -86,7 +86,7 @@ public class AdminController {
         CreateUser createUser = new CreateUser();
         BeanUtils.copyProperties(user, createUser);
         model.addAttribute("user", createUser);
-
+        createUser.setId(id);
         return "Admin/EditAccount";
     }
 
@@ -120,8 +120,10 @@ public class AdminController {
             return "Admin/update";
         }
 
-        User updateUser = new User();
-        BeanUtils.copyProperties(createUser, updateUser);
+        User updateUser = userRepository.findById(createUser.getId()).orElseThrow(() -> {
+            throw new EntityNotFoundException("Not found entity with id: " + createUser.getId());
+        });
+        BeanUtils.copyProperties(createUser, updateUser, "id");
         userRepository.save(updateUser);
 
         return "Admin/AccountList";

@@ -3,14 +3,15 @@ package org.example.mock.DTO.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-
+@Getter
 @Data
 public class CreateUser {
-
+    private Long id;
     @NotBlank(message = "Name is required!")
     private String name;
 
