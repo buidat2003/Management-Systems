@@ -1,10 +1,14 @@
 package org.example.mock.Controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.mock.DTO.request.CreateUser;
+import org.example.mock.Model.User;
 import org.example.mock.Repository.Admin.AdminCustomRepositoryImplement;
 import org.example.mock.Repository.Admin.AdminRepository;
+import org.example.mock.Repository.UserRepository;
 import org.example.mock.Service.AdminService.AdminServiceImplement;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +27,8 @@ public class AdminController {
     @Autowired
     private AdminServiceImplement adminService;
     private AdminRepository adminRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/getForm")
     public String getForm(Model model) {
@@ -37,26 +43,26 @@ public class AdminController {
                              @RequestParam("avatar") MultipartFile avatar,
                              Model model) {
 
-        if(adminRepository.existsByEmail(createUser.getEmail()) ) {
-            result.
-                    addError(new FieldError("user",
-                            "email",
-                            "Email is already in use!"));
-        }
-        if(adminRepository.existsByUsername(createUser.getUsername()) ) {
-            result.
-                    addError(new FieldError("user",
-                            "username",
-                            "Username is already in use!"));
-
-        }
-        if(adminRepository.existsByPhoneNumber(createUser.getPhone()) ) {
-            result.
-                    addError(new FieldError("user",
-                            "phone",
-                            "Phone number is already in use!"));
-
-        }
+//        if(adminRepository.existsByEmail(createUser.getEmail()) ) {
+//            result.
+//                    addError(new FieldError("user",
+//                            "email",
+//                            "Email is already in use!"));
+//        }
+//        if(adminRepository.existsByUsername(createUser.getUsername()) ) {
+//            result.
+//                    addError(new FieldError("user",
+//                            "username",
+//                            "Username is already in use!"));
+//
+//        }
+//        if(adminRepository.existsByPhone(createUser.getPhone()) ) {
+//            result.
+//                    addError(new FieldError("user",
+//                            "phone",
+//                            "Phone number is already in use!"));
+//
+//        }
         if (result.hasErrors()) {
             // Return back to form if there are validation errors
             return "Admin/createAccount";
@@ -72,11 +78,53 @@ public class AdminController {
         return "Admin/AccountList";  // Redirect after successful form submission
     }
 
-    @GetMapping("update/{id}")
-    public String getUpdateForm(){
+    @GetMapping("/getUpdateForm/{id}")
+    public String getUpdateForm(@PathVariable Long id, Model model){
+        User user = userRepository.findById(id).orElseThrow(() -> {
+            throw new EntityNotFoundException("Not found entity with id: " + id);
+        });
         CreateUser createUser = new CreateUser();
+        BeanUtils.copyProperties(user, createUser);
+        model.addAttribute("user", createUser);
 
-        return "Admin/updateAccount";
+        return "Admin/EditAccount";
+    }
+
+    @PostMapping("/update")
+    public String updateAccount(@Validated @ModelAttribute("user") CreateUser createUser,
+                                BindingResult result,
+//                                @RequestParam("avatar") MultipartFile avatar,
+                                Model model){
+//        if(adminRepository.existsByEmail(createUser.getEmail()) ) {
+//            result.
+//                    addError(new FieldError("user",
+//                            "email",
+//                            "Email is already in use!"));
+//        }
+//        if(adminRepository.existsByUsername(createUser.getUsername()) ) {
+//            result.
+//                    addError(new FieldError("user",
+//                            "username",
+//                            "Username is already in use!"));
+//
+//        }
+//        if(adminRepository.existsByPhone(createUser.getPhone()) ) {
+//            result.
+//                    addError(new FieldError("user",
+//                            "phone",
+//                            "Phone number is already in use!"));
+//
+//        }
+        if (result.hasErrors()) {
+            // Return back to form if there are validation errors
+            return "Admin/update";
+        }
+
+        User updateUser = new User();
+        BeanUtils.copyProperties(createUser, updateUser);
+        userRepository.save(updateUser);
+
+        return "Admin/AccountList";
     }
 
 }
