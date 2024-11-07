@@ -13,7 +13,7 @@ import java.time.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "positionAll")
+@Table(name = "positionall")
 public class PositionAll {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

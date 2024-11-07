@@ -62,12 +62,6 @@ public class Candidate {
     @Column(name = "submit_time", nullable = false)
     private LocalTime submitTime;
 
-    @Lob
-    private byte[] file;
-
-    @Column(nullable = false, length = 50)
-    private String filetype;
-
     @Column(name = "is_employ", nullable = false)
     private Boolean isEmploy;
 
@@ -80,8 +74,28 @@ public class Candidate {
 
     @Column(name = "is_recall")
     private Boolean isRecall;
-
+    @Column(name = "cv_path", length = 255)
+    private String cvPath;
     @ManyToOne
     @JoinColumn(name = "vacancy_id", nullable = false)
     private Vacancy vacancy;
+
+    @PrePersist
+    public void prePersist() {
+        if (isEmploy == null) {
+            isEmploy = false; // Giá trị mặc định
+        }
+        if (isMailSent == null) {
+            isMailSent = false; // Giá trị mặc định
+        }
+        if (isRecall == null) {
+            isRecall = false; // Giá trị mặc định nếu không có yêu cầu
+        }
+        if (submitDate == null) {
+            submitDate = LocalDate.now(); // Ngày hiện tại
+        }
+        if (submitTime == null) {
+            submitTime = LocalTime.now(); // Thời gian hiện tại
+        }
+    }
 }
