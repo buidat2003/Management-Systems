@@ -7,7 +7,7 @@
 
   <style>
     body{
-      background-image: url("../Media/backgroundMock.jpg");
+      background-image: url("https://i0.wp.com/blog.nashtechglobal.com/wp-content/uploads/2024/01/pexels-photo-1103970.jpeg?fit=1024%2C682&ssl=1");
       background-repeat: no-repeat;
       background-position: center;
       background-size: cover;
@@ -119,7 +119,6 @@
 <div id="all" class="row">
   <div class="navbar">
 
-    <a href="#"><img src="logo.png" alt="Logo" style="width: 40px;"></a>
 
     <div class="menu">
       <a href="#Recruiter">Recruiter</a>
@@ -130,42 +129,42 @@
     <div class="user-info">
       <span>Nguyễn Văn A</span>
       <span>Recruiter</span>
-      <img src="user-avatar.png" alt="User Avatar">
+      <img src="https://lifehacker.com/imagery/articles/01HF2GKNRQZ4MN1YA639Q53NQV/hero-image.fill.size_1200x675.png" alt="User Avatar">
     </div>
   </div>
 
-  <!--Filters and searchs-->
+  <!-- Filters and search -->
   <div class="filters">
-    <div>
-      <label for="position">Position: </label>
-      <select id="position">
-        <option>All</option>
-        <option>Java Back-end</option>
-        <option>Business Analysis</option>
-        <!-- Add more options as needed -->
-      </select>
+    <form method="GET" action="/users"> <!-- Chuyển hướng dữ liệu qua GET request -->
+      <div>
+        <label for="position">Position: </label>
+        <select id="position" name="position"> <!-- Thêm thuộc tính name để gửi dữ liệu -->
+          <option value="">All</option>
+          <option value="admin">admin</option>
+          <option value="manager">manager</option>
+          <option value="developer">developer</option>
+          <option value="hr">hr</option>
+          <option value="designer">designer</option>
+        </select>
 
-      <label for="status">Status: </label>
-      <select id="status">
-        <option>All</option>
-        <option>Active</option>
-        <option>Inactive</option>
-      </select>
+        <label for="status">Status: </label>
+        <select id="status" name="status">
+          <option value="">All</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
 
-      <label for="display">Display: </label>
-      <select id="display">
-        <option>5 lines</option>
-        <option>10 lines</option>
-        <option>15 lines</option>
-      </select>
-    </div>
-
-    <div>
-      <input type="text" id="search" placeholder="Search">
-      <button type="button">🔍</button>
-    </div>
+        <label for="display">Display: </label>
+        <select id="display" name="display">
+          <option value="5">5 lines</option>
+          <option value="10">10 lines</option>
+          <option value="15">15 lines</option>
+        </select>
+          <input type="text" id="search" name="search" placeholder="Search" />
+          <button type="submit">🔍</button>
+      </div>
+    </form>
   </div>
-
   <table>
     <thead>
     <tr>
@@ -175,24 +174,30 @@
       <th>Phone</th>
       <th>Current position</th>
       <th>Status</th>
+      <th>Role</th>
       <th>Action</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-      <td>1</td>
-      <td>Hồ Văn Phong</td>
-      <td>phongvp@gmail.com</td>
-      <td>0987123456</td>
-      <td>Java Back-end</td>
-      <td>Active</td>
-      <td class="actions">
-        <button title="View">👁️</button>
-        <button title="Edit">✏️</button>
-        <button title="Delete">❌</button>
-      </td>
-    </tr>
-    <!-- Add more rows as needed -->
+    <!-- Dùng Thymeleaf để lặp qua danh sách người dùng -->
+    <th:block th:each="user, iterStat : ${users}">
+      <tr>
+        <td th:text="${iterStat.index + 1}"></td> <!-- STT -->
+        <td th:text="${user.name}"></td> <!-- Name -->
+        <td th:text="${user.email}"></td> <!-- Email -->
+        <td th:text="${user.phone}"></td> <!-- Phone -->
+        <td th:text="${user.username}"></td> <!-- Current position (username) -->
+        <td th:text="${user.status ? 'Active' : 'Inactive'}"></td> <!-- Status -->
+        <td th:text="${user.role}"></td>
+        <td class="actions">
+          <a class="button" title="View" th:href="@{/users/{id}/edit(id=${user.id})}">👁️</a>
+
+
+          <button title="Edit" th:attr="data-id=${user.id}">✏️</button>
+          <button title="Delete" th:attr="data-id=${user.id}">❌</button>
+        </td>
+      </tr>
+    </th:block>
     </tbody>
   </table>
 </div>
