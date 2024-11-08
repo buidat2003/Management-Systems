@@ -4,9 +4,15 @@ package org.example.mock.Controller;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.example.mock.Model.Candidate;
+import org.example.mock.Model.Department;
+import org.example.mock.Model.PositionAll;
 import org.example.mock.Model.Vacancy;
 import org.example.mock.Repository.CandidateRepository;
+import org.example.mock.Repository.DepartmentRepository;
+import org.example.mock.Repository.PositionRepository;
 import org.example.mock.Repository.VacancyRepository;
+import org.example.mock.Service.PositionService;
+import org.example.mock.Service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +27,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class VacancyController {
+    private final VacancyService vacancyService;
+    @Autowired
+    private PositionRepository positionRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+
+    @Autowired
+    public VacancyController(VacancyService vacancyService) {
+        this.vacancyService = vacancyService;
+
+    }
 
     @Autowired
     private VacancyRepository vacancyRepository;
@@ -118,6 +139,47 @@ public String submitApplication(
             e.printStackTrace();
         }
     }
+    @GetMapping("/joblist")
+    public String getFilteredVacancies(
+            @RequestParam(value = "position", required = false) Long positionId,
+            @RequestParam(value = "skills", required = false) String requiredSkills,
+            @RequestParam(value = "department", required = false) Long departmentId,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "search", required = false) String search,
+            Model model) {
+        try {
+            // Lấy dữ liệu từ các filter
+            List<PositionAll> positions = vacancyService.getAllPositions();
+            List<Department> departments = departmentRepository.findAll();
+            List<String> statuses = vacancyService.getAllStatuses();
+
+            // Lọc danh sách vacancies
+            List<Vacancy> filteredVacancies = vacancyService.getFilteredVacancies(positionId, requiredSkills, departmentId, status, search);
+
+            // Thêm các attribute vào model cho Thymeleaf
+            model.addAttribute("positions", positions);
+            model.addAttribute("departments", departments);
+            model.addAttribute("statuses", statuses);
+            model.addAttribute("vacancies", filteredVacancies);
+            model.addAttribute("positionId", positionId);
+            model.addAttribute("requiredSkills", requiredSkills);
+            model.addAttribute("departmentId", departmentId);
+            model.addAttribute("status", status);
+            model.addAttribute("search", search);
+
+            return "Manager/joblist";
+        } catch (Exception e) {
+            e.printStackTrace(); // In chi tiết lỗi ra console để kiểm tra
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi trong quá trình lọc. Vui lòng thử lại sau.");
+            return "error"; // Trả về trang lỗi tùy chỉnh
+        }
+    }
+
+
+
+
+
+
 
 //    @GetMapping("/vacancy/{id}")
 //    public String getVacancyDetails(@PathVariable Long id, Model model) {
@@ -155,6 +217,7 @@ public String submitApplication(
 //
 //        return "Candidate/detailvacancy";  // Chuyển hướng đến trang chi tiết vacancy sau khi lưu thành công
 //    }
+
 
 
 }
