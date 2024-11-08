@@ -1,4 +1,5 @@
 package org.example.mock.Sercurity;
 
-public class SercurityConfiguration {
+public class SercurityConfiguration{
+
 }

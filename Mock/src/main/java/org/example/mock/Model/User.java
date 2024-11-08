@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer  id;
 
     @Column(nullable = false, length = 50)
     private String name;
@@ -41,7 +41,7 @@ public class User {
     private String address;
 
     @Column(nullable = false)
-    private GenderTypes gender;
+    private String gender;
 
     @Column(nullable = false, length = 30)
     private String role;
@@ -49,7 +49,9 @@ public class User {
     @Column(nullable = false)
     private Boolean status;
 
-    @ManyToOne
+    private String avatar;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
 
