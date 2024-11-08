@@ -57,7 +57,7 @@ public class Vacancy {
     @JoinColumn(name = "created_user_id", nullable = false)
     private User createdUser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_user_id")
     private User updatedUser;
 
@@ -65,7 +65,7 @@ public class Vacancy {
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position_id", nullable = false)
     private PositionAll position;
 
