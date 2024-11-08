@@ -35,7 +35,10 @@ public class Department {
     @JoinColumn(name = "created_user_id", nullable = false)
     private User createdUser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_user_id")
     private User updatedUser;
+
+    public Department(Long departmentId) {
+    }
 }

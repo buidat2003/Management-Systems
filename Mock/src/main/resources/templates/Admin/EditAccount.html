@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EEdit Account Information</title>
+  <title>Employee Details</title>
 
   <style>
     body {
-      background-image: url("../Media/backgroundMock.jpg");
+      background-image: url("/static/image/Background/backgroundMock.jpg");
       background-repeat: no-repeat;
       background-position: center;
       background-size: cover;
@@ -26,7 +26,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: rgba(255, 255, 255, 0.19);
+      background-color: rgba(255, 255, 255, 0.5);
       width: 100%;
       padding: 10px 20px;
       margin-left: 5%;
@@ -34,6 +34,8 @@
       text-align: center;
       align-items: center;
       align-self: center;
+      border: 1px solid black;
+      border-radius: 10px;
     }
 
 
@@ -68,13 +70,15 @@
 
     /* Employee Details Form */
     .form-container {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.5);
       border-radius: 10px;
       padding: 20px 40px;
-      max-width: 800px;
+      max-width: 1000px;
       width: 100%;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       margin-top: 20px;
+      border: 1px solid black;
+      border-radius: 10px;
     }
 
     .form-container h2 {
@@ -135,13 +139,15 @@
 <body>
 <!-- Navbar -->
 <div class="navbar">
-  <a href="#"><img src="logo.png" alt="Logo" style="width: 40px;"></a>
-
-  <div class="menu">
-    <a href="#Manager">Manager</a>
-    <a href="#Recruiter">Recruiter</a>
-    <a href="#Interviewer">Interviewer</a>
+  <div>
+    <a href="/home"><img src="/static/image/Background/img.png" alt="Logo" style="width: 50px;"></a>
+    <a href="#"><img src="/static/image/Icon/img.png" alt="Logo" style="width: 40px;"></a>
   </div>
+<!--  <div class="menu">-->
+<!--    <a href="#Manager">Manager</a>-->
+<!--    <a href="#Recruiter">Recruiter</a>-->
+<!--    <a href="#Interviewer">Interviewer</a>-->
+<!--  </div>-->
 
   <div class="user-info">
     <span>Nguyễn Văn A</span>
@@ -153,85 +159,96 @@
 <!-- Form Container -->
 <div class="form-container">
   <h2>Employee Details</h2>
-  <div class="form-row">
-    <div class="form-group">
-      <label for="id">ID:</label>
-      <input type="text" id="id">
-    </div>
-    <div class="form-group">
-      <label for="username">Username:</label>
-      <input type="text" id="username">
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group">
-      <label for="name">Name:</label>
-      <input type="text" id="name">
-    </div>
-    <div class="form-group">
-      <label for="password">Password:</label>
-      <input type="password" id="password">
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group">
-      <label for="dob">Date of Birth:</label>
-      <input type="date" id="dob">
-    </div>
-    <div class="form-group">
-      <label for="phone">Phone:</label>
-      <input type="text" id="phone">
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group">
-      <label for="email">Email:</label>
-      <input type="email" id="email">
-    </div>
-    <div class="form-group">
-      <label for="candidate-level">Candidate Level:</label>
-      <input type="text" id="candidate-level">
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group">
-      <label for="status">Status:</label>
-      <select id="status">
-        <option>Active</option>
-        <option>Inactive</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Gender:</label>
-      <div class="gender-options">
-        <label><input type="radio" name="gender" value="male"> Male</label>
-        <label><input type="radio" name="gender" value="female"> Female</label>
-        <label><input type="radio" name="gender" value="other"> Other</label>
+  <form action="/admin/update" method="post" th:object="${user}" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{id}"/>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" th:field="*{username}" required>
+        <span class="text-danger" th:errors="*{username}"></span>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" th:field="*{email}" required>
+        <span class="text-danger" th:errors="*{email}"></span>
       </div>
     </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group">
-      <label for="department">Department:</label>
-      <select id="department">
-        <option>HR</option>
-        <option>IT</option>
-      </select>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" th:field="*{name}" required>
+        <span class="text-danger" th:errors="*{name}"></span>
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" th:field="*{password}" required>
+        <span class="text-danger" th:errors="*{password}"></span>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="role">Role:</label>
-      <select id="role">
-        <option>Recruiter</option>
-        <option>Manager</option>
-      </select>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" th:field="*{doB}" required>
+        <span class="text-danger" th:errors="*{doB}"></span>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" th:field="*{phone}" required>
+        <span class="text-danger" th:errors="*{phone}"></span>
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <label for="address">Address:</label>
-    <input type="text" id="address">
-  </div>
-  <br>
-  <button class="save-btn">Save</button>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="status">Status:</label>
+        <select id="status" th:field="*{status}" required>
+          <option th:value="1" >Active</option>
+          <option th:value="0">Inactive</option>
+        </select>
+        <span class="text-danger" th:errors="*{status}"></span>
+      </div>
+      <div class="form-group">
+        <label>Gender:</label>
+        <select name="gender" th:field="*{gender}">
+          <option th:value="0">Male</option>
+          <option th:value="1">Female</option>
+        </select>
+        <span class="text-danger" th:errors="*{gender}"></span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="department">Department:</label>
+        <select id="department" th:field="*{departmentId}" required>
+          <option th:value="1">HR</option>
+          <option th:value="2">IT</option>
+        </select>
+        <span class="text-danger" th:errors="*{departmentId}"></span>
+      </div>
+      <div class="form-group">
+        <label for="role">Role:</label>
+        <select id="role" th:field="*{role}" required>
+          <option th:value="Recruiter">Recruiter</option>
+          <option th:value="Manager">Manager</option>
+          <option th:value="Interviewer">Interviewer</option>
+        </select>
+        <span class="text-danger" th:errors="*{role}"></span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="address">Address:</label>
+        <input type="text" id="address" th:field="*{address}" required>
+        <span class="text-danger" th:errors="*{address}"></span>
+      </div>
+      <div class="form-group">
+        <label for="avatar">Avatar:</label>
+        <input type="file" id="avatar" th:field="*{avatar}">
+        <span class="text-danger" th:errors="*{avatar}"></span>
+      </div>
+    </div>
+    <br>
+    <button class="save-btn">Save</button>
+  </form>
 </div>
 </body>
 </html>
