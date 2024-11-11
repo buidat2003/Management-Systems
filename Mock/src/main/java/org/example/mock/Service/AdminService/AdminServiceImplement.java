@@ -2,6 +2,7 @@ package org.example.mock.Service.AdminService;
 
 import org.example.mock.Common.FileUpload;
 import org.example.mock.DTO.request.CreateUser;
+import org.example.mock.Model.Department;
 import org.example.mock.Model.User;
 import org.example.mock.Repository.Admin.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class AdminServiceImplement implements AdminService {
         user.setGender(createUser.getGender()); // Giả sử bạn dùng enum cho Gender
         user.setRole(createUser.getRole());
         user.setStatus(createUser.getStatus());
-        //user.setDepartment(new Department(createUser.getDepartmentId())); // Assuming you have a Department constructor with ID
+        user.setDepartment(new Department(createUser.getDepartmentId())); // Assuming you have a Department constructor with ID
 
         // Xử lý avatar nếu có
         if (avatar != null && !avatar.isEmpty()) {

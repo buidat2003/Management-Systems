@@ -26,6 +26,7 @@ import java.io.IOException;
 public class AdminController {
     @Autowired
     private AdminServiceImplement adminService;
+    @Autowired
     private AdminRepository adminRepository;
     @Autowired
     private UserRepository userRepository;
@@ -43,26 +44,26 @@ public class AdminController {
                              @RequestParam("avatar") MultipartFile avatar,
                              Model model) {
 
-//        if(adminRepository.existsByEmail(createUser.getEmail()) ) {
-//            result.
-//                    addError(new FieldError("user",
-//                            "email",
-//                            "Email is already in use!"));
-//        }
-//        if(adminRepository.existsByUsername(createUser.getUsername()) ) {
-//            result.
-//                    addError(new FieldError("user",
-//                            "username",
-//                            "Username is already in use!"));
-//
-//        }
-//        if(adminRepository.existsByPhone(createUser.getPhone()) ) {
-//            result.
-//                    addError(new FieldError("user",
-//                            "phone",
-//                            "Phone number is already in use!"));
-//
-//        }
+        if(adminRepository.existsByEmail(createUser.getEmail()) ) {
+            result.
+                    addError(new FieldError("user",
+                            "email",
+                            "Email is already in use!"));
+        }
+        if(adminRepository.existsByUsername(createUser.getUsername()) ) {
+            result.
+                    addError(new FieldError("user",
+                            "username",
+                            "Username is already in use!"));
+
+        }
+        if(adminRepository.existsByPhone(createUser.getPhone()) ) {
+            result.
+                    addError(new FieldError("user",
+                            "phone",
+                            "Phone number is already in use!"));
+
+        }
         if (result.hasErrors()) {
             // Return back to form if there are validation errors
             return "Admin/createAccount";
@@ -93,28 +94,28 @@ public class AdminController {
     @PostMapping("/update")
     public String updateAccount(@Validated @ModelAttribute("user") CreateUser createUser,
                                 BindingResult result,
-//                                @RequestParam("avatar") MultipartFile avatar,
+                               @RequestParam("avatar") MultipartFile avatar,
                                 Model model){
-//        if(adminRepository.existsByEmail(createUser.getEmail()) ) {
-//            result.
-//                    addError(new FieldError("user",
-//                            "email",
-//                            "Email is already in use!"));
-//        }
-//        if(adminRepository.existsByUsername(createUser.getUsername()) ) {
-//            result.
-//                    addError(new FieldError("user",
-//                            "username",
-//                            "Username is already in use!"));
-//
-//        }
-//        if(adminRepository.existsByPhone(createUser.getPhone()) ) {
-//            result.
-//                    addError(new FieldError("user",
-//                            "phone",
-//                            "Phone number is already in use!"));
-//
-//        }
+        if(adminRepository.existsByEmail(createUser.getEmail()) ) {
+            result.
+                    addError(new FieldError("user",
+                            "email",
+                            "Email is already in use!"));
+        }
+        if(adminRepository.existsByUsername(createUser.getUsername()) ) {
+            result.
+                    addError(new FieldError("user",
+                            "username",
+                            "Username is already in use!"));
+
+        }
+        if(adminRepository.existsByPhone(createUser.getPhone()) ) {
+            result.
+                    addError(new FieldError("user",
+                            "phone",
+                            "Phone number is already in use!"));
+
+        }
         if (result.hasErrors()) {
             // Return back to form if there are validation errors
             return "Admin/update";
