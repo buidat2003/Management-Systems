@@ -1,5 +1,6 @@
 package org.example.mock.Repository;
 
+import org.example.mock.Model.Department;
 import org.example.mock.Model.JobType;
 import org.example.mock.Model.PositionAll;
 import org.example.mock.Model.Vacancy;
@@ -23,25 +24,29 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
                                         @Param("departmentId") Long departmentId);
 
     ////////////////////////////////////////////////////////////////////
-    @Query(value = "SELECT * FROM vacancy v WHERE " +
-            "(:positionId IS NULL OR v.position_id = :positionId) " +
-            "AND (:requiredSkills IS NULL OR JSON_CONTAINS(JSON_EXTRACT(v.details, '$.required_skills'), :requiredSkills)) " +
-            "AND (:departmentId IS NULL OR v.department_id = :departmentId) " +
+    @Query("SELECT v FROM Vacancy v " +
+            "WHERE (:positionId IS NULL OR v.position.id = :positionId) " +
+            "AND (:requiredSkills IS NULL OR v.details LIKE %:requiredSkills%) " +
+            "AND (:departmentId IS NULL OR v.department.id = :departmentId) " +
             "AND (:status IS NULL OR v.status = :status) " +
-            "AND (:search IS NULL OR JSON_EXTRACT(v.details, '$.description') LIKE CONCAT('%', :search, '%'))",
-            nativeQuery = true)
+            "AND (:search IS NULL OR (v.position.name LIKE %:search% OR v.department.name LIKE %:search%))")
     List<Vacancy> findFilteredVacancie(@Param("positionId") Long positionId,
-                                       @Param("requiredSkills") String requiredSkills,
-                                       @Param("departmentId") Long departmentId,
-                                       @Param("status") String status,
-                                       @Param("search") String search);
+                                        @Param("requiredSkills") String requiredSkills,
+                                        @Param("departmentId") Long departmentId,
+                                        @Param("status") String status,
+                                        @Param("search") String search);
+
 
 
     @Query("SELECT DISTINCT v.position FROM Vacancy v")
     List<PositionAll> findAllPositions();
 
-    @Query("SELECT DISTINCT v.department.name FROM Vacancy v")
-    List<String> findAllDepartments();
+    @Query("SELECT DISTINCT v.details FROM Vacancy v")
+    List<String> findAllDetails();
+
+    @Query("SELECT DISTINCT v.department FROM Vacancy v")
+    List<Department> findAllDepartments();
+
 
     @Query("SELECT DISTINCT v.status FROM Vacancy v")
     List<String> findAllStatuses();
