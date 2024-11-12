@@ -1,9 +1,13 @@
 package org.example.mock.Service.AdminService;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.example.mock.Common.FileUpload;
 import org.example.mock.DTO.request.CreateUser;
+import org.example.mock.Model.Department;
 import org.example.mock.Model.User;
+import org.example.mock.Repository.Admin.AdminCustomRepositoryImplement;
 import org.example.mock.Repository.Admin.AdminRepository;
+import org.example.mock.Repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +22,9 @@ public class AdminServiceImplement implements AdminService {
     @Autowired
     private AdminRepository adminRepository;
 
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
     public void addUser(CreateUser createUser, MultipartFile avatar) throws IOException {
         User user = new User();
         user.setName(createUser.getName());
@@ -30,6 +37,11 @@ public class AdminServiceImplement implements AdminService {
         user.setGender(createUser.getGender()); // Giả sử bạn dùng enum cho Gender
         user.setRole(createUser.getRole());
         user.setStatus(createUser.getStatus());
+
+        Department department = departmentRepository.findById(createUser.getDepartmentId())
+                .orElseThrow(() -> new EntityNotFoundException("Department not found"));
+        user.setDepartment(department);
+
         //user.setDepartment(new Department(createUser.getDepartmentId())); // Assuming you have a Department constructor with ID
 
         // Xử lý avatar nếu có
