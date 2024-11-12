@@ -94,50 +94,6 @@ public class InterviewScheduleController {
         }
 
         interviewScheduleService.delete(schedule);
-        return ResponseEntity.ok("Schedule deleted successfully");
+        return ResponseEntity.ok("Schedule deleted successfullyy!");
     }
-
-    //api chuẩn
-
-
-//    @PostMapping("/create")
-//    public String createInterviewSchedule(
-//            @RequestParam("candidateId") Long candidateId,
-//            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-//            @RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time,
-//            @RequestParam("interviewerId") Long interviewerId,
-//            Model model
-//    ) {
-//        Candidate candidate = candidateService.findById(candidateId);
-//        if (candidate == null) {
-//            throw new IllegalArgumentException("Candidate not found with ID: " + candidateId);
-//        }
-//
-//        interviewScheduleService.createInterviewSchedule(candidate, date, time, interviewerId);
-//
-//        // Lấy danh sách ứng viên đã được tạo lịch phỏng vấn
-//        List<Candidate> candidates = candidateService.getAllCandidates();
-//        model.addAttribute("candidates", candidates);
-//
-//        return "Interviewer/interviewSchedule"; // Trả về view HTML để hiển thị danh sách lịch phỏng vấn
-//    }
-
-    // API để tạo lịch phỏng vấn và gửi email
-//    @PostMapping("/create")
-//    public InterviewSchedule createInterviewSchedule(
-//            @RequestParam("candidateId") Long candidateId,
-//            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-//            @RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time,
-//            @RequestParam("interviewerId") Long interviewerId
-//    ) {
-//        // Additional Logging (Optional)
-//        System.out.println("Received date: " + date);
-//
-//        Candidate candidate = candidateService.findById(candidateId);
-//        if (candidate == null) {
-//            throw new IllegalArgumentException("Candidate not found with ID: " + candidateId);
-//        }
-//
-//        return interviewScheduleService.createInterviewSchedule(candidate, date, time, interviewerId);
-//    }
 }

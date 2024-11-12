@@ -21,15 +21,6 @@ import java.util.Map;
 public class InterviewCandidateController {
     @Autowired
     private CandidateService candidateService;
-
-//    @GetMapping("/candidatelist")
-//    public String getCandidates(Model model) {
-//        List<Candidate> candidates = candidateService.getAllCandidates();
-//        Map<Long, String> candidateStatuses = candidateService.getLatestStatusByCandidateId(candidates);
-//        model.addAttribute("candidates", candidates);
-//        model.addAttribute("candidateStatuses", candidateStatuses);
-//        return "Interviewer/interviewcandidate"; // Tên của template HTML chứa bảng ứng viên
-//    }
 @GetMapping("/filterCandidates")
 public String filterCandidates(
         @RequestParam(required = false) String status,
