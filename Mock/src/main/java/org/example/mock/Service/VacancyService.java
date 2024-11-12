@@ -1,4 +1,6 @@
 package org.example.mock.Service;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.example.mock.Model.Department;
 import org.example.mock.Model.PositionAll;
@@ -25,23 +27,36 @@ public class VacancyService {
         return vacancyRepository.findAll();
     }
     public List<Vacancy> getFilteredVacancies(Long positionId, String requiredSkills, Long departmentId, String status, String search) {
-        // Use repository method to get filtered vacancies based on parameters
         return vacancyRepository.findFilteredVacancie(positionId, requiredSkills, departmentId, status, search);
     }
+
 
     // Placeholder methods for fetching other required data
     public List<PositionAll> getAllPositions() {
         return vacancyRepository.findAllPositions();
     }
-
-    public List<String> getAllDepartments() {
-        return vacancyRepository.findAllDepartments();
+    public List<String> getAllDetails() {
+        return vacancyRepository.findAllDetails();
     }
+
+
+    public List<Department> getAllDepartments() {
+        List<Department> departments = vacancyRepository.findAllDepartments();
+
+        // Lọc để chỉ giữ lại các phòng ban duy nhất
+        return departments.stream()
+                .distinct()  // Đảm bảo không có phòng ban trùng lặp
+                .collect(Collectors.toList());
+    }
+
 
     public List<String> getAllStatuses() {
         return vacancyRepository.findAllStatuses();
     }
 
+    public Optional<Vacancy> findById(Long id) {
+        return vacancyRepository.findById(id);
+    }
 
     // Other methods for filter logic, if needed
 }
