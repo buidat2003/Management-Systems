@@ -28,24 +28,25 @@ public class SercurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authenticationProvider(customAuthenticationProvider)
                 .authorizeRequests(authz -> authz
-                        .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass").permitAll() // Allow unauthenticated access
+                        .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass","/filterCandidates","/cancelCandidate","/interviewschedules/detail","/interviewschedules/create",
+                                "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed").permitAll() // Allow unauthenticated access
                         .requestMatchers("/admin/**").hasRole("ADMIN")        // Admin access
                         .requestMatchers("/recruiter/**").hasRole("RECRUITER") // Recruiter access
                         .requestMatchers("/manager/**").hasRole("MANAGER")     // Manager access
                         .requestMatchers("/interviewer/**").hasRole("INTERVIEWER") // Interviewer access
                         .anyRequest().authenticated()                          // All other requests require authentication
                 )
-                .formLogin(form -> form
-                        .loginPage("/login")                                  // URL for the login page
-                        .permitAll()                                          // Allow everyone to access the login page
-                        .successHandler(authenticationSuccessHandler())       // Custom success handler
-                        .failureHandler(authenticationFailureHandler())       // Custom failure handler
-                )
+//                .formLogin(form -> form
+//                        .loginPage("/login")                                  // URL for the login page
+//                        .permitAll()                                          // Allow everyone to access the login page
+//                        .successHandler(authenticationSuccessHandler())       // Custom success handler
+//                        .failureHandler(authenticationFailureHandler())       // Custom failure handler
+//                )
                 .logout(logout -> logout
-                        .permitAll()
-                        .logoutSuccessUrl("/login")                           // Redirect to login page after logout
+                        .permitAll().logoutSuccessUrl("/login")                           // Redirect to login page after logout
                 )
                 .exceptionHandling(exception -> exception
                         .accessDeniedPage("/access-denied")                   // Custom 403 error page
