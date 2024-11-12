@@ -140,40 +140,46 @@ public String submitApplication(
         }
     }
     @GetMapping("/joblist")
-    public String getFilteredVacancies(
-            @RequestParam(value = "position", required = false) Long positionId,
-            @RequestParam(value = "skills", required = false) String requiredSkills,
-            @RequestParam(value = "department", required = false) Long departmentId,
-            @RequestParam(value = "status", required = false) String status,
-            @RequestParam(value = "search", required = false) String search,
-            Model model) {
-        try {
-            // Lấy dữ liệu từ các filter
-            List<PositionAll> positions = vacancyService.getAllPositions();
-            List<Department> departments = departmentRepository.findAll();
-            List<String> statuses = vacancyService.getAllStatuses();
+    public String getFilteredVacancies(@RequestParam(value = "position", required = false) Long positionId,
+                                       @RequestParam(value = "skills", required = false) String requiredSkills,
+                                       @RequestParam(value = "department", required = false) Long departmentId,
+                                       @RequestParam(value = "status", required = false) String status,
+                                       @RequestParam(value = "search", required = false) String search,
+                                       Model model) {
+        // Provide fallback defaults or handle nulls as necessary
+        List<Vacancy> filteredVacancies = vacancyService.getFilteredVacancies(
+                positionId != null ? positionId : null,
+                requiredSkills != null && !requiredSkills.isEmpty() ? requiredSkills : null,
+                departmentId != null ? departmentId : null,
+                status != null && !status.isEmpty() ? status : null,
+                search != null && !search.isEmpty() ? search : null
+        );
 
-            // Lọc danh sách vacancies
-            List<Vacancy> filteredVacancies = vacancyService.getFilteredVacancies(positionId, requiredSkills, departmentId, status, search);
+        // Add the filtered list and form fields to the model
+        model.addAttribute("vacancies", filteredVacancies);
+        model.addAttribute("positions", vacancyService.getAllPositions());
+        model.addAttribute("departments", vacancyRepository.findAllDepartments());
+        model.addAttribute("statuses", vacancyService.getAllStatuses());
+        model.addAttribute("details", vacancyService.getAllDetails());
 
-            // Thêm các attribute vào model cho Thymeleaf
-            model.addAttribute("positions", positions);
-            model.addAttribute("departments", departments);
-            model.addAttribute("statuses", statuses);
-            model.addAttribute("vacancies", filteredVacancies);
-            model.addAttribute("positionId", positionId);
-            model.addAttribute("requiredSkills", requiredSkills);
-            model.addAttribute("departmentId", departmentId);
-            model.addAttribute("status", status);
-            model.addAttribute("search", search);
+        return "Manager/joblist";
 
-            return "Manager/joblist";
-        } catch (Exception e) {
-            e.printStackTrace(); // In chi tiết lỗi ra console để kiểm tra
-            model.addAttribute("errorMessage", "Đã xảy ra lỗi trong quá trình lọc. Vui lòng thử lại sau.");
-            return "error"; // Trả về trang lỗi tùy chỉnh
+    }
+    @GetMapping("/Manager/viewJob/{id}")
+    public String viewJobDetails(@PathVariable Long id, Model model) {
+        Optional<Vacancy> vacancyOptional = vacancyService.findById(id);
+        if (vacancyOptional.isPresent()) {
+            Vacancy vacancy = vacancyOptional.get();
+            model.addAttribute("vacancy", vacancy);
+            return "Manager/viewJob"; // The new View Job page
+        } else {
+            return "error"; // Handle invalid job ID
         }
     }
+
+
+
+}
 
 
 
@@ -220,4 +226,4 @@ public String submitApplication(
 
 
 
-}
+
