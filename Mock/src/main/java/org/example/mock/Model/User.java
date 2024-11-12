@@ -40,9 +40,6 @@ public class User {
     @Column(nullable = false, length = 255)
     private String address;
 
-    @Column(nullable = false)
-    private GenderTypes gender;
-
     @Column(nullable = false, length = 30)
     private String role;
 
@@ -52,5 +49,6 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
+
 
 }

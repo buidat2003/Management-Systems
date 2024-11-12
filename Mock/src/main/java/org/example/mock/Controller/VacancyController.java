@@ -4,8 +4,10 @@ package org.example.mock.Controller;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.example.mock.Model.Candidate;
+import org.example.mock.Model.CandidateStatus;
 import org.example.mock.Model.Vacancy;
 import org.example.mock.Repository.CandidateRepository;
+import org.example.mock.Repository.CandidateStatusRepository;
 import org.example.mock.Repository.VacancyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
@@ -20,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
 
@@ -30,7 +33,8 @@ public class VacancyController {
     private VacancyRepository vacancyRepository;
     @Autowired
     private CandidateRepository candidateRepository; // Thêm CandidateRepository
-
+    @Autowired
+    private CandidateStatusRepository candidateStatusRepository;
     @GetMapping("/vacancy/{id}")
     public String getVacancyDetails(@PathVariable Long id, Model model) {
         Optional<Vacancy> vacancyOptional = vacancyRepository.findById(id);
@@ -48,45 +52,86 @@ public class VacancyController {
             return "error";
         }
     }
+    @PostMapping("/submitApplication")
+    public String submitApplication(
+            @ModelAttribute Candidate candidate,
+            @RequestParam("vacancyId") Long vacancyId,
+            @RequestParam("file") MultipartFile file,
+            Model model) {
+        try {
+            Vacancy vacancy = vacancyRepository.findById(vacancyId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid vacancy ID"));
 
-@PostMapping("/submitApplication")
-public String submitApplication(
-        @ModelAttribute Candidate candidate,
-        @RequestParam("vacancyId") Long vacancyId,
-        @RequestParam("file") MultipartFile file,
-        Model model) {
-    try {
-        Vacancy vacancy = vacancyRepository.findById(vacancyId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid vacancy ID"));
+            candidate.setVacancy(vacancy);
 
-        // Thiết lập trường vacancy cho candidate
-        candidate.setVacancy(vacancy);
+            if (file != null && !file.isEmpty()) {
+                String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                Path filePath = Paths.get("uploads/cv", fileName);
+                Files.createDirectories(filePath.getParent());
+                file.transferTo(filePath);
 
-        // Kiểm tra và lưu tệp nếu có
-        if (file != null && !file.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get("uploads/cv", fileName);
-            Files.createDirectories(filePath.getParent());
-            file.transferTo(filePath); // Lưu file vào thư mục
+                candidate.setCvPath(filePath.toString());
+            }
 
-            // Lưu đường dẫn vào đối tượng Candidate
-            candidate.setCvPath(filePath.toString());
+            candidateRepository.save(candidate);
+
+            // Tạo một bản ghi CandidateStatus với trạng thái "đang chờ"
+            CandidateStatus candidateStatus = new CandidateStatus();
+            candidateStatus.setCandidate(candidate);
+            candidateStatus.setStatusName("Đang chờ"); // Trạng thái mặc định
+            candidateStatus.setUpdatedAt(LocalDateTime.now()); // Ngày giờ hiện tại
+
+            candidateStatusRepository.save(candidateStatus); // Lưu vào bảng candidate_status
+
+            model.addAttribute("vacancy", vacancy);
+            model.addAttribute("candidate", candidate);
+            model.addAttribute("successMessage", "Application submitted successfully!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
         }
 
-        candidateRepository.save(candidate);
-
-        model.addAttribute("vacancy", vacancy);
-        model.addAttribute("candidate", candidate);
-        // Thêm thông báo thành công vào model
-        model.addAttribute("successMessage", "Application submitted successfully!");
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return "error";
+        return "Candidate/detailvacancy";
     }
-
-    return "Candidate/detailvacancy";
-}
+//@PostMapping("/submitApplication")
+//public String submitApplication(
+//        @ModelAttribute Candidate candidate,
+//        @RequestParam("vacancyId") Long vacancyId,
+//        @RequestParam("file") MultipartFile file,
+//        Model model) {
+//    try {
+//        Vacancy vacancy = vacancyRepository.findById(vacancyId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid vacancy ID"));
+//
+//        // Thiết lập trường vacancy cho candidate
+//        candidate.setVacancy(vacancy);
+//
+//        // Kiểm tra và lưu tệp nếu có
+//        if (file != null && !file.isEmpty()) {
+//            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+//            Path filePath = Paths.get("uploads/cv", fileName);
+//            Files.createDirectories(filePath.getParent());
+//            file.transferTo(filePath); // Lưu file vào thư mục
+//
+//            // Lưu đường dẫn vào đối tượng Candidate
+//            candidate.setCvPath(filePath.toString());
+//        }
+//
+//        candidateRepository.save(candidate);
+//
+//        model.addAttribute("vacancy", vacancy);
+//        model.addAttribute("candidate", candidate);
+//        // Thêm thông báo thành công vào model
+//        model.addAttribute("successMessage", "Application submitted successfully!");
+//
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        return "error";
+//    }
+//
+//    return "Candidate/detailvacancy";
+//}
     @GetMapping("/downloadCV")
     public ResponseEntity<Resource> downloadCV(@RequestParam("candidateId") Long candidateId) {
         Candidate candidate = candidateRepository.findById(candidateId)

@@ -19,16 +19,21 @@ public class InterviewSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "interviewer_id", nullable = false)
-    private User interviewer;
-
     @Column(name = "schedule_date", nullable = false)
     private LocalDate scheduleDate;
 
     @Column(name = "schedule_time", nullable = false)
     private LocalTime scheduleTime;
 
-    @Column(name = "is_available", nullable = false)
-    private Boolean isAvailable;
+    @ManyToOne
+    @JoinColumn(name = "interviewer_id", nullable = false)
+    private User interviewer;
+
+    @ManyToOne
+    @JoinColumn(name = "candidate_id")
+    private Candidate candidate; // Thiết lập khóa ngoại đến bảng Candidate
+
+    @Column(name = "google_meet_link", length = 500)
+    private String googleMeetLink; // Trường mới để lưu liên kết Google Meet
+
 }
