@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/css/vacancydetail/vacancydetail.css">
+    <style>
+        .job-header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .job-badge {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .sidebar-box {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .apply-btn {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .back-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container my-5">
+    <!-- Nút "Back to Home" -->
+    <a href="/home" class="btn back-btn"><i class="bi bi-arrow-left-circle"></i> Back to Home</a>
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 5">
+        <div th:if="${successMessage}" class="toast align-items-center text-white bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <span th:text="${successMessage}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="jobRegistrationModal" tabindex="-1" aria-labelledby="jobRegistrationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="jobRegistrationModalLabel">Job Registration</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="jobApplicationForm" th:action="@{/submitApplication(vacancyId=${vacancy.id})}" method="post" enctype="multipart/form-data">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="example@example.com" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="birthday" class="form-label">Birthday</label>
+                                <input type="date" class="form-control" id="birthday" name="dob" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Gender</label><br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" id="male" value="0" required>
+                                    <label class="form-check-label" for="male">Male</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" id="female" value="1">
+                                    <label class="form-check-label" for="female">Female</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="education" class="form-label">Education</label>
+                                <input type="text" class="form-control" id="education" name="education" placeholder="Your education level" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="workExperience" class="form-label">Work Experience</label>
+                                <input type="text" class="form-control" id="workExperience" name="exp" placeholder="Enter your work experience" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="level" class="form-label">Desired Level</label>
+                                <select class="form-select" id="level" name="level" required>
+                                    <option value="Fresher">Fresher</option>
+                                    <option value="Junior">Junior</option>
+                                    <option value="Senior">Senior</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="mainTech" class="form-label">Main Technology</label>
+                                <input type="text" class="form-control" id="mainTech" name="mainTech" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="technicalSkill" class="form-label">Technical Skill</label>
+                                <input type="text" class="form-control" id="technicalSkill" name="techSkill" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="languageSkill" class="form-label">Language Skill</label>
+                                <input type="text" class="form-control" id="languageSkill" name="languageSkill" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="expectedSalary" class="form-label">Expected Salary</label>
+                                <input type="text" class="form-control" id="expectedSalary" name="expectedSalary" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="file" class="form-label">Upload CV</label>
+                                <input type="file" class="form-control" id="file" name="file">
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="jobApplicationForm">Submit</button>
+                </div>
+
+                <div th:if="${candidate.cvPath != null}">
+                    <a th:href="@{/downloadCV(candidateId=${candidate.id})}" target="_blank">Download CV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Header -->
+    <div class="job-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 th:text="${vacancy.requiredSkills}">Job Title</h2>
+            <div class="d-flex align-items-center">
+                <span class="me-3"><i class="bi bi-person"></i> <span th:text="${vacancy.count}">10</span> Openings</span>
+                <span class="me-3"><i class="bi bi-calendar"></i> <span th:text="${vacancy.dueDate}">2023-12-14</span></span>
+                <span><i class="bi bi-cash-coin"></i> <span th:text="${vacancy.salary}">Negotiable</span></span>
+            </div>
+        </div>
+        <button class="apply-btn" data-bs-toggle="modal" data-bs-target="#jobRegistrationModal">Apply Now</button>
+    </div>
+
+    <!-- Job Type Badge -->
+    <div class="mt-3">
+        <span class="job-badge" th:text="${vacancy.type}">Job Type</span>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Job Description Section -->
+        <div class="col-md-8">
+            <h4>Job Description</h4>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry...</p>
+        </div>
+
+        <!-- Job Overview Sidebar -->
+        <div class="col-md-4">
+            <div class="sidebar-box">
+                <h5>Job Overview</h5>
+                <ul class="list-unstyled">
+                    <!-- Date Posted -->
+                    <li class="mb-2">
+                        <i class="bi bi-calendar"></i>
+                        <strong>Date Posted:</strong>
+                        <span th:text="${vacancy.createdAt}"></span>
+                    </li>
+                    <!-- Expiration Date -->
+                    <li class="mb-2">
+                        <i class="bi bi-calendar2"></i>
+                        <strong>Expiration Date:</strong>
+                        <span th:text="${vacancy.dueDate}"></span>
+                    </li>
+                    <!-- Job Location (có thể cần thêm trường location vào entity nếu cần thiết) -->
+                    <li class="mb-2">
+                        <i class="bi bi-geo-alt"></i>
+                        <strong>Job Location:</strong>
+                        <span th:text="'Hlaing, Yangon'"></span>
+                    </li>
+                    <!-- Job Position (có thể dùng tên của vị trí) -->
+                    <li class="mb-2">
+                        <i class="bi bi-briefcase"></i>
+                        <strong>Job Position:</strong>
+                        <span th:text="${vacancy.position.name}"></span>
+                    </li>
+                    <!-- Salary -->
+                    <li class="mb-2">
+                        <i class="bi bi-cash-coin"></i>
+                        <strong>Salary:</strong>
+                        <span th:text="${vacancy.salary}"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS (for Modal functionality) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

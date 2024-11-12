@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Candidate List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* Google Font Import Link */
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            font-family: 'Ubuntu', sans-serif;
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            transition: all 0.4s ease;
+            z-index: 10;
+        }
+        nav.sticky {
+            padding: 15px 20px;
+            background: #4070f4;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        nav .nav-content {
+            height: 100%;
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        nav .logo a {
+            font-weight: 500;
+            font-size: 35px;
+            color: #4070f4;
+        }
+        nav.sticky .logo a {
+            color: #fff;
+        }
+        .nav-content .nav-links {
+            display: flex;
+        }
+        .nav-content .nav-links li {
+            list-style: none;
+            margin: 0 8px;
+        }
+        .nav-links li a {
+            text-decoration: none;
+            color: #0E2431;
+            font-size: 18px;
+            font-weight: 500;
+            padding: 10px 4px;
+            transition: all 0.3s ease;
+        }
+        .nav-links li a:hover {
+            color: #4070f4;
+        }
+        nav.sticky .nav-links li a {
+            color: #fff;
+            transition: all 0.4s ease;
+        }
+        nav.sticky .nav-links li a:hover {
+            color: #0E2431;
+        }
+        .container-fluid {
+            margin-top: 80px; /* Khoảng trống cho navbar cố định */
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .table .badge {
+            padding: 0.5em 1em;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav>
+    <div class="nav-content">
+        <div class="logo">
+            <a href="#">Interview Candidate List</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Skills</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10">
+
+            <!-- Filter Form Section -->
+            <form action="/filterCandidates" method="GET" class="d-flex mb-3" id="filterForm">
+                <div class="me-2">
+                    <label for="status" class="form-label">Status Candidate</label>
+                    <select id="status" name="status" class="form-select">
+                        <option value="" th:selected="${selectedStatus == null}">All</option>
+                        <option value="Đã phỏng vấn" th:selected="${selectedStatus == 'Đã phỏng vấn'}">Đã phỏng vấn</option>
+                        <option value="Đang chờ" th:selected="${selectedStatus == 'Đang chờ'}">Chờ phản hồi</option>
+                        <option value="Đã hủy" th:selected="${selectedStatus == 'Đã hủy'}">Đã hủy</option>
+                    </select>
+                </div>
+                <div class="me-2">
+                    <label for="experience" class="form-label">Years of Experience</label>
+                    <select id="experience" name="experience" class="form-select">
+                        <option value="" th:selected="${selectedExperience == null}">All</option>
+                        <option value="0" th:selected="${selectedExperience == 0}">Lower 1 năm</option>
+                        <option value="1" th:selected="${selectedExperience == 1}">1 year</option>
+                        <option value="2" th:selected="${selectedExperience == 2}">2 years</option>
+                        <option value="3" th:selected="${selectedExperience == 3}">Higher 3 years</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-4">Apply Filters</button>
+                <button type="button" class="btn btn-secondary mt-4 ms-2" onclick="resetForm()">Reset</button>
+            </form>
+
+
+            <!-- Table Section -->
+            <!-- Table Section -->
+            <!-- Table Section -->
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Vacancy</th>
+                    <th>Education</th>
+                    <th>Main-Tech</th>
+                    <th>Submitted Date</th>
+                    <th>Exp</th>
+                    <th>Interview Status</th>
+                    <th>Download CV</th>
+                    <th>Interview Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="candidate : ${candidates}">
+                    <td th:text="${candidate.name}">Name</td>
+                    <td th:text="${candidate.vacancy.position.name}">Position</td>
+                    <td th:text="${candidate.education}">Vacancy's Department</td>
+                    <td th:text="${candidate.mainTech}">Main-Tech</td>
+                    <td th:text="${candidate.submitDate}">Submitted Date</td>
+                    <td>
+                        <span th:if="${candidate.exp == '0'}" th:text="'Lower 1 year'">Exp</span>
+                        <span th:if="${candidate.exp == '1'}" th:text="'1 year'">Exp</span>
+                        <span th:if="${candidate.exp == '2'}" th:text="'2 years'">Exp</span>
+                        <span th:if="${candidate.exp == '3'}" th:text="'Higher 3 years'">Exp</span>
+                    </td>
+
+                    <td>
+                        <span th:if="${candidateStatuses[candidate.id] == 'Đang chờ'}" class="badge bg-warning" th:text="${candidateStatuses[candidate.id]}"></span>
+                        <span th:if="${candidateStatuses[candidate.id] == 'Đã hủy'}" class="badge bg-danger" th:text="${candidateStatuses[candidate.id]}"></span>
+                        <span th:if="${candidateStatuses[candidate.id] == 'Đã phỏng vấn'}" class="badge bg-primary" th:text="${candidateStatuses[candidate.id]}"></span>
+                    </td>
+
+                    <td>
+                        <a th:href="@{|/download/cv/${candidate.id}|}" download class="btn btn-success btn-sm">
+                            <i class="bi bi-download"></i> Download
+                        </a>
+                    </td>
+                    <td>
+                        <!-- Chỉ hiển thị nút "Cancel Candidate" nếu trạng thái không phải là "Đã hủy" -->
+                        <form th:action="@{/cancelCandidate}" method="post" style="display: inline;" th:if="${candidateStatuses[candidate.id] != 'Đã hủy' && candidateStatuses[candidate.id] != 'Đã phỏng vấn'}">
+                            <input type="hidden" name="candidateId" th:value="${candidate.id}">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-x-circle"></i> Cancel Candidate
+                            </button>
+                        </form>
+                        <button class="btn btn-warning btn-sm"><i class="bi bi-people-fill"></i> View</button>
+<!--                        <button class="btn btn-info btn-sm" onclick="scheduleInterview()"-->
+<!--                                th:if="${candidateStatuses[candidate.id] != 'Đã hủy' && candidateStatuses[candidate.id] != 'Đã phỏng vấn'}">-->
+<!--                            <i class="bi bi-calendar-event"></i> Create Schedule-->
+<!--                        </button>-->
+                        <button class="btn btn-info btn-sm" onclick="scheduleInterview(this)" th:data-candidate-id="${candidate.id}">
+                            <i class="bi bi-calendar-event"></i> Create Schedule
+                        </button>
+
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<!--Modal Schedule-->
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scheduleModalLabel">Schedule Interview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="scheduleForm">
+                    <input type="hidden" id="candidateId" name="candidateId" value="">
+                    <div class="mb-3">
+                        <label for="interviewDate" class="form-label">Interview Date</label>
+                        <input type="date" id="interviewDate" name="interviewDate" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="interviewTime" class="form-label">Interview Time</label>
+                        <input type="time" id="interviewTime" name="interviewTime" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Confirm Schedule</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function scheduleInterview(button) {
+        const candidateId = button.getAttribute("data-candidate-id");
+        document.getElementById('candidateId').value = candidateId; // Gán giá trị candidateId vào form
+        let scheduleModal = new bootstrap.Modal(document.getElementById('scheduleModal'));
+        scheduleModal.show();
+    }
+
+
+    document.getElementById('scheduleForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const candidateId = document.getElementById('candidateId').value;
+        const date = document.getElementById('interviewDate').value;
+        const time = document.getElementById('interviewTime').value;
+        const interviewerId = 1; // Đặt ID người phỏng vấn mặc định
+
+        try {
+            const response = await fetch('/interviewschedules/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `candidateId=${candidateId}&date=${date}&time=${time}&interviewerId=${interviewerId}`
+            });
+
+            if (response.ok) {
+                const redirectUrl = `/interviewschedules/detail`; // URL trang chi tiết lịch phỏng vấn
+                window.location.href = redirectUrl;
+
+            } else {
+                alert("Failed to create interview schedule.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error creating schedule.");
+        }
+    });
+</script>
+<script>
+    let nav = document.querySelector("nav");
+    window.onscroll = function() {
+        if(document.documentElement.scrollTop > 20){
+            nav.classList.add("sticky");
+        } else {
+            nav.classList.remove("sticky");
+        }
+    }
+
+    // function scheduleInterview() {
+    //     alert("Function to schedule an interview!");
+    //     // Logic to open a modal or redirect to a scheduling page can go here
+    // }
+
+    function resetForm() {
+        document.getElementById("filterForm").reset(); // Xóa tất cả các trường trong form
+        window.location.href = '/filterCandidates'; // Tải lại trang mà không có tham số URL
+    }
+
+</script>
+<!-- Bootstrap JS (optional if you need JS features) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
