@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Offer Management</title>
 
   <style>
-    body{
+    body {
       background-image: url("https://i0.wp.com/blog.nashtechglobal.com/wp-content/uploads/2024/01/pexels-photo-1103970.jpeg?fit=1024%2C682&ssl=1");
       background-repeat: no-repeat;
       background-position: center;
@@ -32,7 +32,6 @@
       align-self: center;
     }
 
-
     .navbar a {
       color: rgb(0, 0, 0);
       padding: 14px 20px;
@@ -49,7 +48,6 @@
       gap: 10px;
     }
 
-
     .navbar .user-info {
       display: flex;
       align-items: center;
@@ -61,7 +59,6 @@
       height: 30px;
       border-radius: 50%;
     }
-
 
     /* Filters and Search */
     .filters {
@@ -113,27 +110,15 @@
     .actions button:hover {
       color: #007bff;
     }
-
-    #createAccount{
-      justify-content: end;
-      text-align: end;
-      background-color: #06a729;
-      padding: 5px;
-      border: black solid 1px;
-      text-decoration: none;
-      color: Black;
-    }
   </style>
 </head>
 <body>
 <div id="all" class="row">
   <div class="navbar">
-
-
     <div class="menu">
       <a href="#Recruiter">Recruiter</a>
       <a href="#Manager">Manager</a>
-      <a href="#Manager">Interviewer</a>
+      <a href="#Interviewer">Interviewer</a>
     </div>
 
     <div class="user-info">
@@ -145,24 +130,9 @@
 
   <!-- Filters and search -->
   <div class="filters">
-    <form method="GET" action="/users"> <!-- Chuyển hướng dữ liệu qua GET request -->
+    <form method="GET" action="/offers"> <!-- Chuyển hướng dữ liệu qua GET request -->
       <div>
-        <label for="position">Position: </label>
-        <select id="position" name="position"> <!-- Thêm thuộc tính name để gửi dữ liệu -->
-          <option value="">All</option>
-          <option value="admin">admin</option>
-          <option value="manager">manager</option>
-          <option value="developer">developer</option>
-          <option value="hr">hr</option>
-          <option value="designer">designer</option>
-        </select>
 
-        <label for="status">Status: </label>
-        <select id="status" name="status">
-          <option value="">All</option>
-          <option value="true">Active</option>
-          <option value="false">Inactive</option>
-        </select>
 
         <label for="display">Display: </label>
         <select id="display" name="display">
@@ -170,44 +140,40 @@
           <option value="10">10 lines</option>
           <option value="15">15 lines</option>
         </select>
-          <input type="text" id="search" name="search" placeholder="Search" />
-          <button type="submit">🔍</button>
-
-          <a id="createAccount" href="/admin/getForm"> + Create new account</a>
-
+        <input type="text" id="search" name="search" placeholder="Search">
+        <button type="submit">🔍</button>
       </div>
     </form>
   </div>
+
+  <!-- Table for displaying offers -->
   <table>
     <thead>
     <tr>
       <th>STT</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Phone</th>
-      <th>Current position</th>
+      <th>Offer Date</th>
+      <th>Start Date</th>
+      <th>Salary</th>
+      <th>Candidate</th>
       <th>Status</th>
-      <th>Role</th>
+      <th>Created By</th>
       <th>Action</th>
     </tr>
     </thead>
     <tbody>
-    <!-- Dùng Thymeleaf để lặp qua danh sách người dùng -->
-    <th:block th:each="user, iterStat : ${users}">
+    <!-- Dùng Thymeleaf để lặp qua danh sách offer -->
+    <th:block th:each="offer, iterStat : ${offers}">
       <tr>
         <td th:text="${iterStat.index + 1}"></td> <!-- STT -->
-        <td th:text="${user.name}"></td> <!-- Name -->
-        <td th:text="${user.email}"></td> <!-- Email -->
-        <td th:text="${user.phone}"></td> <!-- Phone -->
-        <td th:text="${user.username}"></td> <!-- Current position (username) -->
-        <td th:text="${user.status ? 'Active' : 'Inactive'}"></td> <!-- Status -->
-        <td th:text="${user.role}"></td>
+        <td th:text="${offer.offerDate}"></td> <!-- Offer Date -->
+        <td th:text="${offer.startDate}"></td> <!-- Start Date -->
+        <td th:text="${offer.salary}"></td> <!-- Salary -->
+        <td th:text="${offer.candidate.name}"></td> <!-- Candidate -->
+        <td th:text="${offer.status}"></td> <!-- Status -->
+        <td th:text="${offer.createdUser.name}"></td> <!-- Created By -->
         <td class="actions">
-          <a class="button" title="View" th:href="@{/users/{id}/edit(id=${user.id})}">👁️</a>
-
-
-          <button title="Edit" th:attr="data-id=${user.id}">✏️</button>
-          <button title="Delete" th:attr="data-id=${user.id}">❌</button>
+          <a class="button" title="View" th:href="@{/offers/{id}/edit(id=${offer.id})}">👁️</a>
+          <button title="Delete" th:attr="data-id=${offer.id}">❌</button>
         </td>
       </tr>
     </th:block>

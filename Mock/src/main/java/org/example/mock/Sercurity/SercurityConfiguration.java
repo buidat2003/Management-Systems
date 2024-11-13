@@ -32,7 +32,8 @@ public class SercurityConfiguration {
                 .authenticationProvider(customAuthenticationProvider)
                 .authorizeRequests(authz -> authz
                         .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass","/filterCandidates","/cancelCandidate","/interviewschedules/detail","/interviewschedules/create",
-                                "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed").permitAll() // Allow unauthenticated access
+                                "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed","/admin/getForm", "/admin/createAccount", "/admin/AccountList", "/admin/addAccount",
+                                "/admin/getUpdateForm/{id}","/admin/getUpdateForm", "/joblist", "/Manager/viewJob/{id}").permitAll() // Allow unauthenticated access
                         .requestMatchers("/admin/**").hasRole("ADMIN")        // Admin access
                         .requestMatchers("/recruiter/**").hasRole("RECRUITER") // Recruiter access
                         .requestMatchers("/manager/**").hasRole("MANAGER")     // Manager access
