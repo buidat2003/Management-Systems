@@ -2,18 +2,11 @@ package org.example.mock.Model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 @Table(name = "offer")
 public class Offer {
     @Id
@@ -32,9 +25,6 @@ public class Offer {
     @Column(name = "terms", columnDefinition = "TEXT")
     private String terms;
 
-    @Column(name = "status", nullable = false, length = 30)
-    private String status;
-
     @ManyToOne
     @JoinColumn(name = "candidate_id", nullable = false)
     private Candidate candidate;
@@ -49,4 +39,104 @@ public class Offer {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "status", nullable = false, length = 30)
+    private String status;
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getOfferDate() {
+        return offerDate;
+    }
+
+    public void setOfferDate(LocalDateTime offerDate) {
+        this.offerDate = offerDate;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getSalary() {
+        return salary;
+    }
+
+    public void setSalary(String salary) {
+        this.salary = salary;
+    }
+
+    public String getTerms() {
+        return terms;
+    }
+
+    public void setTerms(String terms) {
+        this.terms = terms;
+    }
+
+    public Candidate getCandidate() {
+        return candidate;
+    }
+
+    public void setCandidate(Candidate candidate) {
+        this.candidate = candidate;
+    }
+
+    public User getCreatedUser() {
+        return createdUser;
+    }
+
+    public void setCreatedUser(User createdUser) {
+        this.createdUser = createdUser;
+    }
+
+    public User getUpdatedUser() {
+        return updatedUser;
+    }
+
+    public void setUpdatedUser(User updatedUser) {
+        this.updatedUser = updatedUser;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Offer() {
+    }
+
+    public Offer(Long id, LocalDateTime offerDate, LocalDate startDate, String salary, String terms, Candidate candidate, User createdUser, User updatedUser, LocalDateTime updatedAt, String status) {
+        this.id = id;
+        this.offerDate = offerDate;
+        this.startDate = startDate;
+        this.salary = salary;
+        this.terms = terms;
+        this.candidate = candidate;
+        this.createdUser = createdUser;
+        this.updatedUser = updatedUser;
+        this.updatedAt = updatedAt;
+        this.status = status;
+    }
 }
