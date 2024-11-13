@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Management</title>
+
+    <style>
+        body {
+            background-image: url("https://i0.wp.com/blog.nashtechglobal.com/wp-content/uploads/2024/01/pexels-photo-1103970.jpeg?fit=1024%2C682&ssl=1");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            width: 99%;
+            height: 100vh;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.19);
+            width: 98%;
+            padding: 10px 20px;
+            color: rgb(0, 0, 0);
+            text-align: center;
+            align-items: center;
+            align-self: center;
+        }
+
+        .navbar a {
+            color: rgb(0, 0, 0);
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .navbar .menu {
+            display: flex;
+            gap: 10px;
+        }
+
+        .navbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar .user-info img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        /* Filters and Search */
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .filters select, .filters input[type="text"] {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .filters select {
+            margin-right: 10px;
+        }
+
+        /* Table */
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .actions button:hover {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+<div id="all" class="row">
+    <div class="navbar">
+        <div class="menu">
+            <a href="#Recruiter">Recruiter</a>
+            <a href="#Manager">Manager</a>
+            <a href="#Interviewer">Interviewer</a>
+        </div>
+
+        <div class="user-info">
+            <span>Nguyễn Văn A</span>
+            <span>Recruiter</span>
+            <img src="https://lifehacker.com/imagery/articles/01HF2GKNRQZ4MN1YA639Q53NQV/hero-image.fill.size_1200x675.png" alt="User Avatar">
+        </div>
+    </div>
+
+    <!-- Filters and search -->
+    <div class="filters">
+        <form method="GET" action="/offers"> <!-- Chuyển hướng dữ liệu qua GET request -->
+            <div>
+
+
+                <label for="display">Display: </label>
+                <select id="display" name="display">
+                    <option value="5">5 lines</option>
+                    <option value="10">10 lines</option>
+                    <option value="15">15 lines</option>
+                </select>
+                <input type="text" id="search" name="search" placeholder="Search">
+                <button type="submit">🔍</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table for displaying offers -->
+    <table>
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Offer Date</th>
+            <th>Start Date</th>
+            <th>Salary</th>
+            <th>Candidate</th>
+            <th>Status</th>
+            <th>Created By</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Dùng Thymeleaf để lặp qua danh sách offer -->
+        <th:block th:each="offer, iterStat : ${offers}">
+            <tr>
+                <td th:text="${iterStat.index + 1}"></td> <!-- STT -->
+                <td th:text="${offer.offerDate}"></td> <!-- Offer Date -->
+                <td th:text="${offer.startDate}"></td> <!-- Start Date -->
+                <td th:text="${offer.salary}"></td> <!-- Salary -->
+                <td th:text="${offer.candidate.name}"></td> <!-- Candidate -->
+                <td th:text="${offer.status}"></td> <!-- Status -->
+                <td th:text="${offer.createdUser.name}"></td> <!-- Created By -->
+                <td class="actions">
+                    <a class="button" title="View" th:href="@{/offers/{id}/edit(id=${offer.id})}">👁️</a>
+                    <button title="Delete" th:attr="data-id=${offer.id}">❌</button>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
