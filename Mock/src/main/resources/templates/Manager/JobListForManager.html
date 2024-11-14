@@ -14,7 +14,7 @@
   <h2 class="text-center mb-4">Job List</h2>
 
   <!-- Filter Form -->
-  <form th:action="@{/joblist}" method="get" id="filterForm">
+  <form th:action="@{/jobList}" method="get" id="filterForm">
     <div class="form-row">
       <div class="form-group col-md-3">
         <label for="position">Position</label>
@@ -89,11 +89,9 @@
         <td th:text="${vacancy.department.name}"></td>
         <td th:text="${vacancy.status}"></td>
         <td>
-          <a th:href="@{/Manager/viewJob/{id}(id=${vacancy.id})}" class="text-primary"><i class="fa-regular fa-eye"></i></a>
-
-
-          <a href="#" class="text-success"><i class="fa-solid fa-check"></i></a>
-          <a href="#" class="text-danger"><i class="fa-solid fa-xmark"></i></a>
+          <a th:href="@{/Manager/JobDetailsForManager/{id}(id=${vacancy.id})}" class="text-primary"><i class="fa-regular fa-eye"></i></a>
+          <a th:href="@{/ApproveReject/approveJob/{id}(id=${vacancy.id})}" class="text-success"><i class="fa-solid fa-check"></i></a>
+          <a th:href="@{/ApproveReject/rejectJob/{id}(id=${vacancy.id})}" class="text-danger"><i class="fa-solid fa-xmark"></i></a>
         </td>
       </tr>
     </th:block>

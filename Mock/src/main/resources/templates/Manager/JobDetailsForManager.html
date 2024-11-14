@@ -76,7 +76,8 @@
       </div>
     </div>
     <div class="card-footer text-center">
-      <a th:href="@{/editJob/{id}(id=${vacancy.id})}" class="btn btn-primary"><i class="fas fa-edit"></i> Edit Job</a>
+      <button><a th:href="@{/ApproveReject/approveJob/{id}(id=${vacancy.id})}" class="text-success"><i class="fa-solid fa-check"> Approve</i></a></button>
+      <button><a th:href="@{/ApproveReject/rejectJob/{id}(id=${vacancy.id})}" class="text-danger"><i class="fa-solid fa-xmark"> Reject</i></a></button>
 
     </div>
   </div>
