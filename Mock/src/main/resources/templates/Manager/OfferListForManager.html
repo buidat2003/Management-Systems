@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Offer Management</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMtr2s8G5FZ09YQqLl4Zt/3PB/lQpZHVj1eUzj+" crossorigin="anonymous"/>
 
   <style>
     body {
@@ -172,13 +177,22 @@
         <td th:text="${offer.status}"></td> <!-- Status -->
         <td th:text="${offer.createdUser.name}"></td> <!-- Created By -->
         <td class="actions">
-          <a class="button" title="View" th:href="@{/offers/{id}/edit(id=${offer.id})}">👁️</a>
-          <button title="Delete" th:attr="data-id=${offer.id}">❌</button>
+          <a class="button" title="View" th:href="@{/ApproveReject/viewOffer/{id}(id=${offer.id})}">👁️</a>
+          <form th:action="@{/ApproveReject/approveOffer/{id}(id=${offer.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i></button>
+          </form>
+
+          <form th:action="@{/ApproveReject/rejectOffer/{id}(id=${offer.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> </button>
+          </form>
         </td>
       </tr>
     </th:block>
     </tbody>
   </table>
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

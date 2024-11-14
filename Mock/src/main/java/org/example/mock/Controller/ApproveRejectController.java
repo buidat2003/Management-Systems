@@ -69,10 +69,12 @@ public class ApproveRejectController {
         Optional<Vacancy> vacancyOptional = vacancyService.findById(id);
         if(vacancyOptional.isPresent()) {
             Vacancy vacancy = vacancyOptional.get();
-            vacancy.setApproveStatus(ApproveStatus.REJECTED);
+            vacancy.setApproveStatus(ApproveStatus.APPROVED);
             vacancyRepository.save(vacancy);
+            return "redirect:/ApproveReject/jobList"; // The new View Job page
+        } else {
+            return "error"; // Handle invalid job ID
         }
-        return "Manager/JobListForManager";
     }
 
     @PostMapping("/rejectJob/{id}")
@@ -82,8 +84,10 @@ public class ApproveRejectController {
             Vacancy vacancy = vacancyOptional.get();
             vacancy.setApproveStatus(ApproveStatus.REJECTED);
             vacancyRepository.save(vacancy);
+            return "redirect:/ApproveReject/jobList"; // The new View Job page
+        } else {
+            return "error"; // Handle invalid job ID
         }
-        return "Manager/JobListForManager";
     }
 
     //Go to Offer List for Manager
@@ -98,4 +102,38 @@ public class ApproveRejectController {
         return "Manager/OfferListForManager";
     }
 
+
+    @GetMapping("/viewOffer/{id}")
+    public String showOfferDetails(@PathVariable("id") Long id, Model model) {
+        Offer offer = offerService.findOfferById(id);
+        if (offer != null) {
+            model.addAttribute("offer", offer);
+            return "Manager/OfferDetailsForManager";
+        } else {
+            return "Manager/OfferListForManager";
+        }
+    }
+
+    @PostMapping("/approveOffer/{id}")
+    public String approveOffer(@PathVariable Long id, Model model){
+        Offer offer = offerService.findOfferById(id);
+        if(offer!= null) {
+            offer.setStatus(ApproveStatus.APPROVED);
+            offerService.saveOffer(offer);
+            return "redirect:/ApproveReject/offers";
+        }else{
+            return "error";
+        }
+    }
+    @PostMapping("/rejectOffer/{id}")
+    public String rejectOffer(@PathVariable Long id, Model model){
+        Offer offer = offerService.findOfferById(id);
+        if(offer!= null) {
+            offer.setStatus(ApproveStatus.REJECTED);
+            offerService.saveOffer(offer);
+            return "redirect:/ApproveReject/offers";
+        }else{
+            return "error";
+        }
+    }
 }

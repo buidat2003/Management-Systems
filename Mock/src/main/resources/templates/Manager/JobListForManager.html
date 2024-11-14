@@ -8,6 +8,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"/>
+  <style>
+    body {
+      background-image: url("https://www.tourdumonde5continents.com/wp-content/uploads/2021/01/17.jpg");
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+  </style>
 </head>
 <body>
 <div class="container mt-5">
@@ -78,6 +85,7 @@
       <th>Skills</th>
       <th>Department</th>
       <th>Status</th>
+      <th>Approve Status</th>
       <th>Action</th>
     </tr>
     </thead>
@@ -88,10 +96,17 @@
         <td th:text="${vacancy.requiredSkills}"></td>
         <td th:text="${vacancy.department.name}"></td>
         <td th:text="${vacancy.status}"></td>
+        <td th:text="${vacancy.approveStatus}"></td>
         <td>
-          <a th:href="@{/Manager/JobDetailsForManager/{id}(id=${vacancy.id})}" class="text-primary"><i class="fa-regular fa-eye"></i></a>
-          <a th:href="@{/ApproveReject/approveJob/{id}(id=${vacancy.id})}" class="text-success"><i class="fa-solid fa-check"></i></a>
-          <a th:href="@{/ApproveReject/rejectJob/{id}(id=${vacancy.id})}" class="text-danger"><i class="fa-solid fa-xmark"></i></a>
+          <button><a th:href="@{/ApproveReject/viewJob/{id}(id=${vacancy.id})}" class="text-primary"><i class="fa-regular fa-eye"></i></a></button>
+          <form th:action="@{/ApproveReject/approveJob/{id}(id=${vacancy.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i></button>
+          </form>
+
+          <form th:action="@{/ApproveReject/rejectJob/{id}(id=${vacancy.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> </button>
+          </form>
+
         </td>
       </tr>
     </th:block>
