@@ -65,7 +65,7 @@ public class AdminController {
         }
         if (result.hasErrors()) {
             // Return back to form if there are validation errors
-            return "Admin/createAccount";
+            return "redirect:/users";
         }
 
         try {
@@ -75,7 +75,7 @@ public class AdminController {
             return "Admin/Error";
         }
 
-        return "Admin/AccountList";  // Redirect after successful form submission
+        return "redirect:/users";  // Redirect after successful form submission
 
     }
 
@@ -131,7 +131,7 @@ public class AdminController {
         BeanUtils.copyProperties(createUser, updateUser, "id");
         userRepository.save(updateUser);
 
-        return "Admin/AccountList";
+        return "redirect:/users";
     }
 
 }
