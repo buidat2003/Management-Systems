@@ -7,7 +7,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../static/css/vacancydetail/vacancydetail.css">
+    <!--    <link rel="stylesheet" href="../../static/css/vacancydetail/vacancydetail.css">-->
     <style>
         .job-header {
             background-color: #f8f9fa;
@@ -102,10 +102,20 @@
                                 <label for="education" class="form-label">Education</label>
                                 <input type="text" class="form-control" id="education" name="education" placeholder="Your education level" required>
                             </div>
+                            <!--                            <div class="col-md-6">-->
+                            <!--                                <label for="workExperience" class="form-label">Work Experience</label>-->
+                            <!--                                <input type="text" class="form-control" id="workExperience" name="exp" placeholder="Enter your work experience" required>-->
+                            <!--                            </div>-->
                             <div class="col-md-6">
                                 <label for="workExperience" class="form-label">Work Experience</label>
-                                <input type="text" class="form-control" id="workExperience" name="exp" placeholder="Enter your work experience" required>
+                                <select class="form-select" id="workExperience" name="exp" required>
+                                    <option value="0">Dưới 1 năm</option>
+                                    <option value="1">1 năm</option>
+                                    <option value="2">2 năm</option>
+                                    <option value="3">3 năm trở lên</option>
+                                </select>
                             </div>
+
                             <div class="col-md-6">
                                 <label for="level" class="form-label">Desired Level</label>
                                 <select class="form-select" id="level" name="level" required>
@@ -130,10 +140,18 @@
                                 <label for="expectedSalary" class="form-label">Expected Salary</label>
                                 <input type="text" class="form-control" id="expectedSalary" name="expectedSalary" required>
                             </div>
+                            <!--                            <div class="col-md-6">-->
+                            <!--                                <label for="file" class="form-label">Upload CV</label>-->
+                            <!--                                <input type="file" class="form-control" id="file" name="file">-->
+                            <!--                            </div>-->
                             <div class="col-md-6">
-                                <label for="file" class="form-label">Upload CV</label>
-                                <input type="file" class="form-control" id="file" name="file">
+                                <label for="file" class="form-label">Tải lên CV (chỉ PDF hoặc Word)</label>
+                                <input type="file" class="form-control" id="file" name="file" accept=".pdf, .docx" onchange="saveToLocalStorage()">
+                                <div id="tempDownloadLink" style="display: none; margin-top: 10px;">
+                                    <a href="#" id="downloadLink" onclick="downloadFromLocalStorage()">Tải xuống tệp tạm thời</a>
+                                </div>
                             </div>
+
                         </div>
                     </form>
 
@@ -141,10 +159,6 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="jobApplicationForm">Submit</button>
-                </div>
-
-                <div th:if="${candidate.cvPath != null}">
-                    <a th:href="@{/downloadCV(candidateId=${candidate.id})}" target="_blank">Download CV</a>
                 </div>
             </div>
         </div>
@@ -216,7 +230,49 @@
         </div>
     </div>
 </div>
+<script>
+    function saveToLocalStorage() {
+        const fileInput = document.getElementById('file');
+        const file = fileInput.files[0];
 
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64Data = event.target.result.split(',')[1]; // Lấy phần dữ liệu Base64
+                localStorage.setItem("tempFileData", base64Data);
+                localStorage.setItem("tempFileName", file.name);
+
+                // Hiển thị liên kết tải xuống
+                document.getElementById("tempDownloadLink").style.display = "block";
+            };
+            reader.readAsDataURL(file); // Chuyển tệp sang Base64
+        }
+    }
+
+    function downloadFromLocalStorage() {
+        const base64Data = localStorage.getItem("tempFileData");
+        const fileName = localStorage.getItem("tempFileName");
+
+        if (base64Data && fileName) {
+            // Tạo đối tượng Blob từ dữ liệu Base64
+            const byteCharacters = atob(base64Data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: "application/octet-stream" });
+
+            // Tạo liên kết tải xuống
+            const downloadLink = document.createElement("a");
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = fileName;
+            downloadLink.click();
+        } else {
+            alert("Không có tệp tạm thời để tải xuống.");
+        }
+    }
+</script>
 <!-- Bootstrap JS (for Modal functionality) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -110,8 +110,8 @@
             <th>Schedule Time</th>
             <th>Candidate </th>
             <th>Interviewer </th>
-<!--            <th>Department</th>-->
-<!--            <th>Position</th>-->
+            <!--            <th>Department</th>-->
+            <!--            <th>Position</th>-->
             <th>GoogleMeetLink</th>
             <th>Actions</th>
         </tr>
@@ -123,7 +123,7 @@
             <td th:text="${schedule.scheduleTime}">09:00 AM</td>
             <td th:text="${schedule.candidate.name}">Nguyen Van A</td>
             <td th:text="${schedule.interviewer.name}">IT Department</td>
-<!--            <td th:text="${schedule.candidate.position}">Software Engineer</td>-->
+            <!--            <td th:text="${schedule.candidate.position}">Software Engineer</td>-->
             <td><a th:href="${schedule.googleMeetLink}" target="_blank">Link</a></td>
             <td>
                 <button type="button" class="btn btn-success btn-sm" onclick="markAsInterviewed(this)" th:data-schedule-id="${schedule.id}">

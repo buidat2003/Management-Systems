@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
+
 @Controller
 @RequestMapping("/newpass")
 public class NewPassController {
@@ -15,28 +16,28 @@ public class NewPassController {
     private UserService userService;
 
     @GetMapping
-    public String showNewPasswordForm() {
-        return "NewPass";  // Show the new password form
+    public String showNewPasswordForm(@SessionAttribute(value = "verifiedEmail", required = false) String email, Model model) {
+        if (email == null) {
+            return "redirect:/forgot";
+        }
+        return "NewPass";
     }
 
     @PostMapping
     public String processNewPassword(@SessionAttribute("verifiedEmail") String email,
                                      @RequestParam("password") String password,
                                      @RequestParam("repass") String confirmPassword,
-
                                      Model model, SessionStatus status) {
-        // Check password and confirmPassword match
         if (!password.equals(confirmPassword)) {
             model.addAttribute("error", "Passwords do not match.");
             return "NewPass";
         }
 
         try {
-            // Update the password using the email from session
             boolean isUpdated = userService.updatePassword(email, password);
             if (isUpdated) {
-                status.setComplete();  // Clear session attribute after success
-                return "redirect:/login";  // Redirect to login page
+                status.setComplete();  // Clear session attributes
+                return "redirect:/login?success=true"; // Pass success message as a URL parameter
             } else {
                 model.addAttribute("error", "An error occurred while updating the password.");
                 return "NewPass";

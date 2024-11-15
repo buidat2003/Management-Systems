@@ -41,13 +41,45 @@ public class CandidateService {
 
         return candidateStatusMap;
     }
+    //    public List<Candidate> filterCandidates(String status, Integer experience, String search) {
+//        List<Candidate> candidates = candidateRepository.findCandidatesByStatusAndSearch(status, search);
+//
+//        if (experience != null) {
+//            candidates = candidates.stream()
+//                    .filter(candidate -> {
+//                        int candidateExpInYears = Integer.parseInt(candidate.getExp()); // Trực tiếp chuyển từ chuỗi thành số nguyên
+//
+//                        // Kiểm tra ứng viên có đáp ứng kinh nghiệm theo các tùy chọn lọc
+//                        switch (experience) {
+//                            case 0:
+//                                return candidateExpInYears < 1; // Dưới 1 năm
+//                            case 1:
+//                                return candidateExpInYears == 1; // 1 năm
+//                            case 2:
+//                                return candidateExpInYears == 2; // 2 năm
+//                            case 3:
+//                                return candidateExpInYears >= 3; // 3 năm trở lên
+//                            default:
+//                                return true; // Không lọc nếu không có giá trị hợp lệ
+//                        }
+//                    })
+//                    .collect(Collectors.toList());
+//        }
+//
+//        return candidates;
+//    }
     public List<Candidate> filterCandidates(String status, Integer experience, String search) {
         List<Candidate> candidates = candidateRepository.findCandidatesByStatusAndSearch(status, search);
 
         if (experience != null) {
             candidates = candidates.stream()
                     .filter(candidate -> {
-                        int candidateExpInYears = Integer.parseInt(candidate.getExp()); // Trực tiếp chuyển từ chuỗi thành số nguyên
+                        int candidateExpInYears;
+                        try {
+                            candidateExpInYears = Integer.parseInt(candidate.getExp()); // Chuyển đổi chuỗi thành số nguyên
+                        } catch (NumberFormatException e) {
+                            return false; // Loại bỏ nếu không phải số
+                        }
 
                         // Kiểm tra ứng viên có đáp ứng kinh nghiệm theo các tùy chọn lọc
                         switch (experience) {
@@ -68,6 +100,7 @@ public class CandidateService {
 
         return candidates;
     }
+
 
     public Candidate findById(Long id) {
         return candidateRepository.findById(id).orElse(null);
