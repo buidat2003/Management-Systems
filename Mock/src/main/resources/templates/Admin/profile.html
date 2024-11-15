@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url('https://i0.wp.com/blog.nashtechglobal.com/wp-content/uploads/2024/01/pexels-photo-1103970.jpeg?fit=1024%2C682&ssl=1');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: #333;
+            position: relative;
+            flex-direction: column;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            width: 1200px;
+            height: 650px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .profile-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .profile-form-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #ddd;
+        }
+
+        .form-group select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .profile-form {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        .form-group-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .form-group {
+            width: 48%;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group input[type="email"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .gender-group {
+            display: flex;
+            align-items: center;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-3px);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .change-password-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .change-password-link a {
+            font-size: 16px;
+            color: #4CAF50;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .change-password-link a:hover {
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            transform: translateY(-3px);
+        }
+    </style>
+    <script>
+        function validateForm() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+
+            if (!name || !email || !phone || !address) {
+                alert("Please fill in all required fields.");
+                return false;
+            }
+            if (!/^[a-zA-Z\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯẶưăạảấầẩẫậắằẳẵặẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]+$/.test(name)) {
+                alert("Name should contain only letters, spaces, and Vietnamese characters.");
+                return false;
+            }
+
+            if (!/^\d{10}$/.test(phone)) {
+                alert("Phone number should be 10 digits.");
+                return false;
+            }
+            return true;
+        }
+
+        function showAlert(success) {
+            if (success) {
+                alert("Profile updated successfully!");
+            } else {
+                alert("Error updating profile. Please try again.");
+            }
+        }
+    </script>
+</head>
+
+<body>
+<img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcThnpW5ekY67LA9jnFOTujnczieNvevS1mIm6nes68OEd89RpYM" alt="Logo" class="logo">
+
+<div class="container">
+    <h2 class="profile-title">Profile</h2>
+
+    <div class="profile-form-container">
+        <img src="https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg" alt="Avatar" class="avatar">
+
+        <form id="profile-form" action="/profile/editprofile" method="POST" class="profile-form" onsubmit="return validateForm();">
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label for="id">ID:</label>
+                    <input type="text" id="id" name="id" th:value="${user.id}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" th:value="${user.name}">
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" th:value="${user.username}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <input type="text" id="role" name="role" th:value="${user.role}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" th:value="${user.email}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" id="dob" name="dob" th:value="${user.doB}">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" name="phone" th:value="${user.phone}">
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address" th:value="${user.address}">
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status">
+                        <option value="1" th:selected="${user.status == true}">Active</option>
+                        <option value="0" th:selected="${user.status == false}">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select name="gender" id="gender">
+                        <option value="Male" th:selected="${user.gender == 'Male'}">Male</option>
+                        <option value="Female" th:selected="${user.gender == 'Female'}">Female</option>
+                        <option value="Other" th:selected="${user.gender == 'Other'}">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Department:</label>
+                    <input type="text" id="department" name="department"
+                           th:value="${department != null ? department.name : 'No Department'}" readonly>
+                </div>
+
+                <div class="change-password-link">
+                    <a th:href="@{/changepassword/{username}(username=${user.username})}">Change Password</a>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button type="submit" onclick="showAlert(true)">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+
+</html>
