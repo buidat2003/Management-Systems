@@ -1,5 +1,6 @@
 package org.example.mock.Service;
 
+import org.example.mock.Model.Department;
 import org.example.mock.Model.User;
 import org.example.mock.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -64,4 +67,40 @@ public class UserService {
         logger.info("Password updated for user with email {}", email);
         return true; // Indicating successful update
     }
+
+    public User getUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.orElse(null);  // Trả về null nếu không tìm thấy người dùng
+    }
+
+    // Cập nhật thông tin người dùng
+    public void saveUser(User user) {
+        userRepository.save(user);  // Lưu người dùng đã thay đổi vào cơ sở dữ liệu
+    }
+
+    // Giả sử bạn cũng có một phương thức để lấy thông tin department
+    public Department getDepartmentById(Integer departmentId) {
+        // Nếu cần lấy department từ cơ sở dữ liệu, bạn có thể tạo một repository khác cho Department
+        return null;
+    }
+
+    public boolean changePassword(String username, String currentPassword, String newPassword) {
+        // Find the user by username, which returns an Optional<User>
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+
+        // Check if the user exists
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();  // Get the User object
+
+            // Check if the current password matches
+            if (user.getPassword().equals(currentPassword)) {
+                user.setPassword(newPassword);  // Set the new password
+                userRepository.save(user);  // Save the updated user
+                return true;  // Password successfully changed
+            }
+        }
+
+        return false;  // Either user not found or current password incorrect
+    }
+
 }

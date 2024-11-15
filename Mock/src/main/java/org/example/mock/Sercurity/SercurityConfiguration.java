@@ -34,7 +34,7 @@ public class SercurityConfiguration {
                         .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass","/filterCandidates","/cancelCandidate","/interviewschedules/detail","/interviewschedules/create",
                                 "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed","/admin/getForm", "/admin/createAccount", "/admin/AccountList", "/admin/addAccount",
                                 "/admin/getUpdateForm/{id}","/admin/getUpdateForm", "/admin/update", "/joblist", "/Manager/viewJob/{id}","/ApproveReject/jobList", "/ApproveReject/offers","/ApproveReject/viewJob/{id}", "/ApproveReject/approveJob/{id}",
-                                "/ApproveReject/rejectJob/{id}","/Manager/viewJob/{id}", "/ApproveReject/viewOffer/{id}", "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}", "/users", "/offers", "/offers/{id}/detail", "/offers/update", "/offers/create").permitAll() // Allow unauthenticated access
+                                "/ApproveReject/rejectJob/{id}","/Manager/viewJob/{id}", "/ApproveReject/viewOffer/{id}", "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}", "/users", "/offers", "/offers/{id}/detail", "/offers/update", "/offers/create", "/profile", "/profile/editprofile", "/changepassword/*", "/changepassword/submit").permitAll() // Allow unauthenticated access
                         .requestMatchers("/admin/**").hasRole("ADMIN")        // Admin access
                         .requestMatchers("/recruiter/**").hasRole("RECRUITER") // Recruiter access
                         .requestMatchers("/manager/**").hasRole("MANAGER")     // Manager access
