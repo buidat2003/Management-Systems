@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Details</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
+  <style>
+    body {
+      background-image: url("https://www.tourdumonde5continents.com/wp-content/uploads/2021/01/17.jpg");
+      background-repeat: no-repeat;
+
+      background-size: cover;
+    }
+
+
+  </style>
+</head>
+<body>
+<div class="container my-5">
+  <div class="card shadow-lg">
+    <div class="card-header text-center bg-primary text-white">
+      <h2>Job Details</h2>
+    </div>
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h5 class="text-muted">Job Title:</h5>
+          <p class="lead font-weight-bold" th:text="${vacancy.position.name}">Software Engineer</p>
+        </div>
+        <div class="col-md-6">
+          <h5 class="text-muted">Department:</h5>
+          <p class="lead font-weight-bold" th:text="${vacancy.department.name}">IT</p>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h5 class="text-muted">Status:</h5>
+          <p class="lead font-weight-bold" th:text="${vacancy.status}">Open</p>
+        </div>
+        <div class="col-md-6">
+          <h5 class="text-muted">Salary:</h5>
+          <p class="lead font-weight-bold" th:text="${vacancy.salary}">$80,000/year</p>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h5 class="text-muted">Job Type:</h5>
+          <p class="lead font-weight-bold" th:text="${vacancy.type}">Full-Time</p>
+        </div>
+        <div class="col-md-6">
+          <h5 class="text-muted">Number of Openings:</h5>
+          <p class="lead font-weight-bold" th:text="${vacancy.count}">3</p>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h5 class="text-muted">Created By:</h5>
+          <p class="lead font-weight-bold" th:text="${vacancy.createdUser.name}">John Doe</p>
+        </div>
+        <div class="col-md-6">
+          <h5 class="text-muted">Date Created:</h5>
+          <p class="lead font-weight-bold" th:text="${vacancy.createdAt}">2023-01-01</p>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h5 class="text-muted">Last Updated By:</h5>
+          <p class="lead font-weight-bold" th:text="${vacancy.updatedUser != null ? vacancy.updatedUser.name : 'N/A'}">Jane Doe</p>
+        </div>
+        <div class="col-md-6">
+          <h5 class="text-muted">Date Updated:</h5>
+          <p class="lead font-weight-bold" th:text="${vacancy.updatedAt}">2023-05-01</p>
+        </div>
+      </div>
+      <div class="mb-4">
+        <h5 class="text-muted">Required Skills:</h5>
+        <p class="lead font-weight-bold" th:text="${vacancy.details}">Java, Spring, MySQL</p>
+      </div>
+      <div class="mb-4">
+        <h5 class="text-muted">Application Deadline:</h5>
+        <p class="lead font-weight-bold" th:text="${vacancy.dueDate}">2023-12-31</p>
+      </div>
+    </div>
+    <div class="card-footer text-center">
+      <form th:action="@{/ApproveReject/approveJob/{id}(id=${vacancy.id})}" method="post" style="display:inline;">
+        <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i>Approve</button>
+      </form>
+
+      <form th:action="@{/ApproveReject/rejectJob/{id}(id=${vacancy.id})}" method="post" style="display:inline;">
+        <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"></i>Reject</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

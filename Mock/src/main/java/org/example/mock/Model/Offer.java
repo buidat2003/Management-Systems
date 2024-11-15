@@ -40,8 +40,9 @@ public class Offer {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "status", nullable = false, length = 30)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ApproveStatus  status = ApproveStatus.PENDING;
     // Getters and Setters
 
     public Long getId() {
@@ -116,18 +117,18 @@ public class Offer {
         this.updatedAt = updatedAt;
     }
 
-    public String getStatus() {
+    public ApproveStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ApproveStatus status) {
         this.status = status;
     }
 
     public Offer() {
     }
 
-    public Offer(Long id, LocalDateTime offerDate, LocalDate startDate, String salary, String terms, Candidate candidate, User createdUser, User updatedUser, LocalDateTime updatedAt, String status) {
+    public Offer(Long id, LocalDateTime offerDate, LocalDate startDate, String salary, String terms, Candidate candidate, User createdUser, User updatedUser, LocalDateTime updatedAt, ApproveStatus status) {
         this.id = id;
         this.offerDate = offerDate;
         this.startDate = startDate;

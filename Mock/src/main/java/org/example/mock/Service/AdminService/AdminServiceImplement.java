@@ -9,6 +9,7 @@ import org.example.mock.Repository.Admin.AdminCustomRepositoryImplement;
 import org.example.mock.Repository.Admin.AdminRepository;
 import org.example.mock.Repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,12 +26,16 @@ public class AdminServiceImplement implements AdminService {
     @Autowired
     private DepartmentRepository departmentRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public void addUser(CreateUser createUser, MultipartFile avatar) throws IOException {
         User user = new User();
         user.setName(createUser.getName());
         user.setEmail(createUser.getEmail());
         user.setUsername(createUser.getUsername());
-        user.setPassword(createUser.getPassword());
+        String encodedPassword = passwordEncoder.encode(createUser.getPassword());
+        user.setPassword(encodedPassword);
         user.setDoB(createUser.getDoB());
         user.setPhone(createUser.getPhone());
         user.setAddress(createUser.getAddress());

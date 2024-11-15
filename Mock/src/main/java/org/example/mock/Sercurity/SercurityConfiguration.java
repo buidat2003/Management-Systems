@@ -32,7 +32,9 @@ public class SercurityConfiguration {
                 .authenticationProvider(customAuthenticationProvider)
                 .authorizeRequests(authz -> authz
                         .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass","/filterCandidates","/cancelCandidate","/interviewschedules/detail","/interviewschedules/create",
-                                "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed").permitAll() // Allow unauthenticated access
+                                "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed","/admin/getForm", "/admin/createAccount", "/admin/AccountList", "/admin/addAccount",
+                                "/admin/getUpdateForm/{id}","/admin/getUpdateForm", "/admin/update", "/joblist", "/Manager/viewJob/{id}","/ApproveReject/jobList", "/ApproveReject/offers","/ApproveReject/viewJob/{id}", "/ApproveReject/approveJob/{id}",
+                                "/ApproveReject/rejectJob/{id}","/Manager/viewJob/{id}", "/ApproveReject/viewOffer/{id}", "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}", "/users").permitAll() // Allow unauthenticated access
                         .requestMatchers("/admin/**").hasRole("ADMIN")        // Admin access
                         .requestMatchers("/recruiter/**").hasRole("RECRUITER") // Recruiter access
                         .requestMatchers("/manager/**").hasRole("MANAGER")     // Manager access

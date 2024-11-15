@@ -44,6 +44,11 @@ public class Vacancy {
     @Column(nullable = false)
     private VacancyStatus status = VacancyStatus.ACTIVE; // Enum for vacancy status
 
+    //ApproveStatus
+    @Enumerated(EnumType.STRING)
+    @Column(name = "approve_status", nullable = false)
+    private ApproveStatus approveStatus = ApproveStatus.PENDING;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -69,7 +74,7 @@ public class Vacancy {
     @JoinColumn(name = "position_id", nullable = false)
     private PositionAll position;
 
-    public Vacancy(Long id, String details, String salary, Integer count, JobType type, LocalDate dueDate, VacancyStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime reopenAt, User createdUser, User updatedUser, Department department, PositionAll position) {
+    public Vacancy(Long id, String details, String salary, Integer count, JobType type, LocalDate dueDate, VacancyStatus status,ApproveStatus approveStatus, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime reopenAt, User createdUser, User updatedUser, Department department, PositionAll position) {
         this.id = id;
         this.details = details;
         this.salary = salary;
@@ -77,6 +82,7 @@ public class Vacancy {
         this.type = type;
         this.dueDate = dueDate;
         this.status = status;
+        this.approveStatus = approveStatus;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.reopenAt = reopenAt;
@@ -198,6 +204,9 @@ public class Vacancy {
         this.position = position;
     }
 
+    public ApproveStatus getApproveStatus() { return approveStatus;}
+
+    public void setApproveStatus(ApproveStatus approveStatus) { this.approveStatus = approveStatus; }
 
     @Transient
     public String getRequiredSkills() {

@@ -1,5 +1,6 @@
 package org.example.mock.Controller;
 
+import org.example.mock.Model.ApproveStatus;
 import org.example.mock.Model.Candidate;
 import org.example.mock.Model.Offer;
 import org.example.mock.Model.User;
@@ -76,7 +77,6 @@ public class CreateNewOfferController {
             offer.setTerms(terms);
             offer.setCandidate(candidate);
             offer.setCreatedUser(createdUser);
-            offer.setStatus(status != null ? status : "1");
 
             if (updatedUserIdLong != null) {
                 User updatedUser = userRepository.findById(updatedUserIdLong)
