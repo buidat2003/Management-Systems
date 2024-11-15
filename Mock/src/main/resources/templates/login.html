@@ -1,4 +1,6 @@
+
 <!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,6 +72,10 @@
             color: #ff4c4c;
             margin-top: 10px;
         }
+        .success-message {
+            color: #00ff7f;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -79,13 +85,20 @@
         <input type="text" placeholder="Username" name="username" required />
         <input type="password" placeholder="Password" name="password" required />
         <button type="submit">Submit</button>
-        <div th:if="${param.error}" class="error-message">
-            Invalid username or password. Please try again.
-        </div>
         <div class="forgot-password">
             <a href="/forgot">Forgot Password?</a>
         </div>
-    </form>
 
+        <!-- Thông báo lỗi đăng nhập -->
+        <div th:if="${param.error}" class="error-message">
+            Invalid username or password. Please try again.
+        </div>
+
+        <!-- Thông báo thành công sau khi đổi mật khẩu -->
+        <div th:if="${param.success}" class="success-message">
+            Password changed successfully. Please log in.
+        </div>
+    </form>
 </div>
 </body>
+</html>
