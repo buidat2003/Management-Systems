@@ -41,12 +41,12 @@ public class SercurityConfiguration {
                         .requestMatchers("/interviewer/**").hasRole("INTERVIEWER") // Interviewer access
                         .anyRequest().authenticated()                          // All other requests require authentication
                 )
-//                .formLogin(form -> form
-//                        .loginPage("/login")                                  // URL for the login page
-//                        .permitAll()                                          // Allow everyone to access the login page
-//                        .successHandler(authenticationSuccessHandler())       // Custom success handler
-//                        .failureHandler(authenticationFailureHandler())       // Custom failure handler
-//                )
+                .formLogin(form -> form
+                        .loginPage("/login")                                  // URL for the login page
+                        .permitAll()                                          // Allow everyone to access the login page
+                       .successHandler(authenticationSuccessHandler())       // Custom success handler
+                        .failureHandler(authenticationFailureHandler())       // Custom failure handler
+               )
                 .logout(logout -> logout
                         .permitAll().logoutSuccessUrl("/login")                           // Redirect to login page after logout
                 )
@@ -87,10 +87,9 @@ public class SercurityConfiguration {
             }
         };
     }
-
     private AuthenticationFailureHandler authenticationFailureHandler() {
         return (request, response, exception) -> {
-            response.sendRedirect("/login?error=true"); // Redirect to login page with error message on failure
+            response.sendRedirect("/login?error=true");
         };
     }
 
