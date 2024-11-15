@@ -40,6 +40,9 @@ public class Offer {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "statusBan", nullable = false, length = 30)
+    private String statusBan = "1";
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ApproveStatus  status = ApproveStatus.PENDING;
@@ -123,6 +126,14 @@ public class Offer {
 
     public void setStatus(ApproveStatus status) {
         this.status = status;
+    }
+
+    public String getStatusBan() {
+        return statusBan;
+    }
+
+    public void setStatusBan(String statusBan) {
+        this.statusBan = statusBan;
     }
 
     public Offer() {

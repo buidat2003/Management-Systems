@@ -110,6 +110,53 @@
         .actions button:hover {
             color: #007bff;
         }
+        .page-button {
+            margin: 0 2px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: white;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .page-button.active {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .page-button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .filters {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            gap: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            margin: 20px auto;
+            width: 60%;
+        }
+
+        .filters input[type="text"], .filters select {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .filters input[type="text"]:focus, .filters select:focus {
+            border-color: #007bff;
+        }
+
+        .filters input[type="text"] {
+            width: 60%;
+        }
     </style>
 </head>
 <body>
@@ -130,20 +177,12 @@
 
     <!-- Filters and search -->
     <div class="filters">
-        <form method="GET" action="/offers"> <!-- Chuyển hướng dữ liệu qua GET request -->
-            <div>
-
-
-                <label for="display">Display: </label>
-                <select id="display" name="display">
-                    <option value="5">5 lines</option>
-                    <option value="10">10 lines</option>
-                    <option value="15">15 lines</option>
-                </select>
-                <input type="text" id="search" name="search" placeholder="Search">
-                <button type="submit">🔍</button>
-            </div>
-        </form>
+        <input type="text" id="candidateSearch" placeholder="Search by Candidate">
+        <select id="statusFilter">
+            <option value="all">All Statuses</option>
+            <option value="1">Active</option>
+            <option value="0">Deactive</option>
+        </select>
     </div>
 
     <!-- Table for displaying offers -->
@@ -160,8 +199,7 @@
             <th>Action</th>
         </tr>
         </thead>
-        <tbody>
-        <!-- Dùng Thymeleaf để lặp qua danh sách offer -->
+        <tbody id="offerTableBody">
         <th:block th:each="offer, iterStat : ${offers}">
             <tr>
                 <td th:text="${iterStat.index + 1}"></td> <!-- STT -->
@@ -169,16 +207,151 @@
                 <td th:text="${offer.startDate}"></td> <!-- Start Date -->
                 <td th:text="${offer.salary}"></td> <!-- Salary -->
                 <td th:text="${offer.candidate.name}"></td> <!-- Candidate -->
-                <td th:text="${offer.status}"></td> <!-- Status -->
+                <td>
+                    <span th:text="${offer.statusBan == '1' ? 'Active' : 'Deactive'}"></span> <!-- Status -->
+                </td>
                 <td th:text="${offer.createdUser.name}"></td> <!-- Created By -->
                 <td class="actions">
-                    <a class="button" title="View" th:href="@{/offers/{id}/edit(id=${offer.id})}">👁️</a>
-                    <button title="Delete" th:attr="data-id=${offer.id}">❌</button>
+                    <!-- View button -->
+                    <a class="button" title="View" th:href="@{/offers/{id}/detail(id=${offer.id})}">👁️</a>
+
+                    <!-- Action buttons for toggling status -->
+                    <button
+                            th:if="${offer.statusBan == '1'}"
+                            title="Deactivate"
+                            th:attr="data-id=${offer.id}"
+                            th:onclick="'deactivateOffer(' + ${offer.id} + ')'"
+                            class="deactivate-btn">
+                        ❌
+                    </button>
+
+                    <button
+                            th:if="${offer.statusBan == '0'}"
+                            title="Activate"
+                            th:attr="data-id=${offer.id}"
+                            th:onclick="'activateOffer(' + ${offer.id} + ')'"
+                            class="activate-btn">
+                        ✅
+                    </button>
                 </td>
             </tr>
         </th:block>
         </tbody>
     </table>
+    <div id="pagination"></div>
 </div>
+<script>
+    function deactivateOffer(offerId) {
+        fetch(`/offers/${offerId}/deactivate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: offerId }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Reload the page to reflect the updated status
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function activateOffer(offerId) {
+        fetch(`/offers/${offerId}/activate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: offerId }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Reload the page to reflect the updated status
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    const offers = Array.from(document.querySelectorAll("#offerTableBody tr")).map(row => {
+        return {
+            element: row,
+            candidateName: row.querySelector("td:nth-child(5)").innerText.toLowerCase(),
+            status: row.querySelector("td:nth-child(6)").innerText.trim() === "Active" ? "1" : "0"
+        };
+    });
+
+    const offersPerPage = 8;
+    let currentPage = 1;
+    let filteredOffers = offers;
+
+    // Hàm hiển thị bảng cho trang hiện tại
+    function renderTable(offersToDisplay) {
+        const tableBody = document.getElementById("offerTableBody");
+        tableBody.innerHTML = "";
+
+        const startIndex = (currentPage - 1) * offersPerPage;
+        const paginatedOffers = offersToDisplay.slice(startIndex, startIndex + offersPerPage);
+
+        paginatedOffers.forEach(offer => {
+            tableBody.appendChild(offer.element);
+        });
+
+        renderPagination(offersToDisplay.length);
+    }
+
+    // Hàm tạo các nút phân trang
+    function renderPagination(totalOffers) {
+        const paginationDiv = document.getElementById("pagination");
+        paginationDiv.innerHTML = "";
+
+        const totalPages = Math.ceil(totalOffers / offersPerPage);
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement("button");
+            pageButton.innerText = i;
+            pageButton.className = "page-button";
+            if (i === currentPage) pageButton.classList.add("active");
+
+            pageButton.onclick = () => {
+                currentPage = i;
+                renderTable(filteredOffers);
+            };
+
+            paginationDiv.appendChild(pageButton);
+        }
+    }
+
+    // Hàm tìm kiếm ứng viên theo tên
+    function searchOffers(offers, candidateName) {
+        return offers.filter(offer => offer.candidateName.includes(candidateName));
+    }
+
+    // Hàm lọc và tìm kiếm các offer
+    function filterOffers() {
+        const statusFilter = document.getElementById("statusFilter").value;
+        const candidateSearch = document.getElementById("candidateSearch").value.toLowerCase();
+
+        filteredOffers = offers.filter(offer => {
+            const matchesStatus = statusFilter === "all" || offer.status === statusFilter;
+            return matchesStatus;
+        });
+
+        // Áp dụng tìm kiếm trên kết quả đã lọc
+        filteredOffers = searchOffers(filteredOffers, candidateSearch);
+
+        currentPage = 1;  // Đặt lại trang đầu tiên sau khi lọc
+        renderTable(filteredOffers);
+    }
+
+    // Khởi tạo hiển thị bảng khi trang tải
+    document.addEventListener("DOMContentLoaded", () => {
+        renderTable(filteredOffers);
+
+        document.getElementById("statusFilter").addEventListener("change", filterOffers);
+        document.getElementById("candidateSearch").addEventListener("keyup", filterOffers);
+    });
+</script>
 </body>
 </html>

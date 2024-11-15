@@ -46,7 +46,7 @@ public class CreateNewOfferController {
             @RequestParam("terms") String terms,
             @RequestParam("createdUserId") String createdUserId,
             @RequestParam(value = "updatedUserId", required = false) String updatedUserId,
-            @RequestParam(value = "status", required = false) String status,
+
             Model model
     ) {
         try {
