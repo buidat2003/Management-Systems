@@ -4,6 +4,7 @@ import org.example.mock.Model.User;
 import org.example.mock.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -21,7 +22,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;  // Inject PasswordEncoder
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -31,17 +32,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         // Tìm người dùng trong cơ sở dữ liệu
         Optional<User> userOpt = userRepository.findByUsername(username);
         if (userOpt.isEmpty()) {
-            throw new RuntimeException("User not found");
+            throw new BadCredentialsException("User not found");  // Sử dụng BadCredentialsException
         }
 
         User user = userOpt.get();
 
+        // Kiểm tra mật khẩu
         if (passwordEncoder.matches(password, user.getPassword())) {
             return new UsernamePasswordAuthenticationToken(
                     user, password, Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
             );
         } else {
-            throw new RuntimeException("Invalid password");
+            throw new BadCredentialsException("Invalid password");  // Sử dụng BadCredentialsException
         }
     }
 

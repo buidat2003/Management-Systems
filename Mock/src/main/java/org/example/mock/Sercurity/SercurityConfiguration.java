@@ -87,7 +87,7 @@ public class SercurityConfiguration {
 
     private AuthenticationFailureHandler authenticationFailureHandler() {
         return (request, response, exception) -> {
-            response.sendRedirect("/login?error=true"); // Redirect to login page with error message on failure
+            response.sendRedirect("/login?error=true");
         };
     }
 
