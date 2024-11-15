@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +16,12 @@
             background-color: #5fcf80 !important;
             border: 1px solid #5fcf80 !important;
         }
+        .error-message {
+            color: #ff4c4c;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="img js-fullheight">
@@ -28,9 +35,10 @@
                         <h3><i class="fa fa-lock fa-4x"></i></h3>
                         <h2 class="text-center">Enter Code</h2>
 
-                        <!-- Display Success or Error Message -->
-                        <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
-                        <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+                        <!-- Hiển thị thông báo lỗi nếu có -->
+                        <div th:if="${error}" class="error-message">
+                            <p th:text="${error}"></p>
+                        </div>
 
                         <div class="panel-body">
                             <form th:action="@{/recovery}" method="post">

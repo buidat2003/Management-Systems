@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
+
 
 @Controller
 @RequestMapping("/forgot")
-@SessionAttributes({"verifiedEmail", "recoveryCode"})
+@SessionAttributes({"verifiedEmail", "recoveryCode"})  // Store email and recovery code in session
 public class ResetPasswordController {
 
     @Autowired
@@ -21,7 +23,7 @@ public class ResetPasswordController {
 
     @GetMapping
     public String showRequestForm() {
-        return "ForgotPassword";  // Show ForgotPassword.html page
+        return "ForgotPassword";
     }
 
     @PostMapping
@@ -30,7 +32,7 @@ public class ResetPasswordController {
         User user = userService.verifyUser(username, email);
         if (user == null) {
             model.addAttribute("error", "Invalid username or email.");
-            return "ForgotPassword";  // Reload the page with error
+            return "ForgotPassword";
         }
 
         try {
@@ -41,9 +43,8 @@ public class ResetPasswordController {
             }
 
             model.addAttribute("verifiedEmail", email);  // Store email in session
-            model.addAttribute("recoveryCode", recoveryCode);
-            return "redirect:/recovery";  // Redirect to the recovery page
-
+            model.addAttribute("recoveryCode", recoveryCode);  // Store recovery code in session
+            return "redirect:/recovery";
         } catch (Exception e) {
             model.addAttribute("error", "Error sending recovery code.");
             e.printStackTrace();

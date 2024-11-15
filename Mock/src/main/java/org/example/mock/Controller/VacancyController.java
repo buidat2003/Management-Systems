@@ -2,35 +2,34 @@ package org.example.mock.Controller;
 
 
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
-import org.example.mock.Model.Candidate;
-import org.example.mock.Model.Department;
-import org.example.mock.Model.PositionAll;
-import org.example.mock.Model.Vacancy;
-import org.example.mock.Repository.CandidateRepository;
-import org.example.mock.Repository.DepartmentRepository;
-import org.example.mock.Repository.PositionRepository;
-import org.example.mock.Repository.VacancyRepository;
+import org.example.mock.Model.*;
+import org.example.mock.Repository.*;
 import org.example.mock.Service.PositionService;
 import org.example.mock.Service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.core.io.Resource;
+import jakarta.servlet.http.HttpSession;
 
+import org.springframework.core.io.UrlResource;
 @Controller
 public class VacancyController {
     private final VacancyService vacancyService;
@@ -51,6 +50,8 @@ public class VacancyController {
     private VacancyRepository vacancyRepository;
     @Autowired
     private CandidateRepository candidateRepository; // Thêm CandidateRepository
+    @Autowired
+    private CandidateStatusRepository candidateStatusRepository; // Thêm CandidateRepository
 
     @GetMapping("/vacancy/{id}")
     public String getVacancyDetails(@PathVariable Long id, Model model) {
@@ -70,48 +71,61 @@ public class VacancyController {
         }
     }
 
-@PostMapping("/submitApplication")
-public String submitApplication(
-        @ModelAttribute Candidate candidate,
-        @RequestParam("vacancyId") Long vacancyId,
-        @RequestParam("file") MultipartFile file,
-        Model model) {
-    try {
-        Vacancy vacancy = vacancyRepository.findById(vacancyId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid vacancy ID"));
+    @PostMapping("/submitApplication")
+    public String submitApplication(
+            @ModelAttribute Candidate candidate,
+            @RequestParam("vacancyId") Long vacancyId,
+            @RequestParam("file") MultipartFile file,
+            Model model) {
+        try {
+            Vacancy vacancy = vacancyRepository.findById(vacancyId)
+                    .orElseThrow(() -> new IllegalArgumentException("Mã công việc không hợp lệ"));
 
-        // Thiết lập trường vacancy cho candidate
-        candidate.setVacancy(vacancy);
+            candidate.setVacancy(vacancy);
 
-        // Kiểm tra và lưu tệp nếu có
-        if (file != null && !file.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get("uploads/cv", fileName);
-            Files.createDirectories(filePath.getParent());
-            file.transferTo(filePath); // Lưu file vào thư mục
+            if (file != null && !file.isEmpty()) {
+                // Kiểm tra định dạng tệp
+                String fileName = file.getOriginalFilename();
+                if (fileName != null && (fileName.endsWith(".pdf") || fileName.endsWith(".docx"))) {
+                    String newFileName = System.currentTimeMillis() + "_" + fileName;
+                    Path filePath = Paths.get("uploads/cv", newFileName);
+                    Files.createDirectories(filePath.getParent());
+                    file.transferTo(filePath);
 
-            // Lưu đường dẫn vào đối tượng Candidate
-            candidate.setCvPath(filePath.toString());
+                    candidate.setCvPath(filePath.toString());
+                } else {
+                    model.addAttribute("errorMessage", "Chỉ chấp nhận tệp PDF hoặc Word.");
+                    return "Candidate/detailvacancy";
+                }
+            }
+
+            // Lưu ứng viên vào cơ sở dữ liệu
+            candidateRepository.save(candidate);
+
+            // Tạo và lưu trạng thái cho ứng viên với trạng thái mặc định là "đang chờ"
+            CandidateStatus candidateStatus = new CandidateStatus();
+            candidateStatus.setCandidate(candidate);
+            candidateStatus.setStatusName("Đang chờ");
+            candidateStatus.setUpdatedAt(LocalDateTime.now());
+
+            // Lưu vào bảng candidate_status
+            candidateStatusRepository.save(candidateStatus);
+
+            model.addAttribute("vacancy", vacancy);
+            model.addAttribute("candidate", candidate);
+            model.addAttribute("successMessage", "Đã nộp hồ sơ thành công!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
         }
 
-        candidateRepository.save(candidate);
-
-        model.addAttribute("vacancy", vacancy);
-        model.addAttribute("candidate", candidate);
-        // Thêm thông báo thành công vào model
-        model.addAttribute("successMessage", "Application submitted successfully!");
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return "error";
+        return "Candidate/detailvacancy";
     }
-
-    return "Candidate/detailvacancy";
-}
     @GetMapping("/downloadCV")
     public ResponseEntity<Resource> downloadCV(@RequestParam("candidateId") Long candidateId) {
         Candidate candidate = candidateRepository.findById(candidateId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid candidate ID"));
+                .orElseThrow(() -> new IllegalArgumentException("Mã ứng viên không hợp lệ"));
 
         if (candidate.getCvPath() == null) {
             return ResponseEntity.notFound().build();
@@ -119,18 +133,81 @@ public String submitApplication(
 
         try {
             Path path = Paths.get(candidate.getCvPath());
-            Resource resource = (Resource) new UrlResource(path.toUri());
+            if (!Files.exists(path)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            Resource resource = new UrlResource(path.toUri());
+
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new FileNotFoundException("Không thể đọc tệp: " + candidate.getCvPath());
+            }
+
+            // Làm sạch tên tệp để loại bỏ các ký tự không hợp lệ
+            String fileName = path.getFileName().toString().replaceAll("[^\\x00-\\x7F]", "_");
 
             return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=\"" + resource.getClass() + "\"")
+                    .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
                     .body(resource);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
+    @PostMapping("/uploadTemporaryFile")
+    public ResponseEntity<String> uploadTemporaryFile(
+            @RequestParam("file") MultipartFile file, HttpSession session) {
+        try {
+            if (file != null && !file.isEmpty()) {
+                // Kiểm tra định dạng tệp
+                String fileName = file.getOriginalFilename();
+                if (fileName != null && (fileName.endsWith(".pdf") || fileName.endsWith(".docx"))) {
+                    String newFileName = "temp_" + System.currentTimeMillis() + "_" + fileName;
+                    Path filePath = Paths.get("uploads/temp", newFileName);
+                    Files.createDirectories(filePath.getParent());
+                    file.transferTo(filePath);
 
+                    // Lưu đường dẫn tệp tạm thời trong session
+                    session.setAttribute("tempFilePath", filePath.toString());
 
+                    return ResponseEntity.ok("Tệp đã tải tạm thời thành công.");
+                } else {
+                    return ResponseEntity.badRequest().body("Chỉ chấp nhận tệp PDF hoặc Word.");
+                }
+            } else {
+                return ResponseEntity.badRequest().body("Vui lòng chọn tệp để tải lên.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra khi tải lên tệp.");
+        }
+    }
+    @GetMapping("/downloadTemporaryFile")
+    public ResponseEntity<Resource> downloadTemporaryFile(HttpSession session) {
+        String tempFilePath = (String) session.getAttribute("tempFilePath");
+
+        if (tempFilePath == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Path path = Paths.get(tempFilePath);
+            Resource resource = new UrlResource(path.toUri());
+
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new FileNotFoundException("Không thể đọc tệp tạm thời: " + tempFilePath);
+            }
+
+            String fileName = path.getFileName().toString().replaceAll("[^\\x00-\\x7F]", "_");
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
     @PostConstruct
     public void init() {
         try {

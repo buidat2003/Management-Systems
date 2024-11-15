@@ -31,31 +31,45 @@ public class SercurityConfiguration {
                 .csrf().disable()
                 .authenticationProvider(customAuthenticationProvider)
                 .authorizeRequests(authz -> authz
-                        .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass","/filterCandidates","/cancelCandidate","/interviewschedules/detail","/interviewschedules/create",
-                                "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed","/admin/getForm", "/admin/createAccount", "/admin/AccountList", "/admin/addAccount",
-                                "/admin/getUpdateForm/{id}","/admin/getUpdateForm", "/admin/update", "/joblist", "/Manager/viewJob/{id}","/ApproveReject/jobList", "/ApproveReject/offers","/ApproveReject/viewJob/{id}", "/ApproveReject/approveJob/{id}",
-                                "/ApproveReject/rejectJob/{id}","/Manager/viewJob/{id}", "/ApproveReject/viewOffer/{id}", "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}", "/users", "/offers", "/offers/{id}/detail", "/offers/update", "/offers/create").permitAll() // Allow unauthenticated access
-                        .requestMatchers("/admin/**").hasRole("ADMIN")        // Admin access
-                        .requestMatchers("/recruiter/**").hasRole("RECRUITER") // Recruiter access
-                        .requestMatchers("/manager/**").hasRole("MANAGER")     // Manager access
-                        .requestMatchers("/interviewer/**").hasRole("INTERVIEWER") // Interviewer access
-                        .anyRequest().authenticated()                          // All other requests require authentication
+                        // Allow unauthenticated access to these endpoints
+                        .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass", "/filterCandidates",
+                                "/cancelCandidate", "/interviewschedules/detail", "/interviewschedules/create",
+                                "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed",
+                                "/admin/getForm", "/admin/createAccount", "/admin/AccountList", "/admin/addAccount",
+                                "/admin/getUpdateForm/{id}", "/admin/getUpdateForm", "/admin/update", "/joblist",
+                                "/Manager/viewJob/{id}", "/ApproveReject/jobList", "/ApproveReject/offers",
+                                "/ApproveReject/viewJob/{id}", "/ApproveReject/approveJob/{id}",
+                                "/ApproveReject/rejectJob/{id}", "/ApproveReject/viewOffer/{id}",
+                                "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}", "/users",
+                                "/offers", "/offers/{id}/detail", "/offers/update", "/offers/create", "/profile",
+                                "/profile/editprofile", "/changepassword/*", "/changepassword/submit",
+                                "/vacancy/*", "/submitApplication", "/downloadCV", "/uploadTemporaryFile",
+                                "/download/cv/*", "/static/**")
+                        .permitAll()
+                        // Role-based access restrictions
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/recruiter/**").hasRole("RECRUITER")
+                        .requestMatchers("/manager/**").hasRole("MANAGER")
+                        .requestMatchers("/interviewer/**").hasRole("INTERVIEWER")
+                        .anyRequest().authenticated()  // Require authentication for all other requests
                 )
 //                .formLogin(form -> form
-//                        .loginPage("/login")                                  // URL for the login page
-//                        .permitAll()                                          // Allow everyone to access the login page
-//                        .successHandler(authenticationSuccessHandler())       // Custom success handler
-//                        .failureHandler(authenticationFailureHandler())       // Custom failure handler
+//                        .loginPage("/login")  // URL for the login page
+//                        .permitAll()  // Allow everyone to access the login page
+//                        .successHandler(authenticationSuccessHandler())  // Custom success handler
+//                        .failureHandler(authenticationFailureHandler())  // Custom failure handler
 //                )
                 .logout(logout -> logout
-                        .permitAll().logoutSuccessUrl("/login")                           // Redirect to login page after logout
+                        .permitAll()
+                        .logoutSuccessUrl("/login")  // Redirect to login page after logout
                 )
                 .exceptionHandling(exception -> exception
-                        .accessDeniedPage("/access-denied")                   // Custom 403 error page
+                        .accessDeniedPage("/access-denied")  // Custom 403 error page
                 );
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -87,10 +101,9 @@ public class SercurityConfiguration {
             }
         };
     }
-
     private AuthenticationFailureHandler authenticationFailureHandler() {
         return (request, response, exception) -> {
-            response.sendRedirect("/login?error=true"); // Redirect to login page with error message on failure
+            response.sendRedirect("/login?error=true");
         };
     }
 
