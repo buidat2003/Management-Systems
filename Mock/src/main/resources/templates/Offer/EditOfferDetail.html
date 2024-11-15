@@ -161,6 +161,37 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+        #statusBan {
+            width: 200px;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #statusBan:hover {
+            background-color: #f1f1f1;
+        }
+
+        #statusBan option {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        #statusBan option[value="1"] {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        #statusBan option[value="0"] {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
     </style>
 </head>
 <body>
@@ -193,11 +224,12 @@
     </div>
 
     <!-- Form tạo offer mới -->
-    <form action="/offers/create" method="post">
+    <form action="/offers/update" method="post">
+        <input type="hidden" name="id" th:value="${offer.id}" />
+
         <div class="form-row">
             <div class="form-column">
                 <label for="offerDate">Offer Date:</label>
-                <!-- Set giá trị offerDate mặc định là ngày hiện tại -->
                 <input type="date" id="offerDate" name="offerDate" th:value="${offer.offerDate}" readonly>
             </div>
             <div class="form-column">
@@ -212,24 +244,33 @@
                 <input type="text" id="salary" name="salary" th:value="${offer.salary}" maxlength="50" required>
             </div>
             <div class="form-column">
-                <label for="candidateId">Candidate ID:</label>
-                <input type="text" id="candidateId" name="candidateId" th:value="${offer.candidate.name}" required>
+                <label for="candidate">Candidate:</label>
+                <input type="text" id="candidate" name="candidateId" th:value="${offer.candidate.name}" readonly>
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-column">
-                <label for="terms">Terms:</label>
-                <textarea id="terms" name="terms" rows="4" th:text="${offer.terms}"></textarea>
+                <label for="createdUser">Created By:</label>
+                <input type="text" id="createdUser" name="createdUserId" th:value="${offer.createdUser.name}" readonly>
             </div>
             <div class="form-column">
-                <label for="createdUserId">Created By (User ID):</label>
-                <input type="text" id="createdUserId" name="createdUserId" th:value="${offer.createdUser.name}" required>
+                <label for="statusBan">Status:</label>
+                <select id="statusBan" name="statusBan" required>
+                    <option th:value="'1'" th:selected="${offer.statusBan == '1'}">Active</option>
+                    <option th:value="'0'" th:selected="${offer.statusBan == '0'}">De-active</option>
+                </select>
             </div>
         </div>
-
+        <div class="form-row">
+            <label for="terms">Terms:</label>
+            <textarea id="terms" name="terms" rows="4" th:text="${offer.terms}"></textarea>
+        </div>
         <button type="submit">Edit Offer</button>
     </form>
+
+
+
 </div>
 
 <script>
