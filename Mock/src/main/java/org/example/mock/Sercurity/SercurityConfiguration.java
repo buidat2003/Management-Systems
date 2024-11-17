@@ -37,19 +37,16 @@ public class SercurityConfiguration {
                                 "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed",
                                 "/admin/getForm", "/admin/createAccount", "/admin/AccountList", "/admin/addAccount",
                                 "/admin/getUpdateForm/{id}", "/admin/getUpdateForm", "/admin/update", "/joblist",
-                                "/Manager/viewJob/{id}", "/ApproveReject/jobList", "/ApproveReject/offers",
-                                "/ApproveReject/viewJob/{id}", "/ApproveReject/approveJob/{id}",
-                                "/ApproveReject/rejectJob/{id}", "/ApproveReject/viewOffer/{id}",
-                                "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}", "/users",
-                                "/offers", "/offers/{id}/detail", "/offers/update", "/offers/create", "/profile",
-                                "/profile/editprofile", "/changepassword/*", "/changepassword/submit",
+                                "/Manager/viewJob/{id}", "/users","/offers", "/offers/{id}/detail", "/offers/update",
+                                "/offers/create", "/profile","/profile/editprofile", "/changepassword/*", "/changepassword/submit",
                                 "/vacancy/*", "/submitApplication", "/downloadCV", "/uploadTemporaryFile",
                                 "/download/cv/*", "/static/**")
                         .permitAll()
                         // Role-based access restrictions
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/recruiter/**").hasRole("RECRUITER")
-                        .requestMatchers("/manager/**").hasRole("MANAGER")
+                        .requestMatchers("/manager/**", "/ApproveReject/offers","/ApproveReject/viewOffer/{id}",
+                                "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}").hasRole("MANAGER")
                         .requestMatchers("/interviewer/**").hasRole("INTERVIEWER")
                         .anyRequest().authenticated()  // Require authentication for all other requests
                 )
