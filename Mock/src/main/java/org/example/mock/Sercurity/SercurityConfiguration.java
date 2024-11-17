@@ -53,12 +53,12 @@ public class SercurityConfiguration {
                         .requestMatchers("/interviewer/**").hasRole("INTERVIEWER")
                         .anyRequest().authenticated()  // Require authentication for all other requests
                 )
-//                .formLogin(form -> form
-//                        .loginPage("/login")  // URL for the login page
-//                        .permitAll()  // Allow everyone to access the login page
-//                        .successHandler(authenticationSuccessHandler())  // Custom success handler
-//                        .failureHandler(authenticationFailureHandler())  // Custom failure handler
-//                )
+                .formLogin(form -> form
+                        .loginPage("/login")  // URL for the login page
+                        .permitAll()  // Allow everyone to access the login page
+                        .successHandler(authenticationSuccessHandler())  // Custom success handler
+                        .failureHandler(authenticationFailureHandler())  // Custom failure handler
+                )
                 .logout(logout -> logout
                         .permitAll()
                         .logoutSuccessUrl("/login")  // Redirect to login page after logout
@@ -80,7 +80,8 @@ public class SercurityConfiguration {
         return (request, response, authentication) -> {
             User user = (User) authentication.getPrincipal();
             String role = user.getRole().toUpperCase();
-
+            request.getSession().setAttribute("USER_ID", user.getId());
+            System.out.println("Logged-in User ID: " + user.getId());
             // Redirect based on the user's role
             switch (role) {
                 case "ADMIN":
