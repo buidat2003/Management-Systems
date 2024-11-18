@@ -6,6 +6,7 @@ import org.example.mock.Model.Offer;
 import org.example.mock.Model.Vacancy;
 import org.example.mock.Model.VacancyStatus;
 import org.example.mock.Repository.VacancyRepository;
+import org.example.mock.Service.MailHistoryService;
 import org.example.mock.Service.OfferService;
 import org.example.mock.Service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +21,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/ApproveReject")
 public class ApproveRejectController {
-    private final VacancyService vacancyService;
-    @Autowired
-    private VacancyRepository vacancyRepository;
+
     private final OfferService offerService;
+
+    private final MailHistoryService mailHistoryService;
 
     //Go to Offer List for Manager
     @GetMapping("/offers")
-    public String showOffers(Model model) {
+    public String showOffersList(Model model) {
         // Lấy tất cả các offer từ database
         List<Offer> offers = offerService.getAllOffers();
 
@@ -49,17 +50,29 @@ public class ApproveRejectController {
         }
     }
 
+
+
     @PostMapping("/approveOffer/{id}")
     public String approveOffer(@PathVariable Long id, Model model){
         Offer offer = offerService.findOfferById(id);
         if(offer!= null) {
             offer.setStatus(ApproveStatus.APPROVED);
             offerService.saveOffer(offer);
+            try{
+                String recipientEmail = offer.getCandidate().getEmail(); // Email của ứng viên
+                mailHistoryService.sendApprovalEmail(offer, recipientEmail);
+            }catch(Exception e){
+                model.addAttribute("errorMessage", "Failed to send email: " + e.getMessage());
+                return "error";
+            }
             return "redirect:/ApproveReject/offers";
         }else{
             return "error";
         }
     }
+
+
+
     @PostMapping("/rejectOffer/{id}")
     public String rejectOffer(@PathVariable Long id, Model model){
         Offer offer = offerService.findOfferById(id);
@@ -71,4 +84,17 @@ public class ApproveRejectController {
             return "error";
         }
     }
+//
+//    private String generateApprovalEmailContent(Offer offer) {
+//        return "<h1>Congratulations!</h1>" +
+//                "<p>Your offer with ID: " + offer.getId() + " has been approved.</p>" +
+//                "<p>Details:</p>" +
+//                "<ul>" +
+//                "<li>Position: " + offer.getStatus() + "</li>" +
+//                "<li>Salary: " + offer.getSalary() + "</li>" +
+//                "<li>Start Date: " + offer.getStartDate() + "</li>" +
+//                "</ul>" +
+//                "<p>Please contact us if you have any questions.</p>";
+//    }
+
 }

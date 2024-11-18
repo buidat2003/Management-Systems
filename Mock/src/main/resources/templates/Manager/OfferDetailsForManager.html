@@ -183,7 +183,7 @@
 </div>
 
 <div class="offer-form">
-    <h2>Edit Information Offer</h2>
+    <h2>Offer details for manager</h2>
     <div id="message">
         <!-- Hiển thị thông báo thành công nếu có -->
         <div class="message success" th:if="${message}">
@@ -221,38 +221,39 @@
         <div class="form-row">
             <div class="form-column">
                 <label for="candidateId">Candidate ID:</label>
-                <input type="text" id="candidateId" name="candidateId" th:value="${offer.candidate.name}" required>
+                <input type="text" id="candidateId" name="candidateId" th:value="${offer.candidate.id}" required>
             </div>
         </div>
         <div class="form-row">
-<!--            <div class="form-column">-->
-<!--                <label for="terms">Terms:</label>-->
-<!--                <textarea id="terms" name="terms" rows="4" th:text="${offer.terms}"></textarea>-->
-<!--            </div>-->
+            <div class="form-column">
+                <label for="terms">Terms:</label>
+                <textarea id="terms" name="terms" rows="4" th:text="${offer.terms}"></textarea>
+            </div>
+        </div>
+        <div class="form-row">
             <div class="form-column">
                 <label for="createdUserId">Created By (User ID):</label>
-                <input type="text" id="createdUserId" name="createdUserId" th:value="${offer.createdUser.name}"
+                <input type="text" id="createdUserId" name="createdUserId" th:value="${offer.createdUser.id}"
                        required>
             </div>
         </div>
-
-        <div class="form-row">
-            <div class="form-column">
-                <form th:action="@{/ApproveReject/approveOffer/{id}(id=${offer.id})}" method="post"
-                      style="display:inline;">
-                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-check" style="color: #06a729">Approve</i>
-                    </button>
-                </form>
-            </div>
-            <div class="form-column">
-                <form th:action="@{/ApproveReject/rejectOffer/{id}(id=${offer.id})}" method="post"
-                      style="display:inline;">
-                    <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark" style="color: #f44336">Reject</i>
-                    </button>
-                </form>
-            </div>
-        </div>
     </form>
+    <div class="form-row">
+        <div class="form-column">
+            <form th:action="@{/ApproveReject/approveOffer/{id}(id=${offer.id})}" method="post"
+                  style="display:inline;">
+                <button type="submit" class="btn btn-success"><i class="fa-solid fa-check" style="color: #06a729">Approve</i>
+                </button>
+            </form>
+        </div>
+        <div class="form-column">
+            <form th:action="@{/ApproveReject/rejectOffer/{id}(id=${offer.id})}" method="post"
+                  style="display:inline;">
+                <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark" style="color: #f44336">Reject</i>
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script>

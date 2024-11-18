@@ -43,9 +43,9 @@ public class SercurityConfiguration {
                                 "/download/cv/*", "/static/**")
                         .permitAll()
                         // Role-based access restrictions
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**","/admin/getForm", "/admin/createAccount").hasRole("ADMIN")
                         .requestMatchers("/recruiter/**").hasRole("RECRUITER")
-                        .requestMatchers("/manager/**", "/ApproveReject/offers","/ApproveReject/viewOffer/{id}",
+                        .requestMatchers("/manager/**", "/ApproveReject/**", "/ApproveReject/offers","/ApproveReject/viewOffer/{id}",
                                 "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}").hasRole("MANAGER")
                         .requestMatchers("/interviewer/**").hasRole("INTERVIEWER")
                         .anyRequest().authenticated()  // Require authentication for all other requests
@@ -88,7 +88,7 @@ public class SercurityConfiguration {
                     response.sendRedirect("/recruiter/dashboard");
                     break;
                 case "MANAGER":
-                    response.sendRedirect("/manager/dashboard");
+                    response.sendRedirect("/ApproveReject/offers");
                     break;
                 case "INTERVIEWER":
                     response.sendRedirect("/interviewer/dashboard");
