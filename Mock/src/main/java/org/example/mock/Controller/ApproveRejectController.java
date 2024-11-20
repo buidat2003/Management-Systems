@@ -1,10 +1,8 @@
 package org.example.mock.Controller;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.example.mock.Model.ApproveStatus;
-import org.example.mock.Model.Offer;
-import org.example.mock.Model.Vacancy;
-import org.example.mock.Model.VacancyStatus;
+import org.example.mock.Model.*;
 import org.example.mock.Repository.VacancyRepository;
 import org.example.mock.Service.MailHistoryService;
 import org.example.mock.Service.OfferService;
@@ -28,21 +26,34 @@ public class ApproveRejectController {
 
     //Go to Offer List for Manager
     @GetMapping("/offers")
-    public String showOffersList(Model model) {
+    public String showOffersList(HttpSession session, Model model) {
         // Lấy tất cả các offer từ database
         List<Offer> offers = offerService.getAllOffers();
 
+        model.addAttribute("ApproveStatus", ApproveStatus.class);
         // Thêm danh sách offer vào model để hiển thị trong view
         model.addAttribute("offers", offers);
+
+        User user = (User) session.getAttribute("USER");
+        if (user != null) {
+            model.addAttribute("username", user.getUsername());
+            model.addAttribute("role", user.getRole());
+        }
 
         return "Manager/OfferListForManager";
     }
 
 
     @GetMapping("/viewOffer/{id}")
-    public String showOfferDetails(@PathVariable("id") Long id, Model model) {
+    public String showOfferDetails(@PathVariable("id") Long id,HttpSession session, Model model) {
         Offer offer = offerService.findOfferById(id);
+        User user = (User) session.getAttribute("USER");
+        if (user != null) {
+            model.addAttribute("username", user.getUsername());
+            model.addAttribute("role", user.getRole());
+        }
         if (offer != null) {
+            model.addAttribute("ApproveStatus", ApproveStatus.class);
             model.addAttribute("offer", offer);
             return "Manager/OfferDetailsForManager";
         } else {
@@ -50,7 +61,22 @@ public class ApproveRejectController {
         }
     }
 
-
+    @GetMapping("/goReason/{id}")
+    public String GetInforForReason(@PathVariable("id") Long id,HttpSession session, Model model) {
+        Offer offer = offerService.findOfferById(id);
+        User user = (User) session.getAttribute("USER");
+        if (user != null) {
+            model.addAttribute("username", user.getUsername());
+            model.addAttribute("role", user.getRole());
+        }
+        if (offer != null) {
+            model.addAttribute("ApproveStatus", ApproveStatus.class);
+            model.addAttribute("offer", offer);
+            return "Manager/RejectReason";
+        } else {
+            return "Manager/OfferListForManager";
+        }
+    }
 
     @PostMapping("/approveOffer/{id}")
     public String approveOffer(@PathVariable Long id, Model model){
@@ -74,9 +100,10 @@ public class ApproveRejectController {
 
 
     @PostMapping("/rejectOffer/{id}")
-    public String rejectOffer(@PathVariable Long id, Model model){
+    public String rejectOffer(@PathVariable Long id,  @RequestParam("terms") String terms, Model model){
         Offer offer = offerService.findOfferById(id);
         if(offer!= null) {
+            offer.setTerms(terms);
             offer.setStatus(ApproveStatus.REJECTED);
             offerService.saveOffer(offer);
             return "redirect:/ApproveReject/offers";

@@ -77,6 +77,7 @@ public class SercurityConfiguration {
         return (request, response, authentication) -> {
             User user = (User) authentication.getPrincipal();
             String role = user.getRole().toUpperCase();
+            request.getSession().setAttribute("USER_ID", user.getUsername());
             request.getSession().setAttribute("USER_ID", user.getId());
             System.out.println("Logged-in User ID: " + user.getId());
             // Redirect based on the user's role
