@@ -2,10 +2,7 @@ package org.example.mock.Controller;
 
 
 import jakarta.annotation.PostConstruct;
-//import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
-import org.example.mock.Model.*;
-import org.example.mock.Repository.*;
-
+import org.springframework.security.core.Authentication;
 import org.example.mock.Model.*;
 import org.example.mock.Repository.*;
 import org.example.mock.Service.PositionService;
@@ -14,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
-import javax.swing.text.Position;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,17 +41,14 @@ public class VacancyController {
     @Autowired
     private DepartmentRepository departmentRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-
 
     @Autowired
     public VacancyController(VacancyService vacancyService) {
         this.vacancyService = vacancyService;
 
     }
-
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private VacancyRepository vacancyRepository;
     @Autowired
@@ -82,22 +74,114 @@ public class VacancyController {
         }
     }
 
+    //@PostMapping("/submitApplication")
+//public String submitApplication(
+//        @ModelAttribute Candidate candidate,
+//        @RequestParam("vacancyId") Long vacancyId,
+//        @RequestParam("file") MultipartFile file,
+//        Model model) {
+//    try {
+//        // Lấy thông tin Vacancy
+//        Vacancy vacancy = vacancyRepository.findById(vacancyId)
+//                .orElse(null);
+//
+//        if (vacancy == null) {
+//            model.addAttribute("errorMessage", "Không tìm thấy công việc phù hợp.");
+//            model.addAttribute("candidate", candidate);
+//            return "Candidate/detailvacancy";
+//        }
+//
+//        // Gán Vacancy cho Candidate
+//        candidate.setVacancy(vacancy);
+//
+//        // Xử lý file CV
+//        if (file != null && !file.isEmpty()) {
+//            String fileName = file.getOriginalFilename();
+//            if (fileName != null && (fileName.toLowerCase().endsWith(".pdf") || fileName.toLowerCase().endsWith(".docx"))) {
+//                String newFileName = System.currentTimeMillis() + "_" + fileName;
+//                Path filePath = Paths.get("uploads/cv", newFileName);
+//                Files.createDirectories(filePath.getParent());
+//                file.transferTo(filePath);
+//
+//                candidate.setCvPath(filePath.toString());
+//            } else {
+//                model.addAttribute("errorMessage", "Định dạng tệp không hợp lệ. Chỉ chấp nhận PDF hoặc Word.");
+//                model.addAttribute("vacancy", vacancy);
+//                model.addAttribute("candidate", candidate);
+//                return "Candidate/detailvacancy";
+//            }
+//        }
+//
+//        // Lưu Candidate vào cơ sở dữ liệu
+//        candidateRepository.save(candidate);
+//
+//        // Lưu trạng thái của Candidate
+//        CandidateStatus candidateStatus = new CandidateStatus();
+//        candidateStatus.setCandidate(candidate);
+//        candidateStatus.setStatusName("Đang chờ");
+//        candidateStatus.setUpdatedAt(LocalDateTime.now());
+//        candidateStatusRepository.save(candidateStatus);
+//
+//        // Truyền thông báo thành công
+//        model.addAttribute("vacancy", vacancy);
+//        model.addAttribute("successMessage", "Đã nộp hồ sơ thành công!");
+//    } catch (IOException e) {
+//        e.printStackTrace();
+//        model.addAttribute("errorMessage", "Đã xảy ra lỗi khi tải lên tệp. Vui lòng thử lại.");
+//        model.addAttribute("vacancy", vacancyRepository.findById(vacancyId).orElse(null));
+//        model.addAttribute("candidate", candidate);
+//        return "Candidate/detailvacancy";
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        model.addAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý yêu cầu. Vui lòng thử lại sau.");
+//        model.addAttribute("vacancy", vacancyRepository.findById(vacancyId).orElse(null));
+//        model.addAttribute("candidate", candidate);
+//        return "Candidate/detailvacancy";
+//    }
+//
+//    return "Candidate/detailvacancy";
+//}
     @PostMapping("/submitApplication")
     public String submitApplication(
             @ModelAttribute Candidate candidate,
             @RequestParam("vacancyId") Long vacancyId,
             @RequestParam("file") MultipartFile file,
             Model model) {
+        Vacancy vacancy = null; // Khởi tạo để đảm bảo không bị lỗi null pointer
+
         try {
-            Vacancy vacancy = vacancyRepository.findById(vacancyId)
-                    .orElseThrow(() -> new IllegalArgumentException("Mã công việc không hợp lệ"));
+            // Validate email
+            if (!candidate.getEmail().toLowerCase().endsWith("@gmail.com")) {
+                model.addAttribute("errorMessage", "Email phải có định dạng @gmail.com.");
+                model.addAttribute("candidate", candidate);
+                model.addAttribute("vacancy", vacancyRepository.findById(vacancyId).orElse(null));
+                return "Candidate/detailvacancy";
+            }
+
+            // Validate số điện thoại
+            if (!candidate.getPhone().matches("\\d{10}")) {
+                model.addAttribute("errorMessage", "Số điện thoại phải bao gồm đúng 10 chữ số.");
+                model.addAttribute("candidate", candidate);
+                model.addAttribute("vacancy", vacancyRepository.findById(vacancyId).orElse(null));
+                return "Candidate/detailvacancy";
+            }
+
+            // Lấy thông tin Vacancy
+            vacancy = vacancyRepository.findById(vacancyId)
+                    .orElse(null);
+
+            if (vacancy == null) {
+                model.addAttribute("errorMessage", "Không tìm thấy công việc phù hợp.");
+                model.addAttribute("candidate", candidate);
+                return "Candidate/detailvacancy";
+            }
 
             candidate.setVacancy(vacancy);
 
+            // Xử lý file CV
             if (file != null && !file.isEmpty()) {
-                // Kiểm tra định dạng tệp
                 String fileName = file.getOriginalFilename();
-                if (fileName != null && (fileName.endsWith(".pdf") || fileName.endsWith(".docx"))) {
+                if (fileName != null && (fileName.toLowerCase().endsWith(".pdf") || fileName.toLowerCase().endsWith(".docx"))) {
                     String newFileName = System.currentTimeMillis() + "_" + fileName;
                     Path filePath = Paths.get("uploads/cv", newFileName);
                     Files.createDirectories(filePath.getParent());
@@ -105,34 +189,43 @@ public class VacancyController {
 
                     candidate.setCvPath(filePath.toString());
                 } else {
-                    model.addAttribute("errorMessage", "Chỉ chấp nhận tệp PDF hoặc Word.");
+                    model.addAttribute("errorMessage", "Định dạng tệp không hợp lệ. Chỉ chấp nhận PDF hoặc Word.");
+                    model.addAttribute("vacancy", vacancy);
+                    model.addAttribute("candidate", candidate);
                     return "Candidate/detailvacancy";
                 }
             }
 
-            // Lưu ứng viên vào cơ sở dữ liệu
+            // Lưu Candidate vào cơ sở dữ liệu
             candidateRepository.save(candidate);
 
-            // Tạo và lưu trạng thái cho ứng viên với trạng thái mặc định là "đang chờ"
+            // Lưu trạng thái của Candidate
             CandidateStatus candidateStatus = new CandidateStatus();
             candidateStatus.setCandidate(candidate);
             candidateStatus.setStatusName("Đang chờ");
             candidateStatus.setUpdatedAt(LocalDateTime.now());
-
-            // Lưu vào bảng candidate_status
             candidateStatusRepository.save(candidateStatus);
 
-            model.addAttribute("vacancy", vacancy);
-            model.addAttribute("candidate", candidate);
             model.addAttribute("successMessage", "Đã nộp hồ sơ thành công!");
-
+            model.addAttribute("vacancy", vacancy);
+            return "Candidate/detailvacancy";
+        } catch (IOException e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi khi tải lên tệp. Vui lòng thử lại.");
+            model.addAttribute("candidate", candidate);
+            model.addAttribute("vacancy", vacancy);
+            return "Candidate/detailvacancy";
         } catch (Exception e) {
             e.printStackTrace();
-            return "error";
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý yêu cầu. Vui lòng thử lại sau.");
+            model.addAttribute("candidate", candidate);
+            model.addAttribute("vacancy", vacancy);
+            return "Candidate/detailvacancy";
         }
-
-        return "Candidate/detailvacancy";
     }
+
+
+
     @GetMapping("/downloadCV")
     public ResponseEntity<Resource> downloadCV(@RequestParam("candidateId") Long candidateId) {
         Candidate candidate = candidateRepository.findById(candidateId)
@@ -400,8 +493,7 @@ public class VacancyController {
 
 
 
-
-    }
+}
 
 
 

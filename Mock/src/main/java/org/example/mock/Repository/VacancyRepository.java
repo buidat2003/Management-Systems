@@ -19,7 +19,6 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
     List<Vacancy> findFilteredVacancies(@Param("positionId") Long positionId,
                                         @Param("type") JobType type,
                                         @Param("departmentId") Long departmentId);
-
     ////////////////////////////////////////////////////////////////////
     @Query("SELECT v FROM Vacancy v " +
             "WHERE (:positionId IS NULL OR v.position.id = :positionId) " +
@@ -28,10 +27,10 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
             "AND (:status IS NULL OR v.status = :status) " +
             "AND (:search IS NULL OR (v.position.name LIKE %:search% OR v.department.name LIKE %:search%))")
     List<Vacancy> findFilteredVacancie(@Param("positionId") Long positionId,
-                                        @Param("requiredSkills") String requiredSkills,
-                                        @Param("departmentId") Long departmentId,
-                                        @Param("status") VacancyStatus status,
-                                        @Param("search") String search);
+                                       @Param("requiredSkills") String requiredSkills,
+                                       @Param("departmentId") Long departmentId,
+                                       @Param("status") VacancyStatus status,
+                                       @Param("search") String search);
 
 
 

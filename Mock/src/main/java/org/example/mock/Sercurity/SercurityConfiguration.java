@@ -9,13 +9,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import java.io.FileDescriptor;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -33,32 +39,33 @@ public class SercurityConfiguration {
                 .authorizeRequests(authz -> authz
                         // Allow unauthenticated access to these endpoints
                         .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass",
-                                 "/interviewschedules/detail",
-                                "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed",
+
                                 "/admin/getForm", "/admin/createAccount", "/admin/AccountList", "/admin/addAccount",
-                                "/admin/getUpdateForm/{id}", "/admin/getUpdateForm", "/admin/update", "/ApproveReject/jobList", "/ApproveReject/offers",
+                                "/admin/getUpdateForm/{id}", "/admin/getUpdateForm", "/admin/update", "/joblist",
+                                "/Manager/viewJob/{id}", "/ApproveReject/jobList", "/ApproveReject/offers",
                                 "/ApproveReject/viewJob/{id}", "/ApproveReject/approveJob/{id}",
                                 "/ApproveReject/rejectJob/{id}", "/ApproveReject/viewOffer/{id}",
                                 "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}", "/users",
                                 "/offers", "/offers/{id}/detail", "/offers/update", "/offers/create", "/profile",
                                 "/profile/editprofile", "/changepassword/*", "/changepassword/submit",
                                 "/vacancy/*", "/submitApplication", "/downloadCV", "/uploadTemporaryFile",
-                                "/download/cv/*", "/static/**")
+                                "/download/cv/*","/jobcandidate", "/static/**")
                         .permitAll()
-
+                        .requestMatchers("/current-user").authenticated()
                         // Role-based access restrictions
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/recruiter/**","/filterCandidates","/cancelCandidate","/interviewschedules/create","/manager/editJob/{id}", "/Manager/deleteJob/{id}",
-                                "/joblist", "/manager/updateJob", "/Manager/viewJob/{id}","/manager/CreateJob", "/manager/createJob" ).hasRole("RECRUITER")                        .requestMatchers("/manager/**").hasRole("MANAGER")
-                        .requestMatchers("/interviewer/**").hasRole("INTERVIEWER")
+                                "/joblist", "/manager/updateJob", "/Manager/viewJob/{id}","/manager/CreateJob", "/manager/createJob" ).hasRole("RECRUITER")
+                        .requestMatchers("/interviewer/**","/interviewschedules/detail","/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed").hasRole("INTERVIEWER")
                         .anyRequest().authenticated()  // Require authentication for all other requests
                 )
-//                .formLogin(form -> form
-//                        .loginPage("/login")  // URL for the login page
-//                        .permitAll()  // Allow everyone to access the login page
-//                        .successHandler(authenticationSuccessHandler())  // Custom success handler
-//                        .failureHandler(authenticationFailureHandler())  // Custom failure handler
-//                )
+
+                .formLogin(form -> form
+                        .loginPage("/login")  // URL for the login page
+                        .permitAll()  // Allow everyone to access the login page
+                        .successHandler(authenticationSuccessHandler())  // Custom success handler
+                        .failureHandler(authenticationFailureHandler())  // Custom failure handler
+                )
                 .logout(logout -> logout
                         .permitAll()
                         .logoutSuccessUrl("/login")  // Redirect to login page after logout
@@ -78,10 +85,13 @@ public class SercurityConfiguration {
 
     private AuthenticationSuccessHandler authenticationSuccessHandler() {
         return (request, response, authentication) -> {
+
             User user = (User) authentication.getPrincipal();
             String role = user.getRole().toUpperCase();
+            request.getSession().setAttribute("USER_ID", user.getId());
+            System.out.println("Logged-in User ID: " + user.getId());
 
-            // Redirect based on the user's role
+            // Redirect dựa trên vai trò của người dùng
             switch (role) {
                 case "ADMIN":
                     response.sendRedirect("/admin/dashboard");

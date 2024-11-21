@@ -97,7 +97,7 @@
         </div>
         <ul class="nav-links">
             <li><a href="/home">Home</a></li>
-             <li><a href="/joblist">List Job</a></li>
+            <li><a href="/joblist">List Job</a></li>
 
             <!--            <li><a href="#">Services</a></li>-->
             <!--            <li><a href="#">Contact</a></li>-->
@@ -110,6 +110,30 @@
         <div class="col-lg-10">
 
             <!-- Filter Form Section -->
+            <!--            <form action="/filterCandidates" method="GET" class="d-flex mb-3" id="filterForm">-->
+            <!--                <div class="me-2">-->
+            <!--                    <label for="status" class="form-label">Status Candidate</label>-->
+            <!--                    <select id="status" name="status" class="form-select">-->
+            <!--                        <option value="" th:selected="${selectedStatus == null}">All</option>-->
+            <!--                        <option value="Đã phỏng vấn" th:selected="${selectedStatus == 'Đã phỏng vấn'}">Đã phỏng vấn</option>-->
+            <!--                        <option value="Đang chờ" th:selected="${selectedStatus == 'Đang chờ'}">Chờ phản hồi</option>-->
+            <!--                        <option value="Đã hủy" th:selected="${selectedStatus == 'Đã hủy'}">Đã hủy</option>-->
+            <!--                    </select>-->
+            <!--                </div>-->
+            <!--                <div class="me-2">-->
+            <!--                    <label for="experience" class="form-label">Years of Experience</label>-->
+            <!--                    <select id="experience" name="experience" class="form-select">-->
+            <!--                        <option value="" th:selected="${selectedExperience == null}">All</option>-->
+            <!--                        <option value="0" th:selected="${selectedExperience == 0}">Lower 1 năm</option>-->
+            <!--                        <option value="1" th:selected="${selectedExperience == 1}">1 year</option>-->
+            <!--                        <option value="2" th:selected="${selectedExperience == 2}">2 years</option>-->
+            <!--                        <option value="3" th:selected="${selectedExperience == 3}">Higher 3 years</option>-->
+            <!--                    </select>-->
+            <!--                </div>-->
+
+            <!--                <button type="submit" class="btn btn-primary mt-4">Apply Filters</button>-->
+            <!--                <button type="button" class="btn btn-secondary mt-4 ms-2" onclick="resetForm()">Reset</button>-->
+            <!--            </form>-->
             <form action="/filterCandidates" method="GET" class="d-flex mb-3" id="filterForm">
                 <div class="me-2">
                     <label for="status" class="form-label">Status Candidate</label>
@@ -135,6 +159,11 @@
                 <button type="button" class="btn btn-secondary mt-4 ms-2" onclick="resetForm()">Reset</button>
             </form>
 
+            <!-- Hiển thị thông báo lỗi nếu có -->
+            <div th:if="${error != null}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+
 
             <!-- Table Section -->
             <!-- Table Section -->
@@ -149,6 +178,7 @@
                     <th>Submitted Date</th>
                     <th>Exp</th>
                     <th>Interview Status</th>
+                    <th>Candidate Rating</th>
                     <th>Download CV</th>
                     <th>Interview Action</th>
                 </tr>
@@ -172,7 +202,11 @@
                         <span th:if="${candidateStatuses[candidate.id] == 'Đã hủy'}" class="badge bg-danger" th:text="${candidateStatuses[candidate.id]}"></span>
                         <span th:if="${candidateStatuses[candidate.id] == 'Đã phỏng vấn'}" class="badge bg-primary" th:text="${candidateStatuses[candidate.id]}"></span>
                     </td>
-
+                    <td>
+            <span th:if="${candidateRatings[candidate.id] != null}"
+                  th:text="${#numbers.formatDecimal(candidateRatings[candidate.id], 1, 1)} + ' ★'"></span>
+                        <span th:if="${candidateRatings[candidate.id] == null}">No Ratings</span>
+                    </td>
                     <td>
                         <a th:href="@{/download/cv/{candidateId}(candidateId=${candidate.id})}" download class="btn btn-success btn-sm">
                             <i class="bi bi-download"></i> Download
@@ -222,7 +256,19 @@
             </div>
             <div class="modal-body">
                 <form id="scheduleForm">
+                    <div id="error-message" class="alert alert-danger d-none"></div> <!-- Thêm div hiển thị lỗi -->
+
                     <input type="hidden" id="candidateId" name="candidateId" value="">
+                    <div class="mb-3">
+                        <label for="interviewerSelect" class="form-label">Select Interviewer</label>
+                        <select id="interviewerSelect" name="interviewerId" class="form-select" required>
+                            <option value="" disabled selected>Choose an interviewer</option>
+                            <th:block th:each="interviewer : ${interviewers}">
+                                <option th:value="${interviewer.id}" th:text="${interviewer.name}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+
                     <div class="mb-3">
                         <label for="interviewDate" class="form-label">Interview Date</label>
                         <input type="date" id="interviewDate" name="interviewDate" class="form-control" required>
@@ -238,7 +284,72 @@
     </div>
 </div>
 
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Schedule created successfully!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+    <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Error creating schedule.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+
 <script>
+    // function scheduleInterview(button) {
+    //     const candidateId = button.getAttribute("data-candidate-id");
+    //     document.getElementById('candidateId').value = candidateId; // Gán giá trị candidateId vào form
+    //     let scheduleModal = new bootstrap.Modal(document.getElementById('scheduleModal'));
+    //     scheduleModal.show();
+    // }
+    // document.getElementById('scheduleForm').addEventListener('submit', async function(event) {
+    //     event.preventDefault();
+    //
+    //     const candidateId = document.getElementById('candidateId').value;
+    //     const date = document.getElementById('interviewDate').value;
+    //     const time = document.getElementById('interviewTime').value;
+    //     const interviewerId = 4; // Đặt ID người phỏng vấn mặc định
+    //
+    //     const successToast = document.getElementById('successToast');
+    //     const errorToast = document.getElementById('errorToast');
+    //
+    //     try {
+    //         const response = await fetch('/interviewschedules/create', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/x-www-form-urlencoded'
+    //             },
+    //             body: `candidateId=${candidateId}&date=${date}&time=${time}&interviewerId=${interviewerId}`
+    //         });
+    //
+    //         if (response.ok) {
+    //             // Hiển thị toast thông báo thành công
+    //             const toast = new bootstrap.Toast(successToast);
+    //             toast.show();
+    //         } else {
+    //             // Nếu có lỗi, hiển thị thông báo lỗi trong toast
+    //             const errorMessage = await response.text();
+    //             errorToast.querySelector('.toast-body').textContent = errorMessage;
+    //             const toast = new bootstrap.Toast(errorToast);
+    //             toast.show();
+    //         }
+    //     } catch (error) {
+    //         console.error("Error:", error);
+    //         errorToast.querySelector('.toast-body').textContent = "Error creating schedule.";
+    //         const toast = new bootstrap.Toast(errorToast);
+    //         toast.show();
+    //     }
+    // });
+
     function scheduleInterview(button) {
         const candidateId = button.getAttribute("data-candidate-id");
         document.getElementById('candidateId').value = candidateId; // Gán giá trị candidateId vào form
@@ -246,14 +357,19 @@
         scheduleModal.show();
     }
 
-
     document.getElementById('scheduleForm').addEventListener('submit', async function(event) {
         event.preventDefault();
 
         const candidateId = document.getElementById('candidateId').value;
         const date = document.getElementById('interviewDate').value;
         const time = document.getElementById('interviewTime').value;
-        const interviewerId = 1; // Đặt ID người phỏng vấn mặc định
+
+        // Lấy giá trị interviewerId từ dropdown
+        const interviewerSelect = document.getElementById('interviewerSelect');
+        const interviewerId = interviewerSelect.value; // Giá trị của option được chọn
+
+        const successToast = document.getElementById('successToast');
+        const errorToast = document.getElementById('errorToast');
 
         try {
             const response = await fetch('/interviewschedules/create', {
@@ -265,18 +381,106 @@
             });
 
             if (response.ok) {
-                const redirectUrl = `/interviewschedules/detail`; // URL trang chi tiết lịch phỏng vấn
-                window.location.href = redirectUrl;
-
+                // Hiển thị toast thông báo thành công
+                const toast = new bootstrap.Toast(successToast);
+                toast.show();
             } else {
-                alert("Failed to create interview schedule.");
+                // Nếu có lỗi, hiển thị thông báo lỗi trong toast
+                const errorMessage = await response.text();
+                errorToast.querySelector('.toast-body').textContent = errorMessage;
+                const toast = new bootstrap.Toast(errorToast);
+                toast.show();
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("Error creating schedule.");
+            errorToast.querySelector('.toast-body').textContent = "Error creating schedule.";
+            const toast = new bootstrap.Toast(errorToast);
+            toast.show();
         }
     });
+
+
+    //mã cũ chuyển sang trang detail
+    // document.getElementById('scheduleForm').addEventListener('submit', async function(event) {
+    //     event.preventDefault();
+    //
+    //     const candidateId = document.getElementById('candidateId').value;
+    //     const date = document.getElementById('interviewDate').value;
+    //     const time = document.getElementById('interviewTime').value;
+    //     const interviewerId = 1; // Đặt ID người phỏng vấn mặc định
+    //
+    //     try {
+    //         const response = await fetch('/interviewschedules/create', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/x-www-form-urlencoded'
+    //             },
+    //             body: `candidateId=${candidateId}&date=${date}&time=${time}&interviewerId=${interviewerId}`
+    //         });
+    //
+    //         const errorMessageDiv = document.getElementById('error-message'); // Lấy div hiển thị lỗi
+    //
+    //         if (response.ok) {
+    //             // Nếu tạo lịch thành công, chuyển đến trang chi tiết lịch phỏng vấn
+    //             const redirectUrl = `/interviewschedules/detail`;
+    //             window.location.href = redirectUrl;
+    //         } else {
+    //             // Nếu có lỗi (ví dụ: lịch phỏng vấn trùng), hiển thị thông báo lỗi
+    //             const errorMessage = await response.text(); // Lấy thông báo lỗi từ server
+    //             errorMessageDiv.textContent = errorMessage; // Đặt nội dung lỗi
+    //             errorMessageDiv.classList.remove('d-none'); // Hiển thị div lỗi
+    //         }
+    //     } catch (error) {
+    //         console.error("Error:", error);
+    //         errorMessageDiv.textContent = "Error creating schedule.";
+    //         errorMessageDiv.classList.remove('d-none'); // Hiển thị div lỗi
+    //     }
+    // });
+
+
+
 </script>
+<!--<script>-->
+<!--    function scheduleInterview(button) {-->
+<!--        const candidateId = button.getAttribute("data-candidate-id");-->
+<!--        document.getElementById('candidateId').value = candidateId; // Gán giá trị candidateId vào form-->
+<!--        let scheduleModal = new bootstrap.Modal(document.getElementById('scheduleModal'));-->
+<!--        scheduleModal.show();-->
+<!--    }-->
+
+
+<!--    document.getElementById('scheduleForm').addEventListener('submit', async function(event) {-->
+<!--        event.preventDefault();-->
+
+<!--        const candidateId = document.getElementById('candidateId').value;-->
+<!--        const date = document.getElementById('interviewDate').value;-->
+<!--        const time = document.getElementById('interviewTime').value;-->
+<!--        const interviewerId = 1; // Đặt ID người phỏng vấn mặc định-->
+
+<!--        try {-->
+<!--            const response = await fetch('/interviewschedules/create', {-->
+<!--                method: 'POST',-->
+<!--                headers: {-->
+<!--                    'Content-Type': 'application/x-www-form-urlencoded'-->
+<!--                },-->
+<!--                body: `candidateId=${candidateId}&date=${date}&time=${time}&interviewerId=${interviewerId}`-->
+<!--            });-->
+
+<!--            if (response.ok) {-->
+<!--                const redirectUrl = `/interviewschedules/detail`; // URL trang chi tiết lịch phỏng vấn-->
+<!--                window.location.href = redirectUrl;-->
+
+<!--            } else {-->
+<!--                alert("Failed to create interview schedule.");-->
+<!--            }-->
+<!--        } catch (error) {-->
+<!--            console.error("Error:", error);-->
+<!--            alert("Error creating schedule.");-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+
+
 <script>
     let nav = document.querySelector("nav");
     window.onscroll = function() {
