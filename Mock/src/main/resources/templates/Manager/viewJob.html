@@ -76,9 +76,9 @@
             </div>
         </div>
         <div class="card-footer text-center">
-            <a th:href="@{/editJob/{id}(id=${vacancy.id})}" class="btn btn-primary"><i class="fas fa-edit"></i> Edit Job</a>
-
+            <a th:href="@{/manager/editJob/{id}(id=${vacancy.id})}" class="btn btn-primary"><i class="fas fa-edit"></i> Edit Job</a>
         </div>
+        <a th:href="@{/joblist}" class="btn btn-success">Back to List</a>
     </div>
 </div>
 

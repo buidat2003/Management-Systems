@@ -32,12 +32,11 @@ public class SercurityConfiguration {
                 .authenticationProvider(customAuthenticationProvider)
                 .authorizeRequests(authz -> authz
                         // Allow unauthenticated access to these endpoints
-                        .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass", "/filterCandidates",
-                                "/cancelCandidate", "/interviewschedules/detail", "/interviewschedules/create",
+                        .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass",
+                                 "/interviewschedules/detail",
                                 "/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed",
                                 "/admin/getForm", "/admin/createAccount", "/admin/AccountList", "/admin/addAccount",
-                                "/admin/getUpdateForm/{id}", "/admin/getUpdateForm", "/admin/update", "/joblist",
-                                "/Manager/viewJob/{id}", "/ApproveReject/jobList", "/ApproveReject/offers",
+                                "/admin/getUpdateForm/{id}", "/admin/getUpdateForm", "/admin/update", "/ApproveReject/jobList", "/ApproveReject/offers",
                                 "/ApproveReject/viewJob/{id}", "/ApproveReject/approveJob/{id}",
                                 "/ApproveReject/rejectJob/{id}", "/ApproveReject/viewOffer/{id}",
                                 "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}", "/users",
@@ -46,10 +45,11 @@ public class SercurityConfiguration {
                                 "/vacancy/*", "/submitApplication", "/downloadCV", "/uploadTemporaryFile",
                                 "/download/cv/*", "/static/**")
                         .permitAll()
+
                         // Role-based access restrictions
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/recruiter/**").hasRole("RECRUITER")
-                        .requestMatchers("/manager/**").hasRole("MANAGER")
+                        .requestMatchers("/recruiter/**","/filterCandidates","/cancelCandidate","/interviewschedules/create","/manager/editJob/{id}", "/Manager/deleteJob/{id}",
+                                "/joblist", "/manager/updateJob", "/Manager/viewJob/{id}","/manager/CreateJob", "/manager/createJob" ).hasRole("RECRUITER")                        .requestMatchers("/manager/**").hasRole("MANAGER")
                         .requestMatchers("/interviewer/**").hasRole("INTERVIEWER")
                         .anyRequest().authenticated()  // Require authentication for all other requests
                 )
@@ -87,13 +87,13 @@ public class SercurityConfiguration {
                     response.sendRedirect("/admin/dashboard");
                     break;
                 case "RECRUITER":
-                    response.sendRedirect("/recruiter/dashboard");
+                    response.sendRedirect("/filterCandidates");
                     break;
                 case "MANAGER":
                     response.sendRedirect("/manager/dashboard");
                     break;
                 case "INTERVIEWER":
-                    response.sendRedirect("/interviewer/dashboard");
+                    response.sendRedirect("/interviewschedules/detail");
                     break;
                 default:
                     response.sendRedirect("/default");

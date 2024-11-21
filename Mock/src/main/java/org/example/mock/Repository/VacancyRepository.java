@@ -1,9 +1,6 @@
 package org.example.mock.Repository;
 
-import org.example.mock.Model.Department;
-import org.example.mock.Model.JobType;
-import org.example.mock.Model.PositionAll;
-import org.example.mock.Model.Vacancy;
+import org.example.mock.Model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,7 +30,7 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
     List<Vacancy> findFilteredVacancie(@Param("positionId") Long positionId,
                                         @Param("requiredSkills") String requiredSkills,
                                         @Param("departmentId") Long departmentId,
-                                        @Param("status") String status,
+                                        @Param("status") VacancyStatus status,
                                         @Param("search") String search);
 
 
