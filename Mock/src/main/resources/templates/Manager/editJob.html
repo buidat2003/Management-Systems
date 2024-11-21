@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Job</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center">Edit Job</h2>
+    <form th:action="@{/manager/updateJob}" th:object="${vacancy}" method="post">
+        <input type="hidden" name="id" th:value="${vacancy.id}"/>
+
+        <div class="form-group">
+            <label for="position">Position</label>
+            <select id="position" name="positionId" class="form-control" required>
+                <th:block th:each="position : ${positions}">
+                    <option th:value="${position.id}" th:text="${position.name}"
+                            th:selected="${position.id == vacancy.position.id}"></option>
+                </th:block>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="department">Department</label>
+            <select id="department" name="departmentId" class="form-control" required>
+                <th:block th:each="department : ${departments}">
+                    <option th:value="${department.id}" th:text="${department.name}"
+                            th:selected="${department.id == vacancy.department.id}"></option>
+                </th:block>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="count">Count</label>
+            <input type="number" id="count" name="count" class="form-control" th:value="${vacancy.count}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="details">Required Skills</label>
+            <input type="text" id="details" name="details" class="form-control"
+                   th:value="${vacancy.details}" required>
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status" class="form-control" required>
+                    <option value="ACTIVE" th:selected="${vacancy.status == T(org.example.mock.Model.VacancyStatus).ACTIVE}">Active</option>
+                    <option value="CLOSED" th:selected="${vacancy.status == T(org.example.mock.Model.VacancyStatus).CLOSED}">Closed</option>
+                    <option value="URGENT" th:selected="${vacancy.status == T(org.example.mock.Model.VacancyStatus).URGENT}">Urgent</option>
+                    <option value="REOPENED" th:selected="${vacancy.status == T(org.example.mock.Model.VacancyStatus).REOPENED}">Reopened</option>
+                </select>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <label for="salary">Salary</label>
+            <input type="number" id="salary" name="salary" class="form-control"
+                   th:value="${vacancy.salary}" required>
+        </div>
+        <div class="form-group">
+            <label for="type">Job Type</label>
+            <select id="type" name="type" class="form-control" required>
+                <option value="FULL_TIME" th:selected="${vacancy.type == 'FULL_TIME'}">Full Time</option>
+                <option value="PART_TIME" th:selected="${vacancy.type == 'PART_TIME'}">Part Time</option>
+                <option value="INTERNSHIP" th:selected="${vacancy.type == 'INTERNSHIP'}">Internship</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="dueDate">Due Date</label>
+            <input type="date" id="dueDate" name="dueDate" class="form-control" th:value="${vacancy.dueDate}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a th:href="@{/Manager/viewJob/{id}(id=${vacancy.id})}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

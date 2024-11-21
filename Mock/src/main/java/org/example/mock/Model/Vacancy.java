@@ -34,7 +34,7 @@ public class Vacancy {
     private Integer count;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name="type" ,nullable = false)
     private JobType type; // Enum for job type
 
     @Column(name = "due_date", nullable = false)
