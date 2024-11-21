@@ -25,8 +25,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
 
     // Câu lệnh SQL thuần túy để lấy tất cả thông tin của người dùng có id = 1
-    @Query(value = "SELECT * FROM user  WHERE id = :id", nativeQuery = true)
-    Optional<User> findUserById(@Param("id") Integer id);  // Lấy thông tin của người dùng theo id
+    @Query(value = "SELECT * FROM user WHERE id = :id", nativeQuery = true)
+    User findUserById(@Param("id") Integer id);  // Lấy thông tin của người dùng theo id
 
     // Câu lệnh SQL thuần túy để cập nhật thông tin người dùng
     @Modifying
@@ -40,6 +40,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
                        @Param("id") Integer id);
 
 
-
+    List<User> findByRole(String role); // Lấy danh sách user theo role
 
 }

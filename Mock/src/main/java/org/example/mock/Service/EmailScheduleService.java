@@ -26,7 +26,22 @@ public class EmailScheduleService {
         message.setText(emailContent);
         mailSender.send(message);
     }
+    public void sendInterviewScheduleEmailToInterviewer(InterviewSchedule schedule) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(schedule.getInterviewer().getEmail()); // Email của người phỏng vấn
+        message.setSubject("Thông tin Lịch Phỏng Vấn với " + schedule.getCandidate().getName());
 
+        String emailContent = "Chào bạn " + schedule.getInterviewer().getName() + ",\n\n" +
+                "Bạn có một lịch phỏng vấn mới với thông tin như sau:\n" +
+                "Ứng viên: " + schedule.getCandidate().getName() + "\n" +
+                "Ngày: " + schedule.getScheduleDate() + "\n" +
+                "Thời gian: " + schedule.getScheduleTime() + "\n" +
+                "Link Google Meet: " + schedule.getGoogleMeetLink() + "\n\n" +
+                "Trân trọng,\nĐội ngũ tuyển dụng ACE";
+
+        message.setText(emailContent);
+        mailSender.send(message);
+    }
 //    public void sendInterviewScheduleEmail(InterviewSchedule schedule) {
 //        SimpleMailMessage message = new SimpleMailMessage();
 //        message.setTo(schedule.getCandidate().getEmail()); // Địa chỉ email của ứng viên

@@ -12,9 +12,13 @@
 <body>
 <div class="container mt-5">
   <h2 class="text-center mb-4">Job List</h2>
-
-  <div class="mb-4">
-    <a th:href="@{/manager/createJob}" class="btn btn-success">Create New Job</a>
+  <div style="display: flex">
+    <div class="mb-4">
+      <a th:href="@{/filterCandidates}" class="btn btn-secondary">Back to list candidate</a>
+    </div>
+    <div class="mb-4">
+      <a th:href="@{/manager/createJob}" class="btn btn-success">Create New Job</a>
+    </div>
   </div>
   <!-- Filter Form -->
   <form th:action="@{/joblist}" method="get" id="filterForm">
