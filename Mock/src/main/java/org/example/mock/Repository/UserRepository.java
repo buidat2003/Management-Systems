@@ -40,6 +40,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
                        @Param("id") Integer id);
 
 
-
+    List<User> findByRole(String role); // Lấy danh sách user theo role
 
 }

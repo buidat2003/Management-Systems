@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -103,4 +104,7 @@ public class UserService {
         return false;  // Either user not found or current password incorrect
     }
 
+    public List<User> getInterviewers() {
+        return userRepository.findByRole("INTERVIEWER");
+    }
 }

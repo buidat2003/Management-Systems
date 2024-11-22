@@ -24,7 +24,8 @@ public class InterviewSchedule {
 
     @Column(name = "schedule_time", nullable = false)
     private LocalTime scheduleTime;
-
+    @Transient
+    private LocalDateTime scheduleDateTime;  // Thêm thuộc tính này
     @ManyToOne
     @JoinColumn(name = "interviewer_id", nullable = false)
     private User interviewer;
@@ -35,5 +36,11 @@ public class InterviewSchedule {
 
     @Column(name = "google_meet_link", length = 500)
     private String googleMeetLink; // Trường mới để lưu liên kết Google Meet
-
+    @PrePersist
+    @PreUpdate
+    private void updateScheduleDateTime() {
+        if (scheduleDate != null && scheduleTime != null) {
+            this.scheduleDateTime = LocalDateTime.of(scheduleDate, scheduleTime);
+        }
+    }
 }

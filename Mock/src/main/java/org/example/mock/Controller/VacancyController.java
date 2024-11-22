@@ -2,6 +2,7 @@ package org.example.mock.Controller;
 
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.security.core.Authentication;
 import org.example.mock.Model.*;
 import org.example.mock.Repository.*;
 import org.example.mock.Service.PositionService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -45,7 +47,8 @@ public class VacancyController {
         this.vacancyService = vacancyService;
 
     }
-
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private VacancyRepository vacancyRepository;
     @Autowired
@@ -71,22 +74,114 @@ public class VacancyController {
         }
     }
 
+    //@PostMapping("/submitApplication")
+//public String submitApplication(
+//        @ModelAttribute Candidate candidate,
+//        @RequestParam("vacancyId") Long vacancyId,
+//        @RequestParam("file") MultipartFile file,
+//        Model model) {
+//    try {
+//        // Lấy thông tin Vacancy
+//        Vacancy vacancy = vacancyRepository.findById(vacancyId)
+//                .orElse(null);
+//
+//        if (vacancy == null) {
+//            model.addAttribute("errorMessage", "Không tìm thấy công việc phù hợp.");
+//            model.addAttribute("candidate", candidate);
+//            return "Candidate/detailvacancy";
+//        }
+//
+//        // Gán Vacancy cho Candidate
+//        candidate.setVacancy(vacancy);
+//
+//        // Xử lý file CV
+//        if (file != null && !file.isEmpty()) {
+//            String fileName = file.getOriginalFilename();
+//            if (fileName != null && (fileName.toLowerCase().endsWith(".pdf") || fileName.toLowerCase().endsWith(".docx"))) {
+//                String newFileName = System.currentTimeMillis() + "_" + fileName;
+//                Path filePath = Paths.get("uploads/cv", newFileName);
+//                Files.createDirectories(filePath.getParent());
+//                file.transferTo(filePath);
+//
+//                candidate.setCvPath(filePath.toString());
+//            } else {
+//                model.addAttribute("errorMessage", "Định dạng tệp không hợp lệ. Chỉ chấp nhận PDF hoặc Word.");
+//                model.addAttribute("vacancy", vacancy);
+//                model.addAttribute("candidate", candidate);
+//                return "Candidate/detailvacancy";
+//            }
+//        }
+//
+//        // Lưu Candidate vào cơ sở dữ liệu
+//        candidateRepository.save(candidate);
+//
+//        // Lưu trạng thái của Candidate
+//        CandidateStatus candidateStatus = new CandidateStatus();
+//        candidateStatus.setCandidate(candidate);
+//        candidateStatus.setStatusName("Đang chờ");
+//        candidateStatus.setUpdatedAt(LocalDateTime.now());
+//        candidateStatusRepository.save(candidateStatus);
+//
+//        // Truyền thông báo thành công
+//        model.addAttribute("vacancy", vacancy);
+//        model.addAttribute("successMessage", "Đã nộp hồ sơ thành công!");
+//    } catch (IOException e) {
+//        e.printStackTrace();
+//        model.addAttribute("errorMessage", "Đã xảy ra lỗi khi tải lên tệp. Vui lòng thử lại.");
+//        model.addAttribute("vacancy", vacancyRepository.findById(vacancyId).orElse(null));
+//        model.addAttribute("candidate", candidate);
+//        return "Candidate/detailvacancy";
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        model.addAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý yêu cầu. Vui lòng thử lại sau.");
+//        model.addAttribute("vacancy", vacancyRepository.findById(vacancyId).orElse(null));
+//        model.addAttribute("candidate", candidate);
+//        return "Candidate/detailvacancy";
+//    }
+//
+//    return "Candidate/detailvacancy";
+//}
     @PostMapping("/submitApplication")
     public String submitApplication(
             @ModelAttribute Candidate candidate,
             @RequestParam("vacancyId") Long vacancyId,
             @RequestParam("file") MultipartFile file,
             Model model) {
+        Vacancy vacancy = null; // Khởi tạo để đảm bảo không bị lỗi null pointer
+
         try {
-            Vacancy vacancy = vacancyRepository.findById(vacancyId)
-                    .orElseThrow(() -> new IllegalArgumentException("Mã công việc không hợp lệ"));
+            // Validate email
+            if (!candidate.getEmail().toLowerCase().endsWith("@gmail.com")) {
+                model.addAttribute("errorMessage", "Email phải có định dạng @gmail.com.");
+                model.addAttribute("candidate", candidate);
+                model.addAttribute("vacancy", vacancyRepository.findById(vacancyId).orElse(null));
+                return "Candidate/detailvacancy";
+            }
+
+            // Validate số điện thoại
+            if (!candidate.getPhone().matches("\\d{10}")) {
+                model.addAttribute("errorMessage", "Số điện thoại phải bao gồm đúng 10 chữ số.");
+                model.addAttribute("candidate", candidate);
+                model.addAttribute("vacancy", vacancyRepository.findById(vacancyId).orElse(null));
+                return "Candidate/detailvacancy";
+            }
+
+            // Lấy thông tin Vacancy
+            vacancy = vacancyRepository.findById(vacancyId)
+                    .orElse(null);
+
+            if (vacancy == null) {
+                model.addAttribute("errorMessage", "Không tìm thấy công việc phù hợp.");
+                model.addAttribute("candidate", candidate);
+                return "Candidate/detailvacancy";
+            }
 
             candidate.setVacancy(vacancy);
 
+            // Xử lý file CV
             if (file != null && !file.isEmpty()) {
-                // Kiểm tra định dạng tệp
                 String fileName = file.getOriginalFilename();
-                if (fileName != null && (fileName.endsWith(".pdf") || fileName.endsWith(".docx"))) {
+                if (fileName != null && (fileName.toLowerCase().endsWith(".pdf") || fileName.toLowerCase().endsWith(".docx"))) {
                     String newFileName = System.currentTimeMillis() + "_" + fileName;
                     Path filePath = Paths.get("uploads/cv", newFileName);
                     Files.createDirectories(filePath.getParent());
@@ -94,34 +189,43 @@ public class VacancyController {
 
                     candidate.setCvPath(filePath.toString());
                 } else {
-                    model.addAttribute("errorMessage", "Chỉ chấp nhận tệp PDF hoặc Word.");
+                    model.addAttribute("errorMessage", "Định dạng tệp không hợp lệ. Chỉ chấp nhận PDF hoặc Word.");
+                    model.addAttribute("vacancy", vacancy);
+                    model.addAttribute("candidate", candidate);
                     return "Candidate/detailvacancy";
                 }
             }
 
-            // Lưu ứng viên vào cơ sở dữ liệu
+            // Lưu Candidate vào cơ sở dữ liệu
             candidateRepository.save(candidate);
 
-            // Tạo và lưu trạng thái cho ứng viên với trạng thái mặc định là "đang chờ"
+            // Lưu trạng thái của Candidate
             CandidateStatus candidateStatus = new CandidateStatus();
             candidateStatus.setCandidate(candidate);
             candidateStatus.setStatusName("Đang chờ");
             candidateStatus.setUpdatedAt(LocalDateTime.now());
-
-            // Lưu vào bảng candidate_status
             candidateStatusRepository.save(candidateStatus);
 
-            model.addAttribute("vacancy", vacancy);
-            model.addAttribute("candidate", candidate);
             model.addAttribute("successMessage", "Đã nộp hồ sơ thành công!");
-
+            model.addAttribute("vacancy", vacancy);
+            return "Candidate/detailvacancy";
+        } catch (IOException e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi khi tải lên tệp. Vui lòng thử lại.");
+            model.addAttribute("candidate", candidate);
+            model.addAttribute("vacancy", vacancy);
+            return "Candidate/detailvacancy";
         } catch (Exception e) {
             e.printStackTrace();
-            return "error";
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý yêu cầu. Vui lòng thử lại sau.");
+            model.addAttribute("candidate", candidate);
+            model.addAttribute("vacancy", vacancy);
+            return "Candidate/detailvacancy";
         }
-
-        return "Candidate/detailvacancy";
     }
+
+
+
     @GetMapping("/downloadCV")
     public ResponseEntity<Resource> downloadCV(@RequestParam("candidateId") Long candidateId) {
         Candidate candidate = candidateRepository.findById(candidateId)
@@ -222,26 +326,22 @@ public class VacancyController {
                                        @RequestParam(value = "department", required = false) Long departmentId,
                                        @RequestParam(value = "status", required = false) String status,
                                        @RequestParam(value = "search", required = false) String search,
+                                       @RequestParam(value = "limit", required = false, defaultValue = "5") int limit,
+                                       @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                                        Model model) {
-        // Provide fallback defaults or handle nulls as necessary
         List<Vacancy> filteredVacancies = vacancyService.getFilteredVacancies(
-                positionId != null ? positionId : null,
-                requiredSkills != null && !requiredSkills.isEmpty() ? requiredSkills : null,
-                departmentId != null ? departmentId : null,
-                status != null && !status.isEmpty() ? status : null,
-                search != null && !search.isEmpty() ? search : null
+                positionId, requiredSkills, departmentId, status, search
         );
 
-        // Add the filtered list and form fields to the model
         model.addAttribute("vacancies", filteredVacancies);
         model.addAttribute("positions", vacancyService.getAllPositions());
-        model.addAttribute("departments", vacancyRepository.findAllDepartments());
-        model.addAttribute("statuses", vacancyService.getAllStatuses());
-        model.addAttribute("details", vacancyService.getAllDetails());
+        model.addAttribute("departments", vacancyService.getAllDepartments());
+        model.addAttribute("statuses", VacancyStatus.values());  // Cung cấp enum VacancyStatus cho view
+        model.addAttribute("requiredSkills", vacancyService.getAllDetails());
 
         return "Manager/joblist";
-
     }
+
     @GetMapping("/Manager/viewJob/{id}")
     public String viewJobDetails(@PathVariable Long id, Model model) {
         Optional<Vacancy> vacancyOptional = vacancyService.findById(id);
@@ -252,6 +352,143 @@ public class VacancyController {
         } else {
             return "error"; // Handle invalid job ID
         }
+    }
+
+    // Show form to create a job
+    @GetMapping("/manager/createJob")
+    public String showCreateJobForm(Model model) {
+        model.addAttribute("vacancy", new Vacancy());
+        model.addAttribute("positions", vacancyService.getAllPositions());
+        model.addAttribute("departments", vacancyService.getAllDepartments());
+        model.addAttribute("requiredSkills", vacancyService.getAllDetails());
+        return "Manager/createJob";  // Thymeleaf page for job creation
+    }
+
+    // Handle form submission for job creation
+    @PostMapping("/manager/CreateJob")
+    public String createJob(
+            @RequestParam("positionId") Long positionId,
+            @RequestParam("departmentId") Long departmentId,
+            @RequestParam("requiredSkills") String requiredSkills,  // Updated field
+            @ModelAttribute Vacancy vacancy) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Assuming the principal is a User object
+        if (authentication.getPrincipal() instanceof User) {
+            User currentUser = (User) authentication.getPrincipal();
+            String currentUsername = currentUser.getUsername();
+            System.out.println("Current logged-in username: " + currentUsername);
+
+            // Fetch the user from the repository
+            currentUser = userRepository.findByUsername(currentUsername)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            // Retrieve the recruiter's department and set the vacancy's creator
+            vacancy.setCreatedUser(currentUser);
+            vacancy.setDepartment(currentUser.getDepartment()); // Use department from logged-in user
+
+            // Set the position and other vacancy details as before
+            PositionAll position = positionRepository.findById(positionId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid position ID"));
+
+            vacancy.setPosition(position);
+            vacancy.setDetails(requiredSkills);
+
+            vacancyService.createVacancy(vacancy);  // Create the job (Vacancy)
+            return "redirect:/joblist";  // Redirect to job list after successful creation
+        } else {
+            throw new IllegalStateException("Authentication principal is not a User object");
+        }
+    }
+
+
+
+    // Handle job deletion
+    @PostMapping("/Manager/deleteJob/{id}")
+    public String deleteJob(@PathVariable Long id) {
+        vacancyService.deleteVacancy(id);  // Delete job (Vacancy) by ID
+        return "redirect:/joblist";  // Redirect back to job list after deletion
+    }
+    // Show form to edit a job
+    @GetMapping("/manager/editJob/{id}")
+    public String showEditJobForm(@PathVariable Long id, Model model) {
+        Optional<Vacancy> vacancyOptional = vacancyService.findById(id);
+
+        if (vacancyOptional.isPresent()) {
+            Vacancy vacancy = vacancyOptional.get();
+            model.addAttribute("vacancy", vacancy);
+            model.addAttribute("positions", vacancyService.getAllPositions());
+            model.addAttribute("departments", vacancyService.getAllDepartments());
+            return "Manager/editJob";  // Thymeleaf page for job editing
+        } else {
+            return "error"; // Handle invalid job ID
+        }
+    }
+
+    // Handle form submission for job update
+    @PostMapping("/manager/updateJob")
+    public String updateJob(
+            @RequestParam("positionId") Long positionId,
+            @RequestParam("departmentId") Long departmentId,
+            @RequestParam("details") String details,
+            @RequestParam("status") VacancyStatus status,
+            @RequestParam("type") JobType type,
+            @RequestParam("dueDate") String dueDate,
+            @ModelAttribute Vacancy vacancy) {
+
+        // Retrieve Position and Department from the database
+        PositionAll position = positionRepository.findById(positionId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid position ID"));
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid department ID"));
+
+        // Get the current logged-in user's information using Spring Security
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Assuming the principal is a User object
+        User loggedInUser;
+        if (authentication.getPrincipal() instanceof User) {
+            loggedInUser = (User) authentication.getPrincipal();
+        } else {
+            // If it's not a User object, you can handle this situation (e.g., throw an exception or log an error)
+            throw new IllegalArgumentException("Authentication principal is not an instance of User");
+        }
+
+        // Print the username for debugging purposes
+        String currentUsername = loggedInUser.getUsername();
+        System.out.println("Current logged-in username: " + currentUsername);
+
+        // Fetch the user from the repository to ensure it's up-to-date
+        loggedInUser = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // Ensure created_at is set during creation, if null
+        if (vacancy.getCreatedAt() == null) {
+            vacancy.setCreatedAt(LocalDateTime.now()); // Set current time if not already set
+            vacancy.setCreatedUser(loggedInUser); // Set the created user if it's a new vacancy
+        }
+
+        // Parse the string date into a LocalDate object
+        LocalDate parsedDueDate = LocalDate.parse(dueDate);
+
+        // Update vacancy details
+        vacancy.setStatus(status);
+        vacancy.setPosition(position);
+        vacancy.setDepartment(department);
+        vacancy.setDetails(details);
+        vacancy.setDueDate(parsedDueDate);
+        vacancy.setType(type);
+
+        // Set updated_at to current time and updatedUser to the current user
+        vacancy.setUpdatedAt(LocalDateTime.now());
+        vacancy.setUpdatedUser(loggedInUser);
+
+        // Update the vacancy in the database
+        vacancyService.updateVacancy(vacancy);
+
+        // Redirect to the view job page after successful update
+        return "redirect:/Manager/viewJob/" + vacancy.getId();
     }
 
 

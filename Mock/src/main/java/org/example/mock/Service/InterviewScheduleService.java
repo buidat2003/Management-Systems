@@ -7,6 +7,7 @@ import org.example.mock.Repository.InterviewScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -52,7 +53,7 @@ public class InterviewScheduleService {
         System.out.println("Sending email...");
         emailService.sendInterviewScheduleEmail(schedule);
         System.out.println("Email sent.");
-
+        emailService.sendInterviewScheduleEmailToInterviewer(schedule);
         return schedule;
     }
     public InterviewSchedule findByCandidate(Long candidateId) {
@@ -69,6 +70,31 @@ public class InterviewScheduleService {
     public void delete(InterviewSchedule schedule) {
         interviewScheduleRepository.delete(schedule);
     }
+
+    public List<InterviewSchedule> findSchedulesByInterviewerAndTime(Long interviewerId, LocalDate date, LocalTime time) {
+        return interviewScheduleRepository.findByInterviewerAndScheduleDateAndTime(interviewerId, date, time);
+    }
+    public boolean isInterviewerAvailable(Long interviewerId, LocalDate date, LocalTime time) {
+        LocalDateTime newInterviewDateTime = LocalDateTime.of(date, time);
+
+        // Lấy tất cả các lịch phỏng vấn của người phỏng vấn trong ngày đó
+        List<InterviewSchedule> schedules = interviewScheduleRepository.findByInterviewerAndScheduleDate(interviewerId, date);
+
+        for (InterviewSchedule schedule : schedules) {
+            LocalDateTime existingInterviewDateTime = LocalDateTime.of(schedule.getScheduleDate(), schedule.getScheduleTime());
+            Duration duration = Duration.between(existingInterviewDateTime, newInterviewDateTime);
+
+            // Kiểm tra khoảng cách thời gian là ít nhất 20 phút
+            if (Math.abs(duration.toMinutes()) < 20) {
+                return false;  // Không khả dụng nếu khoảng cách dưới 20 phút
+            }
+        }
+        return true; // Khả dụng nếu không có lịch nào trùng trong 20 phút
+    }
+
+
+
+
 
 //    @Autowired
 //    private UserService userService;
