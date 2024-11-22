@@ -198,7 +198,7 @@
                           style="display:inline;">
                         <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"
                                                                         style="color: #f44336"></i></button>
-                        <input type="hidden" name="reason" id="rejectReason-${offer.id}">
+<!--                        <input type="hidden" name="reason" id="rejectReason-${offer.id}">-->
                     </form>
                 </td>
             </tr>
@@ -258,30 +258,6 @@
 </div>
 
 
-<!--Script approve-->
-<!--<script>-->
-<!--    document.addEventListener("DOMContentLoaded", function () {-->
-<!--        let actionForm = null;-->
-
-<!--        // Gán sự kiện cho nút Approve / Reject-->
-<!--        document.querySelectorAll(" .btn-success").forEach(button => {-->
-<!--            button.addEventListener("click", function (e) {-->
-<!--                e.preventDefault(); // Ngăn việc form tự động submit-->
-<!--                actionForm = this.closest("form"); // Lưu form cần submit-->
-<!--                $('#confirmModal').modal('show'); // Hiển thị modal-->
-<!--            });-->
-<!--        });-->
-
-<!--        // Khi nhấn nút Yes trong modal-->
-<!--        document.getElementById("confirmBtn").addEventListener("click", function () {-->
-<!--            if (actionForm) {-->
-<!--                actionForm.submit(); // Submit form đã lưu-->
-<!--            }-->
-<!--            $('#confirmModal').modal('hide'); // Đóng modal-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         let approveForm = null;
@@ -305,27 +281,21 @@
         });
 
         // Sự kiện cho nút Reject
-        document.querySelectorAll(".btn-danger").forEach(button => {
-            button.addEventListener("click", function (e) {
-                e.preventDefault();
-                rejectForm = this.closest("form");
-                $('#rejectModal').modal('show');
-            });
-        });
+        // document.querySelectorAll(".btn-danger").forEach(button => {
+        //     button.addEventListener("click", function (e) {
+        //         e.preventDefault();
+        //         rejectForm = this.closest("form");
+        //         $('#rejectModal').modal('show');
+        //     });
+        // });
 
         // Xử lý khi nhấn Yes trên modal Reject
-        document.getElementById("rejectConfirmBtn").addEventListener("click", function () {
-            if (rejectForm) {
-                // Gắn lý do từ input vào hidden field
-                const reasonInput = document.getElementById("rejectReasonInput").value;
-                const hiddenInput = rejectForm.querySelector("input[name='reason']");
-                if (hiddenInput) {
-                    hiddenInput.value = reasonInput;
-                }
-                rejectForm.submit();
-            }
-            $('#rejectModal').modal('hide');
-        });
+        // document.getElementById("rejectConfirmBtn").addEventListener("click", function () {
+        //     if (rejectForm) {
+        //         rejectForm.submit();
+        //     }
+        //     $('#rejectModal').modal('hide');
+        // });
     });
 </script>
 
