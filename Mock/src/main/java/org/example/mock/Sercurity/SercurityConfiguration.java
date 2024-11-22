@@ -45,14 +45,14 @@ public class SercurityConfiguration {
                                 "/Manager/viewJob/{id}", "/users","/offers", "/offers/{id}/detail", "/offers/update",
                                 "/offers/create", "/profile","/profile/editprofile", "/changepassword/*", "/changepassword/submit",
                                 "/vacancy/*", "/submitApplication", "/downloadCV", "/uploadTemporaryFile",
-                                "/download/cv/*","/jobcandidate", "/static/**")
+                                "/download/cv/*","/jobcandidate", "/static/**", "/offers/infoCreate/{id}")
                         .permitAll()
                         .requestMatchers("/current-user").authenticated()
                         // Role-based access restrictions
 
                         .requestMatchers("/admin/**","/admin/getForm", "/admin/createAccount").hasRole("ADMIN")
                         .requestMatchers("/recruiter/**","/filterCandidates","/cancelCandidate","/interviewschedules/create","/manager/editJob/{id}", "/Manager/deleteJob/{id}",
-                                "/joblist", "/manager/updateJob", "/Manager/viewJob/{id}","/manager/CreateJob", "/manager/createJob" ).hasRole("RECRUITER")
+                                "/joblist", "/manager/updateJob", "/Manager/viewJob/{id}","/manager/CreateJob", "/manager/createJob", "/offers/create", "/offers/infoCreate/{id}" ).hasRole("RECRUITER")
                         .requestMatchers("/manager/**", "/ApproveReject/**", "/ApproveReject/offers","/ApproveReject/viewOffer/{id}",
                                 "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}").hasRole("MANAGER")
                         .requestMatchers("/interviewer/**","/interviewschedules/detail","/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed").hasRole("INTERVIEWER")
