@@ -42,20 +42,19 @@ public class SercurityConfiguration {
 
                                 "/admin/getForm", "/admin/createAccount", "/admin/AccountList", "/admin/addAccount",
                                 "/admin/getUpdateForm/{id}", "/admin/getUpdateForm", "/admin/update", "/joblist",
-                                "/Manager/viewJob/{id}", "/ApproveReject/jobList", "/ApproveReject/offers",
-                                "/ApproveReject/viewJob/{id}", "/ApproveReject/approveJob/{id}",
-                                "/ApproveReject/rejectJob/{id}", "/ApproveReject/viewOffer/{id}",
-                                "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}", "/users",
-                                "/offers", "/offers/{id}/detail", "/offers/update", "/offers/create", "/profile",
-                                "/profile/editprofile", "/changepassword/*", "/changepassword/submit",
+                                "/Manager/viewJob/{id}", "/users","/offers", "/offers/{id}/detail", "/offers/update",
+                                "/offers/create", "/profile","/profile/editprofile", "/changepassword/*", "/changepassword/submit",
                                 "/vacancy/*", "/submitApplication", "/downloadCV", "/uploadTemporaryFile",
                                 "/download/cv/*","/jobcandidate", "/static/**")
                         .permitAll()
                         .requestMatchers("/current-user").authenticated()
                         // Role-based access restrictions
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        .requestMatchers("/admin/**","/admin/getForm", "/admin/createAccount").hasRole("ADMIN")
                         .requestMatchers("/recruiter/**","/filterCandidates","/cancelCandidate","/interviewschedules/create","/manager/editJob/{id}", "/Manager/deleteJob/{id}",
                                 "/joblist", "/manager/updateJob", "/Manager/viewJob/{id}","/manager/CreateJob", "/manager/createJob" ).hasRole("RECRUITER")
+                        .requestMatchers("/manager/**", "/ApproveReject/**", "/ApproveReject/offers","/ApproveReject/viewOffer/{id}",
+                                "/ApproveReject/approveOffer/{id}", "/ApproveReject/rejectOffer/{id}").hasRole("MANAGER")
                         .requestMatchers("/interviewer/**","/interviewschedules/detail","/interviewschedules/markAsInterviewed", "/interviewschedules/deleteInterviewed").hasRole("INTERVIEWER")
                         .anyRequest().authenticated()  // Require authentication for all other requests
                 )
@@ -88,10 +87,12 @@ public class SercurityConfiguration {
 
             User user = (User) authentication.getPrincipal();
             String role = user.getRole().toUpperCase();
+            request.getSession().setAttribute("USER_NAME", user.getUsername());
             request.getSession().setAttribute("USER_ID", user.getId());
+            request.getSession().setAttribute("USER_ROLE", user.getRole());
+            request.getSession().setAttribute("USER_AVATAR", user.getAvatar());
             System.out.println("Logged-in User ID: " + user.getId());
-
-            // Redirect dựa trên vai trò của người dùng
+            // Redirect based on the user's role
             switch (role) {
                 case "ADMIN":
                     response.sendRedirect("/admin/dashboard");
@@ -100,7 +101,7 @@ public class SercurityConfiguration {
                     response.sendRedirect("/filterCandidates");
                     break;
                 case "MANAGER":
-                    response.sendRedirect("/manager/dashboard");
+                    response.sendRedirect("/ApproveReject/offers");
                     break;
                 case "INTERVIEWER":
                     response.sendRedirect("/interviewschedules/detail");

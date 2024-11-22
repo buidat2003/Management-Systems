@@ -65,7 +65,7 @@ public class AdminController {
         }
         if (result.hasErrors()) {
             // Return back to form if there are validation errors
-            return "redirect:/users";
+            return "Admin/createAccount";
         }
 
         try {

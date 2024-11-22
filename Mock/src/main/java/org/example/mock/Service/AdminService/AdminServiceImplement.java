@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -49,11 +50,20 @@ public class AdminServiceImplement implements AdminService {
 
         //user.setDepartment(new Department(createUser.getDepartmentId())); // Assuming you have a Department constructor with ID
 
-        // Xử lý avatar nếu có
+        // Xử lý avatar
         if (avatar != null && !avatar.isEmpty()) {
-            String avatarName = avatar.getOriginalFilename();
-            FileUpload.saveFile(avatar);  // Lưu avatar vào thư mục
-            user.setAvatar(avatarName); // Lưu tên tệp vào cơ sở dữ liệu
+            String avatarName = System.currentTimeMillis() + "_" + avatar.getOriginalFilename(); // Đảm bảo tên file duy nhất
+            String uploadDir = "src/main/webapp/resources/images/"; // Đường dẫn lưu ảnh
+            File destFile = new File(uploadDir + avatarName);
+
+            // Tạo thư mục nếu chưa tồn tại
+            destFile.getParentFile().mkdirs();
+
+            // Lưu ảnh
+            avatar.transferTo(destFile);
+
+            // Gắn tên file vào đối tượng người dùng
+            user.setAvatar(avatarName);
         }
 
         adminRepository.save(user); // Lưu người dùng vào cơ sở dữ liệu
