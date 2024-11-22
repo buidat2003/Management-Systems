@@ -14,4 +14,6 @@ public interface ReviewsRepository extends JpaRepository<Reviews, Long> {
             "FROM Reviews r " +
             "WHERE r.candidate.id IN :candidateIds")
     List<Object[]> findRatingsByCandidateIds(@Param("candidateIds") List<Long> candidateIds);
+
+    List<Reviews> findByCandidateId(Long candidateId);
 }

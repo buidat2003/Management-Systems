@@ -1,8 +1,12 @@
 package org.example.mock.Controller;
 
 
+import org.example.mock.Model.Candidate;
 import org.example.mock.Model.Offer;
+import org.example.mock.Model.Reviews;
 import org.example.mock.Repository.Admin.OfferRepository;
+import org.example.mock.Repository.CandidateRepository;
+import org.example.mock.Repository.ReviewsRepository;
 import org.example.mock.Service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +31,10 @@ public class ListOfferController {
 
     @Autowired
     private OfferRepository offerRepository;
+    @Autowired
+    private CandidateRepository candidateRepository;
+    @Autowired
+    private ReviewsRepository reviewsRepository;
 
     @GetMapping("/offers")
     public String showOffers(Model model) {
@@ -41,38 +49,70 @@ public class ListOfferController {
 
     @GetMapping("/offers/{id}/detail")
     public String showOfferDetails(@PathVariable("id") Long id, Model model) {
+        // Lấy ID của Candidate thông qua Offer
+        Long idCandidate = offerRepository.findCandidateIdByOfferId(id);
+
+
+
+        Candidate candidate = candidateRepository.findById(idCandidate).orElse(null);
+
+
         Offer offer = offerService.findOfferById(id);
-        if (offer != null) {
-            model.addAttribute("offer", offer);
-            return "/Offer/EditOfferDetail";  // Tên view hiển thị chi tiết offer
-        } else {
-            // Nếu không tìm thấy offer với id đó, bạn có thể redirect về trang danh sách
-            return "/Offer/EditOfferDetail";
+        if (offer == null) {
+            return "redirect:/offers"; // Redirect nếu không tìm thấy offer
         }
+
+        // Truy vấn danh sách reviews
+        List<Reviews> reviews = reviewsRepository.findByCandidateId(idCandidate);
+
+        model.addAttribute("candidate", candidate);
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("offer", offer);
+
+        return "/Offer/EditOfferDetail"; // Tên view
     }
+
 
     @PostMapping("/offers/update")
     public String updateOffer(@RequestParam Long id,
                               @RequestParam LocalDate startDate,
                               @RequestParam String salary,
-                              @RequestParam String terms,
                               @RequestParam String statusBan,
                               RedirectAttributes redirectAttributes) {
 
-        long createdUserId = 1;
-        int updated = offerRepository.updateOfferFields(id, startDate, salary, terms, statusBan, createdUserId);
+        // Xác định ID của người dùng được tạo
+        long createdUserId = 1; // Giá trị giả định, cần thay đổi theo ứng dụng thực tế
 
+        // Cập nhật các trường của offer
+        int updated = offerRepository.updateOfferFields(id, startDate, salary, statusBan, createdUserId);
+
+        // Nếu cập nhật thất bại
         if (updated == 0) {
-            // Add an error message if the update fails
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to update offer. Invalid offer ID.");
             return "redirect:/offers/" + id + "/detail";
         }
 
-        // Add a success message for a successful update
-        redirectAttributes.addFlashAttribute("message", "Offer updated successfully.");
+        // Truy xuất ID candidate liên kết với offer
+        Long idCandidate = offerRepository.findCandidateIdByOfferId(id);
+        Candidate candidate = candidateRepository.findById(idCandidate).orElse(null);
 
+        if (candidate == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Candidate not found!");
+            return "redirect:/offers/" + id + "/detail";
+        }
+
+        // Truy vấn danh sách reviews của candidate
+        List<Reviews> reviews = reviewsRepository.findByCandidateId(idCandidate);
+
+        // Lưu thông báo thành công
+        redirectAttributes.addFlashAttribute("message", "Offer updated successfully.");
+        redirectAttributes.addFlashAttribute("candidate", candidate);
+        redirectAttributes.addFlashAttribute("reviews", reviews);
+
+        // Chuyển hướng về trang chi tiết offer
         return "redirect:/offers/" + id + "/detail";
     }
+
 
     @PostMapping("/offers/{id}/deactivate")
     @ResponseBody
