@@ -72,6 +72,7 @@ public class AdminController {
             adminService.addUser(createUser, avatar);
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Error while uploading file: " + e.getMessage());
+            e.printStackTrace();
             return "Admin/Error";
         }
 
@@ -94,7 +95,7 @@ public class AdminController {
     @PostMapping("/update")
     public String updateAccount(@Validated @ModelAttribute("user") CreateUser createUser,
                                 BindingResult result,
-//                                @RequestParam("avatar") MultipartFile avatar,
+                                @RequestParam("avatar") MultipartFile avatar,
                                 Model model) {
         User updateUser = userRepository.findById(createUser.getId()).orElseThrow(() -> {
             throw new EntityNotFoundException("Not found entity with id: " + createUser.getId());
@@ -129,7 +130,16 @@ public class AdminController {
 
 
         BeanUtils.copyProperties(createUser, updateUser, "id");
-        userRepository.save(updateUser);
+        //userRepository.save(updateUser);
+        //adminService.addUser(updateUser, avatar);
+        // Gọi addUser từ service để lưu hoặc cập nhật người dùng
+        try {
+            adminService.addUser(createUser, avatar);  // Gọi addUser để lưu hoặc cập nhật thông tin người dùng
+        } catch (IOException e) {
+            model.addAttribute("errorMessage", "Error while uploading file: " + e.getMessage());
+            e.printStackTrace();
+            return "Admin/Error";
+        }
 
         return "redirect:/users";
     }

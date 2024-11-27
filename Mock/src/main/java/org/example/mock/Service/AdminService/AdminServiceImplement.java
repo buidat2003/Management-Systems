@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 public class AdminServiceImplement implements AdminService {
@@ -31,7 +33,17 @@ public class AdminServiceImplement implements AdminService {
     private PasswordEncoder passwordEncoder;
 
     public void addUser(CreateUser createUser, MultipartFile avatar) throws IOException {
-        User user = new User();
+        User user;
+        // Kiểm tra xem người dùng có tồn tại không
+        if (createUser.getId() != null) {
+            // Nếu có ID, tìm người dùng cũ và cập nhật
+            user = adminRepository.findById(createUser.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        } else {
+            // Nếu không có ID, tạo người dùng mới
+            user = new User();
+        }
+
         user.setName(createUser.getName());
         user.setEmail(createUser.getEmail());
         user.setUsername(createUser.getUsername());
@@ -52,18 +64,28 @@ public class AdminServiceImplement implements AdminService {
 
         // Xử lý avatar
         if (avatar != null && !avatar.isEmpty()) {
-            String avatarName = System.currentTimeMillis() + "_" + avatar.getOriginalFilename(); // Đảm bảo tên file duy nhất
-            String uploadDir = "src/main/webapp/resources/images/"; // Đường dẫn lưu ảnh
+            // Kiểm tra định dạng MIME type của tệp ảnh
+//            String contentType = avatar.getContentType();
+//            if (contentType == null || !contentType.startsWith("image/")) {
+//                throw new IOException("Only image files are allowed.");
+//            }
+            // Đảm bảo đường dẫn upload ảnh hợp lệ và tạo thư mục nếu cần
+            //String uploadDir = System.getProperty("user.dir") + "src/main/webapp/resources/static/images/Avatar/"; // Đường dẫn lưu ảnh
+            Path uploadDirPath = Paths.get("src/main/resources/static/image/Avatar/_").toAbsolutePath();
+            String uploadDir = uploadDirPath.toString();
+//            File uploadDirFile = new File(uploadDir);
+//            if (!uploadDirFile.exists()) {
+//                uploadDirFile.mkdirs();  // Tạo thư mục nếu chưa tồn tại
+//            }
+
+            String avatarName = System.currentTimeMillis() + "_" + avatar.getOriginalFilename(); // Tạo tên ảnh duy nhất
             File destFile = new File(uploadDir + avatarName);
 
-            // Tạo thư mục nếu chưa tồn tại
-            destFile.getParentFile().mkdirs();
-
-            // Lưu ảnh
+            // Lưu ảnh vào thư mục
             avatar.transferTo(destFile);
 
             // Gắn tên file vào đối tượng người dùng
-            user.setAvatar(avatarName);
+            user.setAvatar( "static/image/Avatar/_" + avatarName);
         }
 
         adminRepository.save(user); // Lưu người dùng vào cơ sở dữ liệu

@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class FileUpload {
-    private static final String UPLOAD_DIR = "/static/image/Avatar";
+    private static final String UPLOAD_DIR = "src/main/webapp/resources/static/images/Avatar/";
 
     public static void saveFile(MultipartFile file) throws IOException {
         if (!file.isEmpty()) {
