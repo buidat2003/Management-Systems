@@ -34,6 +34,9 @@ public class InterviewSchedule {
     @JoinColumn(name = "candidate_id")
     private Candidate candidate; // Thiết lập khóa ngoại đến bảng Candidate
 
+    @Column(name = "result", length = 500)
+    private String result;
+
     @Column(name = "google_meet_link", length = 500)
     private String googleMeetLink; // Trường mới để lưu liên kết Google Meet
     @PrePersist
