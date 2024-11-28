@@ -214,38 +214,65 @@
                 <!-- Set giá trị offerDate mặc định là ngày hiện tại -->
                 <input type="date" id="offerDate" name="offerDate" th:value="${offer.offerDate}" readonly>
             </div>
-        </div>
-        <div class="form-row">
             <div class="form-column">
                 <label for="startDate">Start Date:</label>
                 <input type="date" id="startDate" name="startDate" th:value="${offer.startDate}" required>
             </div>
-        </div>
-        <div class="form-row">
             <div class="form-column">
                 <label for="salary">Salary:</label>
                 <input type="text" id="salary" name="salary" th:value="${offer.salary}" maxlength="50" required>
             </div>
         </div>
-
         <div class="form-row">
             <div class="form-column">
                 <label for="candidateId">Candidate ID:</label>
                 <input type="text" id="candidateId" name="candidateId" th:value="${offer.candidate.id}" required>
             </div>
+
+            <div class="form-column">
+                <label for="candidateName">Candidate Name:</label>
+                <input type="text" id="candidateName" name="candidateName" th:value="${offer.candidate.name}" maxlength="50" required>
+            </div>
+
+            <div class="form-column">
+                <label for="candidateEmail">Candidate Email:</label>
+                <input type="text" id="candidateEmail" name="candidateEmail" th:value="${offer.candidate.email}" required>
+            </div>
         </div>
-<!--        <div class="form-row">-->
-<!--            <div class="form-column">-->
-<!--                <label for="terms">Terms:</label>-->
-<!--                <textarea id="terms" name="terms" rows="4" th:text="${offer.terms}"></textarea>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div class="form-row">
+            <div class="form-column">
+                <label for="expectedSalary">Expected Salary:</label>
+                <input type="text" id="expectedSalary" name="expectedSalary" th:value="${offer.candidate.expectedSalary}" required>
+            </div>
+
+            <div class="form-column">
+                <label for="candidateExp">Candidate Experience (years):</label>
+                <input type="text" id="candidateExp" name="candidateExp" th:value="${offer.candidate.exp}" maxlength="50" required>
+            </div>
+
+            <div class="form-column">
+                <label for="candidateMainTech">Candidate Main Tech:</label>
+                <input type="text" id="candidateMainTech" name="candidateMainTech" th:value="${offer.candidate.mainTech}" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-column">
+                <label for="candidateVacancy">Candidate Education:</label>
+                <input type="text" id="candidateVacancy" name="candidateVacancy" th:value="${offer.candidate.education}" maxlength="50" required>
+            </div>
+
+            <div class="form-column">
+                <label for="candidatePhone">Candidate Phone Number:</label>
+                <input type="text" id="candidatePhone" name="candidatePhone" th:value="${offer.candidate.phone}" required>
+            </div>
+        </div>
         <div class="form-row">
             <div class="form-column">
                 <label for="createdUserId">Created By (User ID):</label>
                 <input type="text" id="createdUserId" name="createdUserId" th:value="${offer.createdUser.id}"
                        required>
             </div>
+
         </div>
     </form>
     <div class="form-row">
@@ -269,12 +296,13 @@
                   style="display:inline;">
                 <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"
                                                                 style="color: #f44336">Reject</i></button>
-                <input type="hidden" name="reason" id="rejectReason-${offer.id}">
+
             </form>
         </div>
     </div>
     <div class="form-row">
-        <button th:if="${offer.status == ApproveStatus.APPROVED || offer.status == ApproveStatus.REJECTED}">
+<!--        th:if="${offer.status == ApproveStatus.APPROVED || offer.status == ApproveStatus.REJECTED}"-->
+        <button >
             <a class="back" title="View" href="/ApproveReject/offers">Back to offer list</a>
         </button>
     </div>
@@ -298,7 +326,6 @@
             <!--                <p><strong>Candidate:</strong> <span th:text="${offer.candidate.name}"></span></p>-->
             <!--                <p><strong>Status:</strong> <span th:text="${offer.status}"></span></p>-->
             <!--                <p><strong>Created By:</strong> <span th:text="${offer.createdUser.name}"></span></p>-->
-
             <!--            </div>-->
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
@@ -353,27 +380,27 @@
         });
 
         // Sự kiện cho nút Reject
-        document.querySelectorAll(".btn-danger").forEach(button => {
-            button.addEventListener("click", function (e) {
-                e.preventDefault();
-                rejectForm = this.closest("form");
-                $('#rejectModal').modal('show');
-            });
-        });
+        // document.querySelectorAll(".btn-danger").forEach(button => {
+        //     button.addEventListener("click", function (e) {
+        //         e.preventDefault();
+        //         rejectForm = this.closest("form");
+        //         $('#rejectModal').modal('show');
+        //     });
+        // });
 
         // Xử lý khi nhấn Yes trên modal Reject
-        document.getElementById("rejectConfirmBtn").addEventListener("click", function () {
-            if (rejectForm) {
-                // Gắn lý do từ input vào hidden field
-                const reasonInput = document.getElementById("rejectReasonInput").value;
-                const hiddenInput = rejectForm.querySelector("input[name='reason']");
-                if (hiddenInput) {
-                    hiddenInput.value = reasonInput;
-                }
-                rejectForm.submit();
-            }
-            $('#rejectModal').modal('hide');
-        });
+        // document.getElementById("rejectConfirmBtn").addEventListener("click", function () {
+        //     if (rejectForm) {
+        //         // Gắn lý do từ input vào hidden field
+        //         const reasonInput = document.getElementById("rejectReasonInput").value;
+        //         const hiddenInput = rejectForm.querySelector("input[name='reason']");
+        //         if (hiddenInput) {
+        //             hiddenInput.value = reasonInput;
+        //         }
+        //         rejectForm.submit();
+        //     }
+        //     $('#rejectModal').modal('hide');
+        // });
     });
 </script>
 

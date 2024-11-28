@@ -1,12 +1,14 @@
 package org.example.mock.DTO.request;
 
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
-
+import java.time.*;
 import java.time.LocalDate;
 @Getter
 @Data
@@ -24,6 +26,7 @@ public class CreateUser {
     @Length(min = 8, max = 12, message = "Password length must be between {min} and {max}")
     private String password;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate doB;
 
     @Pattern(regexp = "\\d{10}", message = "Phone number is invalid!")

@@ -73,10 +73,10 @@ public class AdminServiceImplement implements AdminService {
             //String uploadDir = System.getProperty("user.dir") + "src/main/webapp/resources/static/images/Avatar/"; // Đường dẫn lưu ảnh
             Path uploadDirPath = Paths.get("src/main/resources/static/image/Avatar/_").toAbsolutePath();
             String uploadDir = uploadDirPath.toString();
-//            File uploadDirFile = new File(uploadDir);
-//            if (!uploadDirFile.exists()) {
-//                uploadDirFile.mkdirs();  // Tạo thư mục nếu chưa tồn tại
-//            }
+            File uploadDirFile = new File(uploadDir);
+            if (!uploadDirFile.exists()) {
+                uploadDirFile.mkdirs();  // Tạo thư mục nếu chưa tồn tại
+            }
 
             String avatarName = System.currentTimeMillis() + "_" + avatar.getOriginalFilename(); // Tạo tên ảnh duy nhất
             File destFile = new File(uploadDir + avatarName);
