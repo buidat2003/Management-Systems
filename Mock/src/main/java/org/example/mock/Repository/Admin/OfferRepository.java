@@ -20,12 +20,11 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     @Query("UPDATE Offer o SET o.startDate = :startDate, o.salary = :salary,"
             + "o.statusBan = :statusBan, o.updatedUser.id = :updatedUserId, o.updatedAt = CURRENT_TIMESTAMP "
             + "WHERE o.id = :id")
-    int updateOfferFields(Long id, LocalDate startDate, String salary, String terms, String statusBan, Long updatedUserId);
+    int updateOfferFields(Long id, LocalDate startDate, String salary,  String statusBan, Long updatedUserId);
 
     Page<Offer> findByCandidateNameContainingIgnoreCase(String name, Pageable pageable);
     Page<Offer> findByStatus(ApproveStatus status, Pageable pageable);
     Page<Offer> findByCandidateNameContainingIgnoreCaseAndStatus(String name, ApproveStatus status, Pageable pageable);
-    int updateOfferFields(Long id, LocalDate startDate, String salary,  String statusBan, Long updatedUserId);
 
     @Query("SELECT o.candidate.id FROM Offer o WHERE o.id = :offerId")
     Long findCandidateIdByOfferId(@Param("offerId") Long offerId);
