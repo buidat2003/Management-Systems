@@ -99,7 +99,6 @@
             <th>Schedule Time</th>
             <th>Interviewer</th>
             <th>Google Meet Link</th>
-            <th>Result</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -113,7 +112,6 @@
             <td>
                 <a th:href="${schedule.googleMeetLink}" target="_blank">Link</a>
             </td>
-            <td th:text="${schedule.result}">Pending</td>
             <td>
                 <button type="button" class="btn btn-success btn-sm" onclick="markAsInterviewed(this)" th:data-schedule-id="${schedule.id}">
                     Mark as Interviewed

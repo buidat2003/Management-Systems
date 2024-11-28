@@ -1,11 +1,9 @@
 package org.example.mock.Service;
 
-import org.example.mock.Model.Candidate;
-import org.example.mock.Model.CandidateStatus;
-import org.example.mock.Model.InterviewSchedule;
-import org.example.mock.Model.User;
+import org.example.mock.Model.*;
 import org.example.mock.Repository.CandidateStatusRepository;
 import org.example.mock.Repository.InterviewScheduleRepository;
+import org.example.mock.Repository.ReviewsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +30,10 @@ public class InterviewScheduleService {
 
     @Autowired
     private EmailScheduleService emailService;
+
+    // Autowiring the ReviewsRepository
+    @Autowired
+    private ReviewsRepository reviewsRepository;  // This was missing
 
     public InterviewSchedule createInterviewSchedule(Candidate candidate, LocalDate date, LocalTime time, Long interviewerId) {
         User interviewer = userService.findById(interviewerId);
@@ -136,5 +138,13 @@ public class InterviewScheduleService {
 
     public void update(InterviewSchedule schedule) {
         interviewScheduleRepository.save(schedule);
+    }
+
+    public List<Reviews> getReviewsBySchedule(Long scheduleId) {
+        return reviewsRepository.findByCandidateId(scheduleId); // Now it can fetch reviews properly
+    }
+
+    public void saveReview(Reviews review) {
+        reviewsRepository.save(review);
     }
 }

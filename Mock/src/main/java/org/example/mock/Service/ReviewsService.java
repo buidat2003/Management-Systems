@@ -24,4 +24,6 @@ public class ReviewsService {
                         Collectors.mapping(result -> (Integer) result[1], Collectors.toList()) // List of ratings
                 ));
     }
+
+
 }
