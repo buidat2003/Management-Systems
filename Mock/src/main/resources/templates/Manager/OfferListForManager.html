@@ -185,7 +185,7 @@
 
                 <label for="statusFilter">Status: </label>
                 <select id="statusFilter" name="status" onchange="updateStatusFilter()">
-                    <option th:value="" th:selected="${status == null || status == ''}">All</option>
+                    <option value="" th:selected="${status == null || status == ''}">All</option>
                     <option th:value="${ApproveStatus.PENDING}" th:selected="${status == ApproveStatus.PENDING}">Pending</option>
                     <option th:value="${ApproveStatus.APPROVED}" th:selected="${status == ApproveStatus.APPROVED}">Approved</option>
                     <option th:value="${ApproveStatus.REJECTED}" th:selected="${status == ApproveStatus.REJECTED}">Rejected</option>
