@@ -1,0 +1,104 @@
+  <!DOCTYPE html>
+  <html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+          integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+  </head>
+  <body>
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Create Job</h2>
+
+    <!-- Create Job Form -->
+    <form th:action="@{/manager/CreateJob}" method="post">
+      <div class="form-row">
+        <!-- Position -->
+        <div class="form-group col-md-6">
+          <label for="position">Position</label>
+          <select class="form-control" id="position" name="positionId" required>
+            <option value="">Select Position</option>
+            <th:block th:each="position : ${positions}">
+              <option th:value="${position.id}" th:text="${position.name}" th:selected="${position.id == positionId}"></option>
+            </th:block>
+          </select>
+        </div>
+
+        <!-- Department -->
+        <div class="form-group col-md-6">
+          <label for="department">Department</label>
+          <select class="form-control" id="department" name="departmentId" required>
+            <option value="">Select Department</option>
+            <th:block th:each="department : ${departments}">
+              <option th:value="${department.id}" th:text="${department.name}" th:selected="${department.id == departmentId}"></option>
+            </th:block>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- Job Type -->
+        <div class="form-group col-md-6">
+          <label for="type">Job Type</label>
+          <select class="form-control" id="type" name="type" required>
+            <option value="">Select Job Type</option>
+            <option value="FULL_TIME">Full-Time</option>
+            <option value="PART_TIME">Part-Time</option>
+            <option value="CONTRACT">Contract</option>
+          </select>
+        </div>
+
+        <!-- Salary -->
+        <div class="form-group col-md-6">
+          <label for="salary">Salary</label>
+          <input type="number" class="form-control" id="salary" name="salary" placeholder="Enter salary" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- Vacancy Count -->
+        <div class="form-group col-md-6">
+          <label for="count">Number of Vacancies</label>
+          <input type="number" class="form-control" id="count" name="count" placeholder="Enter number of positions" required>
+        </div>
+
+        <!-- Due Date -->
+        <div class="form-group col-md-6">
+          <label for="dueDate">Due Date</label>
+          <input type="date" class="form-control" id="dueDate" name="dueDate" required>
+        </div>
+      </div>
+
+      <!-- Job Details -->
+      <div class="form-group">
+        <label for="requiredSkills">Required Skills (comma-separated)</label>
+        <textarea id="requiredSkills" name="requiredSkills" class="form-control"
+                  placeholder="Enter required skills, separated by commas" required></textarea>
+      </div>
+
+      <!-- Status -->
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select class="form-control" id="status" name="status" required>
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Create Job</button>
+    </form>
+    <!-- Trong joblist.html hoặc các trang khác -->
+    <div th:if="${successMessage}" class="alert alert-success">
+      <p th:text="${successMessage}"></p>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+  </html>

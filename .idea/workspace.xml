@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6864e709-5c6e-4f27-9ce0-45abcd7900cf" name="Changes" comment="" />
+    <list default="true" id="6864e709-5c6e-4f27-9ce0-45abcd7900cf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Mock/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Mock/pom.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -33,9 +36,11 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "com.codeium.enabled": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/OJT/Management-Systems/Mock",
+    "last_opened_file_path": "F:/ProjectHomenay/Mock",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -58,6 +63,7 @@
       <updated>1730647479186</updated>
       <workItem from="1730647479980" duration="79000" />
       <workItem from="1730974792006" duration="39000" />
+      <workItem from="1732198879602" duration="102000" />
     </task>
     <servers />
   </component>

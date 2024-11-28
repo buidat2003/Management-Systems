@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Management</title>
+
+    <style>
+        body {
+            background-image: url("https://i0.wp.com/blog.nashtechglobal.com/wp-content/uploads/2024/01/pexels-photo-1103970.jpeg?fit=1024%2C682&ssl=1");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            width: 99%;
+            height: 100vh;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.19);
+            width: 98%;
+            padding: 10px 20px;
+            color: rgb(0, 0, 0);
+            text-align: center;
+            align-items: center;
+            align-self: center;
+        }
+
+        .navbar a {
+            color: rgb(0, 0, 0);
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .navbar .menu {
+            display: flex;
+            gap: 10px;
+        }
+
+        .navbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar .user-info img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        /* Filters and Search */
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .filters select, .filters input[type="text"] {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .filters select {
+            margin-right: 10px;
+        }
+
+        /* Table */
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .actions button:hover {
+            color: #007bff;
+        }
+        .page-button {
+            margin: 0 2px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: white;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .page-button.active {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .page-button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .filters {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            gap: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            margin: 20px auto;
+            width: 60%;
+        }
+
+        .filters input[type="text"], .filters select {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .filters input[type="text"]:focus, .filters select:focus {
+            border-color: #007bff;
+        }
+
+        .filters input[type="text"] {
+            width: 60%;
+        }
+    </style>
+</head>
+<body>
+<div id="all" class="row">
+    <div class="navbar">
+        <div class="menu">
+            <a href="#Recruiter">Recruiter</a>
+            <a href="#Manager">Manager</a>
+            <a href="#Interviewer">Interviewer</a>
+        </div>
+
+        <div class="user-info">
+            <span>Nguyễn Văn A</span>
+            <span>Recruiter</span>
+            <img src="https://lifehacker.com/imagery/articles/01HF2GKNRQZ4MN1YA639Q53NQV/hero-image.fill.size_1200x675.png" alt="User Avatar">
+        </div>
+    </div>
+
+    <!-- Filters and search -->
+    <div class="filters">
+        <input type="text" id="candidateSearch" placeholder="Search by Candidate">
+        <select id="statusFilter">
+            <option value="all">All Statuses</option>
+            <option value="1">Active</option>
+            <option value="0">Deactive</option>
+        </select>
+    </div>
+
+    <!-- Table for displaying offers -->
+    <table>
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Offer Date</th>
+            <th>Start Date</th>
+            <th>Salary</th>
+            <th>Candidate</th>
+            <th>Status</th>
+            <th>Created By</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="offerTableBody">
+        <th:block th:each="offer, iterStat : ${offers}">
+            <tr>
+                <td th:text="${iterStat.index + 1}"></td> <!-- STT -->
+                <td th:text="${offer.offerDate}"></td> <!-- Offer Date -->
+                <td th:text="${offer.startDate}"></td> <!-- Start Date -->
+                <td th:text="${offer.salary}"></td> <!-- Salary -->
+                <td th:text="${offer.candidate.name}"></td> <!-- Candidate -->
+                <td>
+                    <span th:text="${offer.statusBan == '1' ? 'Active' : 'Deactive'}"></span> <!-- Status -->
+                </td>
+                <td th:text="${offer.createdUser.name}"></td> <!-- Created By -->
+                <td class="actions">
+                    <!-- View button -->
+                    <a class="button" title="View" th:href="@{/offers/{id}/detail(id=${offer.id})}">👁️</a>
+
+                    <!-- Action buttons for toggling status -->
+                    <button
+                            th:if="${offer.statusBan == '1'}"
+                            title="Deactivate"
+                            th:attr="data-id=${offer.id}"
+                            th:onclick="'deactivateOffer(' + ${offer.id} + ')'"
+                            class="deactivate-btn">
+                        ❌
+                    </button>
+
+                    <button
+                            th:if="${offer.statusBan == '0'}"
+                            title="Activate"
+                            th:attr="data-id=${offer.id}"
+                            th:onclick="'activateOffer(' + ${offer.id} + ')'"
+                            class="activate-btn">
+                        ✅
+                    </button>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+    <div id="pagination"></div>
+</div>
+<script>
+    function deactivateOffer(offerId) {
+        fetch(`/offers/${offerId}/deactivate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: offerId }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Reload the page to reflect the updated status
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function activateOffer(offerId) {
+        fetch(`/offers/${offerId}/activate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: offerId }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Reload the page to reflect the updated status
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    const offers = Array.from(document.querySelectorAll("#offerTableBody tr")).map(row => {
+        return {
+            element: row,
+            candidateName: row.querySelector("td:nth-child(5)").innerText.toLowerCase(),
+            status: row.querySelector("td:nth-child(6)").innerText.trim() === "Active" ? "1" : "0"
+        };
+    });
+
+    const offersPerPage = 8;
+    let currentPage = 1;
+    let filteredOffers = offers;
+
+    // Hàm hiển thị bảng cho trang hiện tại
+    function renderTable(offersToDisplay) {
+        const tableBody = document.getElementById("offerTableBody");
+        tableBody.innerHTML = "";
+
+        const startIndex = (currentPage - 1) * offersPerPage;
+        const paginatedOffers = offersToDisplay.slice(startIndex, startIndex + offersPerPage);
+
+        paginatedOffers.forEach(offer => {
+            tableBody.appendChild(offer.element);
+        });
+
+        renderPagination(offersToDisplay.length);
+    }
+
+    // Hàm tạo các nút phân trang
+    function renderPagination(totalOffers) {
+        const paginationDiv = document.getElementById("pagination");
+        paginationDiv.innerHTML = "";
+
+        const totalPages = Math.ceil(totalOffers / offersPerPage);
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement("button");
+            pageButton.innerText = i;
+            pageButton.className = "page-button";
+            if (i === currentPage) pageButton.classList.add("active");
+
+            pageButton.onclick = () => {
+                currentPage = i;
+                renderTable(filteredOffers);
+            };
+
+            paginationDiv.appendChild(pageButton);
+        }
+    }
+
+    // Hàm tìm kiếm ứng viên theo tên
+    function searchOffers(offers, candidateName) {
+        return offers.filter(offer => offer.candidateName.includes(candidateName));
+    }
+
+    // Hàm lọc và tìm kiếm các offer
+    function filterOffers() {
+        const statusFilter = document.getElementById("statusFilter").value;
+        const candidateSearch = document.getElementById("candidateSearch").value.toLowerCase();
+
+        filteredOffers = offers.filter(offer => {
+            const matchesStatus = statusFilter === "all" || offer.status === statusFilter;
+            return matchesStatus;
+        });
+
+        // Áp dụng tìm kiếm trên kết quả đã lọc
+        filteredOffers = searchOffers(filteredOffers, candidateSearch);
+
+        currentPage = 1;  // Đặt lại trang đầu tiên sau khi lọc
+        renderTable(filteredOffers);
+    }
+
+    // Khởi tạo hiển thị bảng khi trang tải
+    document.addEventListener("DOMContentLoaded", () => {
+        renderTable(filteredOffers);
+
+        document.getElementById("statusFilter").addEventListener("change", filterOffers);
+        document.getElementById("candidateSearch").addEventListener("keyup", filterOffers);
+    });
+</script>
+</body>
+</html>

@@ -2,6 +2,7 @@ package org.example.mock.Model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 
 import java.time.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +36,7 @@ public class Vacancy {
     private Integer count;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name="type" ,nullable = false)
     private JobType type; // Enum for job type
 
     @Column(name = "due_date", nullable = false)
@@ -43,6 +45,11 @@ public class Vacancy {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private VacancyStatus status = VacancyStatus.ACTIVE; // Enum for vacancy status
+
+    //ApproveStatus
+    @Enumerated(EnumType.STRING)
+    @Column(name = "approve_status", nullable = false)
+    private ApproveStatus approveStatus = ApproveStatus.PENDING;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -69,7 +76,7 @@ public class Vacancy {
     @JoinColumn(name = "position_id", nullable = false)
     private PositionAll position;
 
-    public Vacancy(Long id, String details, String salary, Integer count, JobType type, LocalDate dueDate, VacancyStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime reopenAt, User createdUser, User updatedUser, Department department, PositionAll position) {
+    public Vacancy(Long id, String details, String salary, Integer count, JobType type, LocalDate dueDate, VacancyStatus status,ApproveStatus approveStatus, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime reopenAt, User createdUser, User updatedUser, Department department, PositionAll position) {
         this.id = id;
         this.details = details;
         this.salary = salary;
@@ -77,6 +84,7 @@ public class Vacancy {
         this.type = type;
         this.dueDate = dueDate;
         this.status = status;
+        this.approveStatus = approveStatus;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.reopenAt = reopenAt;
@@ -198,6 +206,9 @@ public class Vacancy {
         this.position = position;
     }
 
+    public ApproveStatus getApproveStatus() { return approveStatus;}
+
+    public void setApproveStatus(ApproveStatus approveStatus) { this.approveStatus = approveStatus; }
 
     @Transient
     public String getRequiredSkills() {
@@ -218,6 +229,29 @@ public class Vacancy {
             e.printStackTrace();
         }
         return "";
+    }
+    public void setRequiredSkillsAsJson(String skills) {
+        try {
+            // Create a JSON object mapper
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode detailsNode = mapper.createObjectNode();
+
+            // Split the skills string by commas and trim each skill
+            String[] skillArray = skills.split(",");
+            List<String> skillList = Arrays.stream(skillArray)
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+
+            // Add the skill list to the details node as "required_skills"
+            detailsNode.putPOJO("required_skills", skillList);
+
+            // Convert the node to a string and set it as the details field
+            this.details = detailsNode.toString();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle or log the exception as needed
+        }
     }
 
 }

@@ -55,4 +55,12 @@ public class User {
     @JoinColumn(name = "department_id")
     private Department department;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", role='" + role + '\'' +
+                '}';
+    }
 }

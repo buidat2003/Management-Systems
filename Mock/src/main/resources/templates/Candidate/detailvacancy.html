@@ -7,7 +7,12 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../static/css/vacancydetail/vacancydetail.css">
+    <!--    <link rel="stylesheet" href="../../static/css/vacancydetail/vacancydetail.css">-->
+    <!-- Thêm jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
         .job-header {
             background-color: #f8f9fa;
@@ -59,8 +64,120 @@
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
+        <!-- Toast thông báo lỗi -->
+        <div th:if="${errorMessage}" class="toast align-items-center text-white bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <span th:text="${errorMessage}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
     </div>
     <!-- Modal -->
+    <!--    <div class="modal fade" id="jobRegistrationModal" tabindex="-1" aria-labelledby="jobRegistrationModalLabel" aria-hidden="true">-->
+    <!--        <div class="modal-dialog modal-lg">-->
+    <!--            <div class="modal-content">-->
+    <!--                <div class="modal-header">-->
+    <!--                    <h5 class="modal-title" id="jobRegistrationModalLabel">Job Registration</h5>-->
+    <!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+    <!--                </div>-->
+    <!--                <div class="modal-body">-->
+    <!--                    <form id="jobApplicationForm" th:action="@{/submitApplication(vacancyId=${vacancy.id})}" method="post" enctype="multipart/form-data">-->
+    <!--                        <div class="row g-3">-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="name" class="form-label">Name</label>-->
+    <!--                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="email" class="form-label">Email</label>-->
+    <!--                                <input type="email" class="form-control" id="email" name="email" placeholder="example@example.com" required>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="birthday" class="form-label">Birthday</label>-->
+    <!--                                <input type="date" class="form-control" id="birthday" name="dob" required>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="phone" class="form-label">Phone Number</label>-->
+    <!--                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone" required>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label class="form-label">Gender</label><br>-->
+    <!--                                <div class="form-check form-check-inline">-->
+    <!--                                    <input class="form-check-input" type="radio" name="gender" id="male" value="0" required>-->
+    <!--                                    <label class="form-check-label" for="male">Male</label>-->
+    <!--                                </div>-->
+    <!--                                <div class="form-check form-check-inline">-->
+    <!--                                    <input class="form-check-input" type="radio" name="gender" id="female" value="1">-->
+    <!--                                    <label class="form-check-label" for="female">Female</label>-->
+    <!--                                </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="education" class="form-label">Education</label>-->
+    <!--                                <input type="text" class="form-control" id="education" name="education" placeholder="Your education level" required>-->
+    <!--                            </div>-->
+    <!--                            &lt;!&ndash;                            <div class="col-md-6">&ndash;&gt;-->
+    <!--                            &lt;!&ndash;                                <label for="workExperience" class="form-label">Work Experience</label>&ndash;&gt;-->
+    <!--                            &lt;!&ndash;                                <input type="text" class="form-control" id="workExperience" name="exp" placeholder="Enter your work experience" required>&ndash;&gt;-->
+    <!--                            &lt;!&ndash;                            </div>&ndash;&gt;-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="workExperience" class="form-label">Work Experience</label>-->
+    <!--                                <select class="form-select" id="workExperience" name="exp" required>-->
+    <!--                                    <option value="0">Dưới 1 năm</option>-->
+    <!--                                    <option value="1">1 năm</option>-->
+    <!--                                    <option value="2">2 năm</option>-->
+    <!--                                    <option value="3">3 năm trở lên</option>-->
+    <!--                                </select>-->
+    <!--                            </div>-->
+
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="level" class="form-label">Desired Level</label>-->
+    <!--                                <select class="form-select" id="level" name="level" required>-->
+    <!--                                    <option value="Fresher">Fresher</option>-->
+    <!--                                    <option value="Junior">Junior</option>-->
+    <!--                                    <option value="Senior">Senior</option>-->
+    <!--                                </select>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="mainTech" class="form-label">Main Technology</label>-->
+    <!--                                <input type="text" class="form-control" id="mainTech" name="mainTech" required>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="technicalSkill" class="form-label">Technical Skill</label>-->
+    <!--                                <input type="text" class="form-control" id="technicalSkill" name="techSkill" required>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="languageSkill" class="form-label">Language Skill</label>-->
+    <!--                                <input type="text" class="form-control" id="languageSkill" name="languageSkill" required>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="expectedSalary" class="form-label">Expected Salary</label>-->
+    <!--                                <input type="text" class="form-control" id="expectedSalary" name="expectedSalary" required>-->
+    <!--                            </div>-->
+    <!--                            &lt;!&ndash;                            <div class="col-md-6">&ndash;&gt;-->
+    <!--                            &lt;!&ndash;                                <label for="file" class="form-label">Upload CV</label>&ndash;&gt;-->
+    <!--                            &lt;!&ndash;                                <input type="file" class="form-control" id="file" name="file">&ndash;&gt;-->
+    <!--                            &lt;!&ndash;                            </div>&ndash;&gt;-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="file" class="form-label">Tải lên CV (chỉ PDF hoặc Word)</label>-->
+    <!--                                <input type="file" class="form-control" id="file" name="file" accept=".pdf, .docx" onchange="saveToLocalStorage()">-->
+    <!--                                <div id="tempDownloadLink" style="display: none; margin-top: 10px;">-->
+    <!--                                    <a href="#" id="downloadLink" onclick="downloadFromLocalStorage()">Tải xuống tệp tạm thời</a>-->
+    <!--                                </div>-->
+    <!--                            </div>-->
+
+    <!--                        </div>-->
+    <!--                    </form>-->
+
+    <!--                </div>-->
+    <!--                <div class="modal-footer">-->
+    <!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+    <!--                    <button type="submit" class="btn btn-primary" form="jobApplicationForm">Submit</button>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
     <div class="modal fade" id="jobRegistrationModal" tabindex="-1" aria-labelledby="jobRegistrationModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -69,23 +186,41 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="jobApplicationForm" th:action="@{/submitApplication(vacancyId=${vacancy.id})}" method="post" enctype="multipart/form-data">
+                    <!-- Hiển thị lỗi nếu có -->
+                    <div th:if="${errorMessage}" class="alert alert-danger">
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+                    <div th:if="${successMessage}" class="alert alert-success">
+                        <span th:text="${successMessage}"></span>
+                    </div>
+                    <!-- Form đăng ký -->
+                    <form id="jobApplicationForm" th:action="${vacancy != null} ? @{/submitApplication(vacancyId=${vacancy.id})} : ''" method="post" enctype="multipart/form-data">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="name" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
                             </div>
+                            <!--                            <div class="col-md-6">-->
+                            <!--                                <label for="email" class="form-label">Email</label>-->
+                            <!--                                <input type="email" class="form-control" id="email" name="email" placeholder="example@example.com" required>-->
+                            <!--                            </div>-->
                             <div class="col-md-6">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="example@example.com" required>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="example@gmail.com" required>
+                                <div class="invalid-feedback" id="emailError">Email phải có định dạng @gmail.com.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="birthday" class="form-label">Birthday</label>
                                 <input type="date" class="form-control" id="birthday" name="dob" required>
                             </div>
+                            <!--                            <div class="col-md-6">-->
+                            <!--                                <label for="phone" class="form-label">Phone Number</label>-->
+                            <!--                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone" required>-->
+                            <!--                            </div>-->
                             <div class="col-md-6">
                                 <label for="phone" class="form-label">Phone Number</label>
                                 <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone" required>
+                                <div class="invalid-feedback" id="phoneError">Số điện thoại phải gồm đúng 10 chữ số.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Gender</label><br>
@@ -104,7 +239,12 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="workExperience" class="form-label">Work Experience</label>
-                                <input type="text" class="form-control" id="workExperience" name="exp" placeholder="Enter your work experience" required>
+                                <select class="form-select" id="workExperience" name="exp" required>
+                                    <option value="0">Dưới 1 năm</option>
+                                    <option value="1">1 năm</option>
+                                    <option value="2">2 năm</option>
+                                    <option value="3">3 năm trở lên</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <label for="level" class="form-label">Desired Level</label>
@@ -131,25 +271,22 @@
                                 <input type="text" class="form-control" id="expectedSalary" name="expectedSalary" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="file" class="form-label">Upload CV</label>
-                                <input type="file" class="form-control" id="file" name="file">
+                                <label for="file" class="form-label">Tải lên CV (chỉ PDF hoặc Word)</label>
+                                <input type="file" class="form-control" id="file" name="file" accept=".pdf, .docx" onchange="saveToLocalStorage()">
+                                <div id="tempDownloadLink" style="display: none; margin-top: 10px;">
+                                    <a href="#" id="downloadLink" onclick="downloadFromLocalStorage()">Tải xuống tệp tạm thời</a>
+                                </div>
                             </div>
                         </div>
                     </form>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="jobApplicationForm">Submit</button>
                 </div>
-
-                <div th:if="${candidate.cvPath != null}">
-                    <a th:href="@{/downloadCV(candidateId=${candidate.id})}" target="_blank">Download CV</a>
-                </div>
             </div>
         </div>
     </div>
-
     <!-- Job Header -->
     <div class="job-header d-flex justify-content-between align-items-center">
         <div>
@@ -216,7 +353,196 @@
         </div>
     </div>
 </div>
+<div class="container mt-5">
+    <h3>See the jobs you've applied for</h3>
+    <button id="showAppliedJobsButton" class="btn btn-primary mb-3">Show Applied Jobs</button>
+    <div id="appliedJobsList" class="mt-3" style="display: none;">
+        <!-- Danh sách công việc đã ứng tuyển sẽ được thêm ở đây -->
+    </div>
+</div>
 
+<script>
+    // Hàm lưu thông tin ứng tuyển vào Local Storage
+    function saveApplicationToLocalStorage(event) {
+        // Lấy dữ liệu từ form
+        const form = document.getElementById("jobApplicationForm");
+        const formData = new FormData(form);
+
+        const application = {
+            name: formData.get("name"),
+            email: formData.get("email"),
+            phone: formData.get("phone"),
+            dob: formData.get("dob"),
+            gender: formData.get("gender"),
+            education: formData.get("education"),
+            exp: formData.get("exp"),
+            level: formData.get("level"),
+            mainTech: formData.get("mainTech"),
+            techSkill: formData.get("techSkill"),
+            languageSkill: formData.get("languageSkill"),
+            expectedSalary: formData.get("expectedSalary"),
+            date: new Date().toISOString(), // Lưu thời gian ứng tuyển
+        };
+
+        // Lưu thông tin vào Local Storage
+        const applications = JSON.parse(localStorage.getItem("jobApplications")) || [];
+        applications.push(application);
+        localStorage.setItem("jobApplications", JSON.stringify(applications));
+
+        console.log("Application saved:", application);
+    }
+
+    // Gắn sự kiện vào form submit mà không thay đổi hành vi mặc định
+    document.getElementById("jobApplicationForm").addEventListener("submit", (event) => {
+        saveApplicationToLocalStorage(event);
+    });
+</script>
+<script>
+    document.getElementById("showAppliedJobsButton").addEventListener("click", () => {
+        const listContainer = document.getElementById("appliedJobsList");
+
+        // Kiểm tra trạng thái hiển thị của danh sách
+        if (listContainer.style.display === "none" || listContainer.style.display === "") {
+            // Nếu danh sách đang ẩn, hiển thị và tải dữ liệu
+            displayAppliedJobs();
+            listContainer.style.display = "block";
+        } else {
+            // Nếu danh sách đang hiển thị, ẩn đi
+            listContainer.style.display = "none";
+        }
+    });
+
+    // Hàm hiển thị danh sách công việc đã ứng tuyển
+    function displayAppliedJobs() {
+        const applications = JSON.parse(localStorage.getItem("jobApplications")) || [];
+        const listContainer = document.getElementById("appliedJobsList");
+
+        if (applications.length === 0) {
+            listContainer.innerHTML = "<p>No jobs applied yet.</p>";
+            return;
+        }
+
+        listContainer.innerHTML = applications
+            .map(
+                (app, index) => `
+            <div class="job-card p-3 mb-3">
+                <h5>${app.name} applied for "${app.mainTech}"</h5>
+                <p><strong>Email:</strong> ${app.email}</p>
+                <p><strong>Phone:</strong> ${app.phone}</p>
+               <p><strong>Exp:</strong>
+    ${app.exp === '0' ? "Dưới 1 năm" :
+                    app.exp === '1' ? "1 năm" :
+                        app.exp === '2' ? "2 năm" :
+                            "Trên 3 năm"}
+</p>
+
+                <p><strong>Name:</strong> ${app.name}</p>
+                <p><strong>Applied On:</strong> ${new Date(app.date).toLocaleDateString()}</p>
+                <button class="btn btn-danger btn-sm" onclick="deleteApplication(${index})">Delete</button>
+            </div>`
+            )
+            .join("");
+    }
+
+    // Hàm xóa ứng dụng khỏi Local Storage
+    function deleteApplication(index) {
+        const applications = JSON.parse(localStorage.getItem("jobApplications")) || [];
+        applications.splice(index, 1);
+        localStorage.setItem("jobApplications", JSON.stringify(applications));
+        displayAppliedJobs();
+    }
+
+</script>
+
+
+<script>
+    function validateForm() {
+        let isValid = true;
+
+        // Validate email
+        const emailInput = document.getElementById("email");
+        const emailError = document.getElementById("emailError");
+        if (!emailInput.value.endsWith("@gmail.com")) {
+            emailError.style.display = "block";
+            emailInput.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            emailError.style.display = "none";
+            emailInput.classList.remove("is-invalid");
+        }
+
+        // Validate số điện thoại
+        const phoneInput = document.getElementById("phone");
+        const phoneError = document.getElementById("phoneError");
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(phoneInput.value)) {
+            phoneError.style.display = "block";
+            phoneInput.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            phoneError.style.display = "none";
+            phoneInput.classList.remove("is-invalid");
+        }
+
+        return isValid;
+    }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Bootstrap Toast tự động hiển thị nếu có thông báo
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+
+        toastList.forEach(toast => toast.show());
+    });
+</script>
+
+
+<script>
+    function saveToLocalStorage() {
+        const fileInput = document.getElementById('file');
+        const file = fileInput.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64Data = event.target.result.split(',')[1]; // Lấy phần dữ liệu Base64
+                localStorage.setItem("tempFileData", base64Data);
+                localStorage.setItem("tempFileName", file.name);
+
+                // Hiển thị liên kết tải xuống
+                document.getElementById("tempDownloadLink").style.display = "block";
+            };
+            reader.readAsDataURL(file); // Chuyển tệp sang Base64
+        }
+    }
+
+    function downloadFromLocalStorage() {
+        const base64Data = localStorage.getItem("tempFileData");
+        const fileName = localStorage.getItem("tempFileName");
+
+        if (base64Data && fileName) {
+            // Tạo đối tượng Blob từ dữ liệu Base64
+            const byteCharacters = atob(base64Data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: "application/octet-stream" });
+
+            // Tạo liên kết tải xuống
+            const downloadLink = document.createElement("a");
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = fileName;
+            downloadLink.click();
+        } else {
+            alert("Không có tệp tạm thời để tải xuống.");
+        }
+    }
+</script>
 <!-- Bootstrap JS (for Modal functionality) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -113,6 +113,16 @@
     .actions button:hover {
       color: #007bff;
     }
+
+    #createAccount{
+      justify-content: end;
+      text-align: end;
+      background-color: #06a729;
+      padding: 5px;
+      border: black solid 1px;
+      text-decoration: none;
+      color: Black;
+    }
   </style>
 </head>
 <body>
@@ -162,6 +172,9 @@
         </select>
           <input type="text" id="search" name="search" placeholder="Search" />
           <button type="submit">🔍</button>
+
+          <a id="createAccount" href="/admin/getForm"> + Create new account</a>
+
       </div>
     </form>
   </div>
@@ -172,7 +185,7 @@
       <th>Name</th>
       <th>Email</th>
       <th>Phone</th>
-      <th>Current position</th>
+      <th>Username</th>
       <th>Status</th>
       <th>Role</th>
       <th>Action</th>
@@ -190,10 +203,9 @@
         <td th:text="${user.status ? 'Active' : 'Inactive'}"></td> <!-- Status -->
         <td th:text="${user.role}"></td>
         <td class="actions">
-          <a class="button" title="View" th:href="@{/users/{id}/edit(id=${user.id})}">👁️</a>
+          <a class="button" title="View" th:href="@{/admin/getUpdateForm/{id}(id=${user.id})}">👁️</a>
 
-
-          <button title="Edit" th:attr="data-id=${user.id}">✏️</button>
+          <button title="Edit" th:attr="data-id=${user.id}" th:href="@{/admin/getUpdateForm/{id}(id=${user.id})}">✏️</button>
           <button title="Delete" th:attr="data-id=${user.id}">❌</button>
         </td>
       </tr>
