@@ -115,7 +115,11 @@
             <artifactId>google-api-services-calendar</artifactId>
             <version>v3-rev20240705-2.0.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.auth</groupId>
+            <artifactId>google-auth-library-oauth2-http</artifactId>
+            <version>1.16.0</version>
+        </dependency>
         <!-- Gson for JSON processing -->
         <dependency>
             <groupId>com.google.code.gson</groupId>

@@ -11,6 +11,7 @@ import org.example.mock.Model.InterviewSchedule;
 import org.example.mock.Model.User;
 import org.example.mock.Repository.CandidateStatusRepository;
 import org.example.mock.Service.CandidateService;
+import org.example.mock.Service.GoogleCalendarService;
 import org.example.mock.Service.InterviewScheduleService;
 import org.example.mock.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+
+//@RestController//chỉ dành cho api trả về json hoặc chỗi
 @Controller
+
 @RequestMapping("/interviewschedules")
 public class InterviewScheduleController {
 
@@ -43,6 +47,64 @@ public class InterviewScheduleController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private GoogleCalendarService googleCalendarService;
+//    @PostMapping("/create")
+//    public String createInterviewSchedule(
+//            @RequestParam("candidateId") Long candidateId,
+//            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+//            @RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time,
+//            @RequestParam("interviewerId") Long interviewerId,
+//            Model model
+//    ) {
+//        // Lấy thông tin ứng viên
+//        Candidate candidate = candidateService.findById(candidateId);
+//        if (candidate == null) {
+//            throw new IllegalArgumentException("Candidate not found with ID: " + candidateId);
+//        }
+//
+//        // Tạo lịch phỏng vấn và lưu vào database
+//        interviewScheduleService.createInterviewSchedule(candidate, date, time, interviewerId);
+//
+//        // Lấy danh sách ứng viên sau khi tạo lịch phỏng vấn
+//        List<Candidate> candidates = candidateService.getAllCandidates();
+//        model.addAttribute("candidates", candidates);
+//
+//        // Trả về trang chứa danh sách các ứng viên đã tạo lịch phỏng vấn
+//        return "Interviewer/interviewschedule";
+//    }
+
+//@PostMapping("/create")
+//public ResponseEntity<String> createInterviewSchedule(
+//        @RequestParam("candidateId") Long candidateId,
+//        @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+//        @RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time,
+//        @RequestParam("interviewerId") Long interviewerId
+//) {
+//    // Lấy thông tin ứng viên
+//    Candidate candidate = candidateService.findById(candidateId);
+//    if (candidate == null) {
+//        return ResponseEntity.badRequest().body("Candidate not found with ID: " + candidateId);
+//    }
+//
+//    // Kiểm tra xem người phỏng vấn đã có lịch phỏng vấn tại thời gian này chưa
+//    List<InterviewSchedule> existingSchedules = interviewScheduleService.findSchedulesByInterviewerAndTime(interviewerId, date, time);
+//
+//    if (!existingSchedules.isEmpty()) {
+//        // Nếu đã có lịch phỏng vấn, trả về lỗi
+//        return ResponseEntity.badRequest().body("Interviewer is already scheduled at this time.");
+//    }
+//
+//    // Tạo lịch phỏng vấn và lưu vào database
+//    interviewScheduleService.createInterviewSchedule(candidate, date, time, interviewerId);
+//
+//    return ResponseEntity.ok("Schedule created successfully.");
+//}
+
+    //@GetMapping("/interviewers")
+//public List<User> getInterviewers() {
+//    return userService.getInterviewers(); // Gọi phương thức trong service để lấy interviewers
+//}
     @PostMapping("/create")
     public ResponseEntity<String> createInterviewSchedule(
             @RequestParam("candidateId") Long candidateId,
@@ -50,21 +112,46 @@ public class InterviewScheduleController {
             @RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time,
             @RequestParam("interviewerId") Long interviewerId
     ) {
-        // Lấy thông tin ứng viên
-        Candidate candidate = candidateService.findById(candidateId);
-        if (candidate == null) {
-            return ResponseEntity.badRequest().body("Candidate not found with ID: " + candidateId);
+        try {
+            Candidate candidate = candidateService.findById(candidateId);
+            if (candidate == null) {
+                return ResponseEntity.badRequest().body("Candidate not found.");
+            }
+
+            if (!interviewScheduleService.isInterviewerAvailable(interviewerId, date, time)) {
+                return ResponseEntity.badRequest().body("Interviewer is not available.");
+            }
+
+            InterviewSchedule schedule = interviewScheduleService.createInterviewSchedule(candidate, date, time, interviewerId);
+
+            // Tạo sự kiện trên Google Calendar
+            LocalDateTime startDateTime = LocalDateTime.of(date, time);
+            LocalDateTime endDateTime = startDateTime.plusHours(1);
+            String eventLink = googleCalendarService.createEvent(
+                    "primary",
+                    "Phỏng vấn: " + candidate.getName(),
+                    "Phỏng vấn với " + schedule.getInterviewer().getName(),
+                    startDateTime,
+                    endDateTime
+            );
+
+            return ResponseEntity.ok("Schedule created successfully. Google Calendar link: " + eventLink);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
+    }
 
-        // Kiểm tra xem người phỏng vấn có khả dụng tại thời gian này không
-        if (!interviewScheduleService.isInterviewerAvailable(interviewerId, date, time)) {
-            return ResponseEntity.badRequest().body("Interviewer is not available within 20 minutes of this time.");
-        }
 
-        // Tạo lịch phỏng vấn và lưu vào database
-        interviewScheduleService.createInterviewSchedule(candidate, date, time, interviewerId);
 
-        return ResponseEntity.ok("Schedule created successfully.");
+    // Lấy danh sách tất cả các lịch phỏng vấn
+    @GetMapping("/detail")
+    public String getAllInterviewSchedules(Model model) {
+        // Lấy danh sách tất cả lịch phỏng vấn từ service
+        List<InterviewSchedule> schedules = interviewScheduleService.getAllSchedules();
+        model.addAttribute("schedules", schedules);
+
+        // Trả về trang hiển thị danh sách lịch phỏng vấn
+        return "Interviewer/interviewschedule";
     }
 
     @PostMapping("/markAsInterviewed")
@@ -113,15 +200,15 @@ public class InterviewScheduleController {
         return ResponseEntity.ok("Schedule deleted and status updated to Đã hủy");
     }
 
-    @GetMapping("/detail")
-    public String getAllInterviewSchedules(Model model) {
-        // Lấy danh sách tất cả lịch phỏng vấn từ service
-        List<InterviewSchedule> schedules = interviewScheduleService.getAllSchedules();
-        model.addAttribute("schedules", schedules);
-
-        // Trả về trang hiển thị danh sách lịch phỏng vấn
-        return "Interviewer/interviewschedule";
-    }
+//    @GetMapping("/detail")
+//    public String getAllInterviewSchedules(Model model) {
+//        // Lấy danh sách tất cả lịch phỏng vấn từ service
+//        List<InterviewSchedule> schedules = interviewScheduleService.getAllSchedules();
+//        model.addAttribute("schedules", schedules);
+//
+//        // Trả về trang hiển thị danh sách lịch phỏng vấn
+//        return "Interviewer/interviewschedule";
+//    }
     @PostMapping("/uploadExcel")
     public ResponseEntity<String> uploadExcel(@RequestParam("file") MultipartFile file) {
         // Kiểm tra nếu tệp rỗng hoặc không phải tệp Excel

@@ -50,6 +50,8 @@ public class User {
     private Boolean status;
 
     private String avatar;
+    @Column(name = "google_calendar_link", length = 500)
+    private String googleCalendarLink;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
