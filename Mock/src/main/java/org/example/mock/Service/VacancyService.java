@@ -9,7 +9,10 @@ import org.example.mock.Model.PositionAll;
 import org.example.mock.Model.Vacancy;
 import org.example.mock.Model.VacancyStatus;
 import org.example.mock.Repository.VacancyRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,6 +21,8 @@ import java.util.List;
 
 @Service
 public class VacancyService {
+
+    private final Logger logger = LoggerFactory.getLogger(VacancyService.class);
 
     private final VacancyRepository vacancyRepository;
 
@@ -29,6 +34,7 @@ public class VacancyService {
     public List<Vacancy> getAllVacancies() {
         return vacancyRepository.findAll();
     }
+
     public List<Vacancy> getFilteredVacancies(Long positionId, String requiredSkills, Long departmentId, String status, String search) {
         VacancyStatus vacancyStatus = null;
         if (status != null && !status.isEmpty()) {
@@ -47,6 +53,7 @@ public class VacancyService {
     public List<PositionAll> getAllPositions() {
         return vacancyRepository.findAllPositions();
     }
+
     public List<String> getAllDetails() {
         return vacancyRepository.findAllDetails();
     }
@@ -84,13 +91,35 @@ public class VacancyService {
     public void updateVacancy(Vacancy vacancy) {
         vacancyRepository.save(vacancy);  // Save updated Vacancy entity
     }
+
     public List<String> getAllVacancyStatuses() {
         return Arrays.stream(VacancyStatus.values())
                 .map(Enum::name)  // Lấy tên của các enum
                 .collect(Collectors.toList());
     }
 
+    // Scheduled task to update vacancies every day at midnight
+    @Scheduled(cron = "0 * * * * ?")  // Chạy mỗi phút
+    public void updateExpiredVacancies() {
+        LocalDate today = LocalDate.now();
+        // Find vacancies with status ACTIVE, URGENT, or REOPENED and due_date before today
+        List<Vacancy> expiredVacancies = vacancyRepository.findExpiredVacancies(
+                today, Arrays.asList(VacancyStatus.ACTIVE, VacancyStatus.URGENT, VacancyStatus.REOPENED)
+        );
 
-    // Other methods for filter logic, if needed
+        // Update status to CLOSED for each expired vacancy
+        for (Vacancy vacancy : expiredVacancies) {
+            vacancy.setStatus(VacancyStatus.CLOSED);
+            vacancy.setUpdatedAt(LocalDateTime.now());
+            vacancyRepository.save(vacancy);
+        }
+        logger.info("Scheduled task running at: " + LocalDateTime.now());
+
+    }
+
+
+
 }
+    // Other methods for filter logic, if needed
+
 

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -46,6 +47,9 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
 
     @Query("SELECT DISTINCT v.status FROM Vacancy v")
     List<String> findAllStatuses();
+
+    @Query("SELECT v FROM Vacancy v WHERE v.dueDate < :today AND v.status IN :statuses")
+    List<Vacancy> findExpiredVacancies(@Param("today") LocalDate today, @Param("statuses") List<VacancyStatus> statuses);
 }
 
 
