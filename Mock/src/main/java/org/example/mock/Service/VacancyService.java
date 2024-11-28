@@ -32,7 +32,8 @@ public class VacancyService {
     }
 
     public List<Vacancy> getAllVacancies() {
-        return vacancyRepository.findAll();
+        return vacancyRepository.findByStatus(VacancyStatus.ACTIVE);
+
     }
 
     public List<Vacancy> getFilteredVacancies(Long positionId, String requiredSkills, Long departmentId, String status, String search) {
