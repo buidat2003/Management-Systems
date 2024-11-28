@@ -32,6 +32,8 @@ import org.springframework.core.io.Resource;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.core.io.UrlResource;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 @Controller
 public class VacancyController {
     private final VacancyService vacancyService;
@@ -370,7 +372,9 @@ public class VacancyController {
             @RequestParam("positionId") Long positionId,
             @RequestParam("departmentId") Long departmentId,
             @RequestParam("requiredSkills") String requiredSkills,  // Updated field
-            @ModelAttribute Vacancy vacancy) {
+            @ModelAttribute Vacancy vacancy,
+            RedirectAttributes redirectAttributes) {  // Add RedirectAttributes here
+
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -393,9 +397,12 @@ public class VacancyController {
                     .orElseThrow(() -> new IllegalArgumentException("Invalid position ID"));
 
             vacancy.setPosition(position);
-            vacancy.setDetails(requiredSkills);
+            vacancy.setRequiredSkillsAsJson(requiredSkills);
 
             vacancyService.createVacancy(vacancy);  // Create the job (Vacancy)
+            // Add success message
+            redirectAttributes.addFlashAttribute("successMessage", "Job created successfully!");
+
             return "redirect:/joblist";  // Redirect to job list after successful creation
         } else {
             throw new IllegalStateException("Authentication principal is not a User object");
@@ -406,8 +413,11 @@ public class VacancyController {
 
     // Handle job deletion
     @PostMapping("/Manager/deleteJob/{id}")
-    public String deleteJob(@PathVariable Long id) {
+    public String deleteJob(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         vacancyService.deleteVacancy(id);  // Delete job (Vacancy) by ID
+
+        // Add success message
+        redirectAttributes.addFlashAttribute("successMessage", "Job deleted successfully!");
         return "redirect:/joblist";  // Redirect back to job list after deletion
     }
     // Show form to edit a job
@@ -426,7 +436,6 @@ public class VacancyController {
         }
     }
 
-    // Handle form submission for job update
     @PostMapping("/manager/updateJob")
     public String updateJob(
             @RequestParam("positionId") Long positionId,
@@ -435,7 +444,8 @@ public class VacancyController {
             @RequestParam("status") VacancyStatus status,
             @RequestParam("type") JobType type,
             @RequestParam("dueDate") String dueDate,
-            @ModelAttribute Vacancy vacancy) {
+            @ModelAttribute Vacancy vacancy,
+            RedirectAttributes redirectAttributes) {
 
         // Retrieve Position and Department from the database
         PositionAll position = positionRepository.findById(positionId)
@@ -445,34 +455,25 @@ public class VacancyController {
 
         // Get the current logged-in user's information using Spring Security
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Assuming the principal is a User object
         User loggedInUser;
         if (authentication.getPrincipal() instanceof User) {
             loggedInUser = (User) authentication.getPrincipal();
         } else {
-            // If it's not a User object, you can handle this situation (e.g., throw an exception or log an error)
             throw new IllegalArgumentException("Authentication principal is not an instance of User");
         }
 
-        // Print the username for debugging purposes
-        String currentUsername = loggedInUser.getUsername();
-        System.out.println("Current logged-in username: " + currentUsername);
-
-        // Fetch the user from the repository to ensure it's up-to-date
-        loggedInUser = userRepository.findByUsername(currentUsername)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        // Ensure created_at is set during creation, if null
-        if (vacancy.getCreatedAt() == null) {
-            vacancy.setCreatedAt(LocalDateTime.now()); // Set current time if not already set
-            vacancy.setCreatedUser(loggedInUser); // Set the created user if it's a new vacancy
-        }
+        // Fetch the original vacancy from the database to avoid overwriting createdUser and createdAt
+        Vacancy existingVacancy = vacancyService.findById(vacancy.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Vacancy not found"));
 
         // Parse the string date into a LocalDate object
         LocalDate parsedDueDate = LocalDate.parse(dueDate);
 
-        // Update vacancy details
+        // Preserve the original createdUser and createdAt
+        vacancy.setCreatedUser(existingVacancy.getCreatedUser());
+        vacancy.setCreatedAt(existingVacancy.getCreatedAt());
+
+        // Update only the fields that need to be changed
         vacancy.setStatus(status);
         vacancy.setPosition(position);
         vacancy.setDepartment(department);
@@ -487,9 +488,13 @@ public class VacancyController {
         // Update the vacancy in the database
         vacancyService.updateVacancy(vacancy);
 
+        // Add success message
+        redirectAttributes.addFlashAttribute("successMessage", "Job updated successfully!");
+
         // Redirect to the view job page after successful update
         return "redirect:/Manager/viewJob/" + vacancy.getId();
     }
+
 
 
 

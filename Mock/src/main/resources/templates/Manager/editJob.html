@@ -75,6 +75,10 @@
         <button type="submit" class="btn btn-primary">Save Changes</button>
         <a th:href="@{/Manager/viewJob/{id}(id=${vacancy.id})}" class="btn btn-secondary">Cancel</a>
     </form>
+    <!-- Trong joblist.html hoặc các trang khác -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <p th:text="${successMessage}"></p>
+    </div>
 </div>
 
 <!-- Bootstrap JS -->

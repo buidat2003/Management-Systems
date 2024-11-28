@@ -90,6 +90,10 @@
 
       <button type="submit" class="btn btn-primary">Create Job</button>
     </form>
+    <!-- Trong joblist.html hoặc các trang khác -->
+    <div th:if="${successMessage}" class="alert alert-success">
+      <p th:text="${successMessage}"></p>
+    </div>
   </div>
 
   <!-- Bootstrap JS and dependencies -->
