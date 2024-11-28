@@ -10,6 +10,8 @@ import org.example.mock.Service.OfferService;
 import org.example.mock.Repository.CandidateRepository;
 import org.example.mock.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,11 +77,14 @@ public class CreateNewOfferController {
             @RequestParam("startDate") String startDate,
             @RequestParam("salary") String salary,
             @RequestParam("candidateId") String candidateId,
-
             Model model
     ) {
         try {
-            long createdUserId = 1;
+            // Lấy thông tin người dùng đang đăng nhập
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User user = (User) authentication.getPrincipal(); // Lấy đối tượng User đã đăng nhập
+            long createdUserId = user.getId(); // ID của người dùng đang đăng nhập
+
             // Convert candidateId và createdUserId to Long
             Long candidateIdLong = Long.parseLong(candidateId);
 
@@ -105,6 +110,7 @@ public class CreateNewOfferController {
             offer.setCandidate(candidates);
             offer.setCreatedUser(createdUser);
 
+            // Truy vấn Candidate và Reviews
             Candidate candidate = candidateRepository.findById(candidateIdLong).orElse(null);
 
             if (candidate == null) {
@@ -120,8 +126,6 @@ public class CreateNewOfferController {
             model.addAttribute("reviews", reviews);
             model.addAttribute("offerDate", LocalDate.now());
 
-
-
             // Save offer
             offerService.saveOffer(offer);
 
@@ -136,5 +140,6 @@ public class CreateNewOfferController {
             return "Offer/CreateNewOffer";
         }
     }
+
 
 }

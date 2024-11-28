@@ -62,9 +62,9 @@ public class ListAccountDetailByAdminController {
             model.addAttribute("departments", departmentRepository.findAll());  // Add departments for dropdown
         } else {
             model.addAttribute("errorMessage", "User not found");
-            return "/Admin/EditAccount";  // Return to edit page with error message
+            return "/Admin/AccountDetail";  // Return to edit page with error message
         }
-        return "/Admin/EditAccount";  // Ensure this matches your HTML page name
+        return "/Admin/AccountDetail";  // Ensure this matches your HTML page name
     }
 
     // Handle the update user request

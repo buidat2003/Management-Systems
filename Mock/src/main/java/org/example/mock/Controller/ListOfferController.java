@@ -4,12 +4,15 @@ package org.example.mock.Controller;
 import org.example.mock.Model.Candidate;
 import org.example.mock.Model.Offer;
 import org.example.mock.Model.Reviews;
+import org.example.mock.Model.User;
 import org.example.mock.Repository.Admin.OfferRepository;
 import org.example.mock.Repository.CandidateRepository;
 import org.example.mock.Repository.ReviewsRepository;
 import org.example.mock.Service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -80,8 +83,10 @@ public class ListOfferController {
                               @RequestParam String statusBan,
                               RedirectAttributes redirectAttributes) {
 
-        // Xác định ID của người dùng được tạo
-        long createdUserId = 1; // Giá trị giả định, cần thay đổi theo ứng dụng thực tế
+        // Lấy thông tin người dùng đang đăng nhập
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal(); // Lấy đối tượng User đã đăng nhập
+        long createdUserId = user.getId(); // ID của người dùng đang đăng nhập
 
         // Cập nhật các trường của offer
         int updated = offerRepository.updateOfferFields(id, startDate, salary, statusBan, createdUserId);
