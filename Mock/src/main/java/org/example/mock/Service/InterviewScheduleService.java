@@ -63,7 +63,7 @@ public class InterviewScheduleService {
         emailService.sendInterviewScheduleEmailToInterviewer(schedule);
 
         // Create or update the candidate's status to "Scheduled"
-        updateCandidateStatus(candidate, "Scheduled");
+//        updateCandidateStatus(candidate, "Đang chờ");
 
         return schedule;
     }
