@@ -23,5 +23,11 @@ public interface InterviewScheduleRepository extends JpaRepository<InterviewSche
     List<InterviewSchedule> findByInterviewerAndScheduleDate(@Param("interviewerId") Long interviewerId,
                                                              @Param("scheduleDate") LocalDate scheduleDate);
 
+    @Query("SELECT s FROM InterviewSchedule s " +
+            "WHERE s.scheduleDate < :currentDate OR " +
+            "(s.scheduleDate = :currentDate AND s.scheduleTime < :currentTime)")
+    List<InterviewSchedule> findPastSchedules(@Param("currentDate") LocalDate currentDate,
+                                              @Param("currentTime") LocalTime currentTime);
 
 }
+

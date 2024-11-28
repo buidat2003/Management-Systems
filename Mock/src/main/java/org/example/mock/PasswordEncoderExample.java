@@ -7,7 +7,7 @@ public class PasswordEncoderExample {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         // Mã hóa mật khẩu "password123"
-        String rawPassword = "password123";
+        String rawPassword = "1";
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
         // In ra mật khẩu đã mã hóa

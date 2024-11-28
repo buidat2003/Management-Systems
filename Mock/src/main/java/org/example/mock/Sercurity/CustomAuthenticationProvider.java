@@ -29,7 +29,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        // TÃ¬m ngÆ°á»i dÃ¹ng trong cÆ¡ sá»Ÿ dá»¯ liá»‡u
         Optional<User> userOpt = userRepository.findByUsername(username);
         if (userOpt.isEmpty()) {
             throw new BadCredentialsException("User not found");  // Sá»­ dá»¥ng BadCredentialsException

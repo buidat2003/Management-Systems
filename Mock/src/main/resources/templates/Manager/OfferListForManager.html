@@ -239,7 +239,7 @@
                           style="display:inline;">
                         <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"
                                                                         style="color: #f44336"></i></button>
-                        <input type="hidden" name="reason" id="rejectReason-${offer.id}">
+<!--                        <input type="hidden" name="reason" id="rejectReason-${offer.id}">-->
                     </form>
                 </td>
             </tr>
@@ -313,8 +313,6 @@
     </div>
 </div>
 
-
-
 <script>
     function updatePageSize() {
         const selectedSize = document.getElementById('display').value; // Lấy giá trị đã chọn
@@ -357,27 +355,21 @@
         });
 
         // Sự kiện cho nút Reject
-        document.querySelectorAll(".btn-danger").forEach(button => {
-            button.addEventListener("click", function (e) {
-                e.preventDefault();
-                rejectForm = this.closest("form");
-                $('#rejectModal').modal('show');
-            });
-        });
+        // document.querySelectorAll(".btn-danger").forEach(button => {
+        //     button.addEventListener("click", function (e) {
+        //         e.preventDefault();
+        //         rejectForm = this.closest("form");
+        //         $('#rejectModal').modal('show');
+        //     });
+        // });
 
         // Xử lý khi nhấn Yes trên modal Reject
-        document.getElementById("rejectConfirmBtn").addEventListener("click", function () {
-            if (rejectForm) {
-                // Gắn lý do từ input vào hidden field
-                const reasonInput = document.getElementById("rejectReasonInput").value;
-                const hiddenInput = rejectForm.querySelector("input[name='reason']");
-                if (hiddenInput) {
-                    hiddenInput.value = reasonInput;
-                }
-                rejectForm.submit();
-            }
-            $('#rejectModal').modal('hide');
-        });
+        // document.getElementById("rejectConfirmBtn").addEventListener("click", function () {
+        //     if (rejectForm) {
+        //         rejectForm.submit();
+        //     }
+        //     $('#rejectModal').modal('hide');
+        // });
     });
 </script>
 
