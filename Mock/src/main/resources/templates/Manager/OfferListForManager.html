@@ -185,7 +185,7 @@
 
                 <label for="statusFilter">Status: </label>
                 <select id="statusFilter" name="status" onchange="updateStatusFilter()">
-                    <option th:value="" th:selected="${status == null || status == ''}">All</option>
+                    <option value="" th:selected="${status == null || status == ''}">All</option>
                     <option th:value="${ApproveStatus.PENDING}" th:selected="${status == ApproveStatus.PENDING}">Pending</option>
                     <option th:value="${ApproveStatus.APPROVED}" th:selected="${status == ApproveStatus.APPROVED}">Approved</option>
                     <option th:value="${ApproveStatus.REJECTED}" th:selected="${status == ApproveStatus.REJECTED}">Rejected</option>
@@ -326,6 +326,7 @@
 <script>
     function updateStatusFilter() {
         const selectedStatus = document.getElementById('statusFilter').value; // Lấy giá trị đã chọn
+        console.log("Selected Status: ", selectedStatus);
         const currentUrl = new URL(window.location.href); // Lấy URL hiện tại
         currentUrl.searchParams.set('status', selectedStatus); // Cập nhật tham số 'status'
         currentUrl.searchParams.set('page', 0); // Reset về trang đầu tiên
