@@ -43,7 +43,7 @@ public class SercurityConfiguration {
                                 "/Manager/viewJob/{id}", "/offers", "/offers/{id}/detail", "/offers/update",
                                 "/offers/create", "/profile","/profile/editprofile", "/changepassword/*", "/changepassword/submit",
                                 "/vacancy/*", "/submitApplication", "/downloadCV", "/uploadTemporaryFile",
-                                "/download/cv/*","/jobcandidate", "/static/**", "/offers/infoCreate/{id}")
+                                "/download/cv/*","/jobcandidate", "/static/**", "/offers/infoCreate/{id}","/api/users/update-all-calendar-links","/api/users/update-calendar-links-for-interviewers")
                         .permitAll()
                         .requestMatchers("/current-user").authenticated()
                         // Role-based access restrictions

@@ -272,6 +272,10 @@
                             </th:block>
                         </select>
                     </div>
+                    <!-- View Google Calendar -->
+                    <div id="calendarLinkContainer" class="mb-3 d-none">
+                        <a id="calendarLink" href="#" target="_blank" class="btn btn-info">View Google Calendar</a>
+                    </div>
 
                     <div class="mb-3">
                         <label for="interviewDate" class="form-label">Interview Date</label>
@@ -307,53 +311,34 @@
     </div>
 </div>
 
+<script>
+    document.getElementById('interviewerSelect').addEventListener('change', async function () {
+        const interviewerId = this.value;
+        const calendarLinkContainer = document.getElementById('calendarLinkContainer');
+        const calendarLink = document.getElementById('calendarLink');
+
+        if (!interviewerId) {
+            calendarLinkContainer.classList.add('d-none');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/calendar/interviewer-link?interviewerId=${interviewerId}`);
+            if (response.ok) {
+                const link = await response.text();
+                calendarLink.href = link;
+                calendarLinkContainer.classList.remove('d-none');
+            } else {
+                calendarLinkContainer.classList.add('d-none');
+            }
+        } catch (error) {
+            console.error('Error fetching calendar link:', error);
+            calendarLinkContainer.classList.add('d-none');
+        }
+    });
+</script>
 
 <script>
-    // function scheduleInterview(button) {
-    //     const candidateId = button.getAttribute("data-candidate-id");
-    //     document.getElementById('candidateId').value = candidateId; // Gán giá trị candidateId vào form
-    //     let scheduleModal = new bootstrap.Modal(document.getElementById('scheduleModal'));
-    //     scheduleModal.show();
-    // }
-    // document.getElementById('scheduleForm').addEventListener('submit', async function(event) {
-    //     event.preventDefault();
-    //
-    //     const candidateId = document.getElementById('candidateId').value;
-    //     const date = document.getElementById('interviewDate').value;
-    //     const time = document.getElementById('interviewTime').value;
-    //     const interviewerId = 4; // Đặt ID người phỏng vấn mặc định
-    //
-    //     const successToast = document.getElementById('successToast');
-    //     const errorToast = document.getElementById('errorToast');
-    //
-    //     try {
-    //         const response = await fetch('/interviewschedules/create', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/x-www-form-urlencoded'
-    //             },
-    //             body: `candidateId=${candidateId}&date=${date}&time=${time}&interviewerId=${interviewerId}`
-    //         });
-    //
-    //         if (response.ok) {
-    //             // Hiển thị toast thông báo thành công
-    //             const toast = new bootstrap.Toast(successToast);
-    //             toast.show();
-    //         } else {
-    //             // Nếu có lỗi, hiển thị thông báo lỗi trong toast
-    //             const errorMessage = await response.text();
-    //             errorToast.querySelector('.toast-body').textContent = errorMessage;
-    //             const toast = new bootstrap.Toast(errorToast);
-    //             toast.show();
-    //         }
-    //     } catch (error) {
-    //         console.error("Error:", error);
-    //         errorToast.querySelector('.toast-body').textContent = "Error creating schedule.";
-    //         const toast = new bootstrap.Toast(errorToast);
-    //         toast.show();
-    //     }
-    // });
-
     function scheduleInterview(button) {
         const candidateId = button.getAttribute("data-candidate-id");
         document.getElementById('candidateId').value = candidateId; // Gán giá trị candidateId vào form
@@ -402,47 +387,6 @@
             toast.show();
         }
     });
-
-
-    //mã cũ chuyển sang trang detail
-    // document.getElementById('scheduleForm').addEventListener('submit', async function(event) {
-    //     event.preventDefault();
-    //
-    //     const candidateId = document.getElementById('candidateId').value;
-    //     const date = document.getElementById('interviewDate').value;
-    //     const time = document.getElementById('interviewTime').value;
-    //     const interviewerId = 1; // Đặt ID người phỏng vấn mặc định
-    //
-    //     try {
-    //         const response = await fetch('/interviewschedules/create', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/x-www-form-urlencoded'
-    //             },
-    //             body: `candidateId=${candidateId}&date=${date}&time=${time}&interviewerId=${interviewerId}`
-    //         });
-    //
-    //         const errorMessageDiv = document.getElementById('error-message'); // Lấy div hiển thị lỗi
-    //
-    //         if (response.ok) {
-    //             // Nếu tạo lịch thành công, chuyển đến trang chi tiết lịch phỏng vấn
-    //             const redirectUrl = `/interviewschedules/detail`;
-    //             window.location.href = redirectUrl;
-    //         } else {
-    //             // Nếu có lỗi (ví dụ: lịch phỏng vấn trùng), hiển thị thông báo lỗi
-    //             const errorMessage = await response.text(); // Lấy thông báo lỗi từ server
-    //             errorMessageDiv.textContent = errorMessage; // Đặt nội dung lỗi
-    //             errorMessageDiv.classList.remove('d-none'); // Hiển thị div lỗi
-    //         }
-    //     } catch (error) {
-    //         console.error("Error:", error);
-    //         errorMessageDiv.textContent = "Error creating schedule.";
-    //         errorMessageDiv.classList.remove('d-none'); // Hiển thị div lỗi
-    //     }
-    // });
-
-
-
 </script>
 <!--<script>-->
 <!--    function scheduleInterview(button) {-->
