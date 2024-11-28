@@ -227,9 +227,9 @@
       <div class="form-group">
         <label for="role">Role:</label>
         <select id="role" th:field="*{role}" required>
-          <option th:value="Recruiter">Recruiter</option>
-          <option th:value="Manager">Manager</option>
-          <option th:value="Interviewer">Interviewer</option>
+          <option th:value="RECRUITER">Recruiter</option>
+          <option th:value="MANAGER">Manager</option>
+          <option th:value="INTERVIEWER">Interviewer</option>
         </select>
         <span class="text-danger" th:errors="*{role}"></span>
       </div>

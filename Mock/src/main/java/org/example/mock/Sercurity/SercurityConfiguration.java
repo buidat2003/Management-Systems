@@ -38,11 +38,9 @@ public class SercurityConfiguration {
                 .authenticationProvider(customAuthenticationProvider)
                 .authorizeRequests(authz -> authz
                         // Allow unauthenticated access to these endpoints
-                        .requestMatchers("/login", "/home", "/forgot", "/recovery", "/newpass",
-
-                                "/admin/getForm", "/admin/createAccount", "/admin/AccountList", "/admin/addAccount",
-                                "/admin/getUpdateForm/{id}", "/admin/getUpdateForm", "/admin/update", "/joblist",
-                                "/Manager/viewJob/{id}", "/users","/offers", "/offers/{id}/detail", "/offers/update",
+                        .requestMatchers("/login", "/home", "/forgot", "/recovery",
+                                "/newpass", "/admin/createAccount", "/joblist",
+                                "/Manager/viewJob/{id}", "/offers", "/offers/{id}/detail", "/offers/update",
                                 "/offers/create", "/profile","/profile/editprofile", "/changepassword/*", "/changepassword/submit",
                                 "/vacancy/*", "/submitApplication", "/downloadCV", "/uploadTemporaryFile",
                                 "/download/cv/*","/jobcandidate", "/static/**", "/offers/infoCreate/{id}")
@@ -50,7 +48,7 @@ public class SercurityConfiguration {
                         .requestMatchers("/current-user").authenticated()
                         // Role-based access restrictions
 
-                        .requestMatchers("/admin/**","/admin/getForm", "/admin/createAccount").hasRole("ADMIN")
+                        .requestMatchers("/admin/**","/admin/update","/users","/admin/AccountList","/admin/getForm", "/admin/createAccount", "/admin/addAccount", "/admin/getUpdateForm/{id}", "/admin/getUpdateForm").hasRole("ADMIN")
                         .requestMatchers("/recruiter/**","/filterCandidates","/cancelCandidate","/interviewschedules/create","/manager/editJob/{id}", "/Manager/deleteJob/{id}",
                                 "/joblist", "/manager/updateJob", "/Manager/viewJob/{id}","/manager/CreateJob", "/manager/createJob", "/offers/create", "/offers/infoCreate/{id}" ).hasRole("RECRUITER")
                         .requestMatchers("/manager/**", "/ApproveReject/**", "/ApproveReject/offers","/ApproveReject/viewOffer/{id}",
@@ -95,7 +93,7 @@ public class SercurityConfiguration {
             // Redirect based on the user's role
             switch (role) {
                 case "ADMIN":
-                    response.sendRedirect("/admin/dashboard");
+                    response.sendRedirect("/users");
                     break;
                 case "RECRUITER":
                     response.sendRedirect("/filterCandidates");
