@@ -184,135 +184,6 @@
                     <th>Interview Action</th>
                 </tr>
                 </thead>
-<!--                <tbody>-->
-<!--                <tr th:each="candidate : ${candidates}">-->
-<!--                    <td th:text="${candidate.name}">Name</td>-->
-<!--                    <td th:text="${candidate.vacancy.position.name}">Position</td>-->
-<!--                    <td th:text="${candidate.education}">Vacancy's Department</td>-->
-<!--                    <td th:text="${candidate.mainTech}">Main-Tech</td>-->
-<!--                    <td th:text="${candidate.submitDate}">Submitted Date</td>-->
-<!--                    <td>-->
-<!--                        <span th:if="${candidate.exp == '0'}" th:text="'Lower 1 year'">Exp</span>-->
-<!--                        <span th:if="${candidate.exp == '1'}" th:text="'1 year'">Exp</span>-->
-<!--                        <span th:if="${candidate.exp == '2'}" th:text="'2 years'">Exp</span>-->
-<!--                        <span th:if="${candidate.exp == '3'}" th:text="'Higher 3 years'">Exp</span>-->
-<!--                    </td>-->
-
-<!--                    <td>-->
-<!--                        <span th:if="${candidateStatuses[candidate.id] == 'Đang chờ'}" class="badge bg-warning" th:text="${candidateStatuses[candidate.id]}"></span>-->
-<!--                        <span th:if="${candidateStatuses[candidate.id] == 'Đã hủy'}" class="badge bg-danger" th:text="${candidateStatuses[candidate.id]}"></span>-->
-<!--                        <span th:if="${candidateStatuses[candidate.id] == 'Đã phỏng vấn'}" class="badge bg-primary" th:text="${candidateStatuses[candidate.id]}"></span>-->
-<!--                    </td>-->
-<!--                    <td>-->
-<!--            <span th:if="${candidateRatings[candidate.id] != null}"-->
-<!--                  th:text="${#numbers.formatDecimal(candidateRatings[candidate.id], 1, 1)} + ' ★'"></span>-->
-<!--                        <span th:if="${candidateRatings[candidate.id] == null}">No Ratings</span>-->
-<!--                    </td>-->
-<!--                    <td>-->
-<!--                        <a th:href="@{/download/cv/{candidateId}(candidateId=${candidate.id})}" download class="btn btn-success btn-sm">-->
-<!--                            <i class="bi bi-download"></i> Download-->
-<!--                        </a>-->
-<!--                    </td>-->
-
-<!--                    <td>-->
-<!--                        &lt;!&ndash; Chỉ hiển thị nút "Cancel Candidate" nếu trạng thái không phải là "Đã hủy" &ndash;&gt;-->
-<!--                        <form th:action="@{/cancelCandidate}" method="post" style="display: inline;" th:if="${candidateStatuses[candidate.id] != 'Đã hủy' && candidateStatuses[candidate.id] != 'Đã phỏng vấn'}">-->
-<!--                            <input type="hidden" name="candidateId" th:value="${candidate.id}">-->
-<!--                            <button type="submit" class="btn btn-primary btn-sm">-->
-<!--                                <i class="bi bi-x-circle"></i> Cancel Candidate-->
-<!--                            </button>-->
-<!--                        </form>-->
-<!--                        <a href="/interviewschedules/detail" class="btn btn-warning btn-sm"-->
-<!--                           th:if="${candidateStatuses[candidate.id] != 'Đang chờ' && candidateStatuses[candidate.id] != 'Đã hủy'}">-->
-<!--                            <i class="bi bi-people-fill"></i> View-->
-<!--                        </a>-->
-
-<!--                        &lt;!&ndash;                        <button class="btn btn-info btn-sm" onclick="scheduleInterview(this)" th:data-candidate-id="${candidate.id}">&ndash;&gt;-->
-<!--                        &lt;!&ndash;                            <i class="bi bi-calendar-event"></i> Create Schedule&ndash;&gt;-->
-<!--                        &lt;!&ndash;                        </button>&ndash;&gt;-->
-<!--                        <button class="btn btn-info btn-sm" onclick="scheduleInterview(this)" th:data-candidate-id="${candidate.id}"-->
-<!--                                th:if="${candidateStatuses[candidate.id] != 'Đã hủy' && candidateStatuses[candidate.id] != 'Đã phỏng vấn'}">-->
-<!--                            <i class="bi bi-calendar-event"></i> Create Schedule-->
-<!--                        </button>-->
-
-<!--&lt;!&ndash;                        <a th:href="@{/offers/infoCreate/{id}(id=${candidate.id})}" class="btn btn-secondary btn-sm"&ndash;&gt;-->
-<!--&lt;!&ndash;                           th:if="${candidateStatuses[candidate.id] != 'Đang chờ' && candidateStatuses[candidate.id] != 'Đã hủy'}">&ndash;&gt;-->
-<!--&lt;!&ndash;                        >&ndash;&gt;-->
-<!--&lt;!&ndash;                            <i class="bi bi-arrow-right-circle"></i> Create Offer&ndash;&gt;-->
-<!--&lt;!&ndash;                        </a>&ndash;&gt;-->
-<!--                        <a th:href="@{/offers/infoCreate/{id}(id=${candidate.id})}" class="btn btn-secondary btn-sm"-->
-<!--                           th:if="${candidateStatuses[candidate.id] != 'Đang chờ' && candidateStatuses[candidate.id] != 'Đã hủy' && (candidateRatings[candidate.id] == null || candidateRatings[candidate.id] != null && candidateRatings[candidate.id] >= 3)}">-->
-<!--                            <i class="bi bi-arrow-right-circle"></i> Create Offer-->
-<!--                        </a>-->
-
-<!--                    </td>-->
-
-<!--                    </td>-->
-<!--                </tr>-->
-<!--                </tbody>-->
-
-
-<!--                <tbody>-->
-<!--                <tr th:each="candidate : ${candidates}">-->
-<!--                    <td th:text="${candidate.name}">Name</td>-->
-<!--                    <td th:text="${candidate.vacancy.position.name}">Position</td>-->
-<!--                    <td th:text="${candidate.education}">Vacancy's Department</td>-->
-<!--                    <td th:text="${candidate.mainTech}">Main-Tech</td>-->
-<!--                    <td th:text="${candidate.submitDate}">Submitted Date</td>-->
-<!--                    <td>-->
-<!--                        <span th:if="${candidate.exp == '0'}" th:text="'Lower 1 year'">Exp</span>-->
-<!--                        <span th:if="${candidate.exp == '1'}" th:text="'1 year'">Exp</span>-->
-<!--                        <span th:if="${candidate.exp == '2'}" th:text="'2 years'">Exp</span>-->
-<!--                        <span th:if="${candidate.exp == '3'}" th:text="'Higher 3 years'">Exp</span>-->
-<!--                    </td>-->
-
-<!--                    <td>-->
-<!--                        <span th:if="${candidateStatuses[candidate.id] == 'Đang chờ'}" class="badge bg-warning" th:text="${candidateStatuses[candidate.id]}"></span>-->
-<!--                        <span th:if="${candidateStatuses[candidate.id] == 'Đã hủy'}" class="badge bg-danger" th:text="${candidateStatuses[candidate.id]}"></span>-->
-<!--                        <span th:if="${candidateStatuses[candidate.id] == 'Đã phỏng vấn'}" class="badge bg-primary" th:text="${candidateStatuses[candidate.id]}"></span>-->
-<!--                    </td>-->
-
-<!--                    <td>-->
-<!--            <span th:if="${candidateRatings[candidate.id] != null}"-->
-<!--                  th:text="${#numbers.formatDecimal(candidateRatings[candidate.id], 1, 1)} + ' ★'"></span>-->
-<!--                        <span th:if="${candidateRatings[candidate.id] == null}">No Ratings</span>-->
-<!--                    </td>-->
-
-<!--                    <td>-->
-<!--                        &lt;!&ndash; Hiển thị bình luận nếu có &ndash;&gt;-->
-<!--                        <span th:if="${candidateRatings[candidate.id] != null}" th:text="${candidateRatings[candidate.id].comment}">No Comment</span>-->
-<!--                        <span th:if="${candidateRatings[candidate.id] == null}">No Comments</span>-->
-<!--                    </td>-->
-
-<!--                    <td>-->
-<!--                        <a th:href="@{/download/cv/{candidateId}(candidateId=${candidate.id})}" download class="btn btn-success btn-sm">-->
-<!--                            <i class="bi bi-download"></i> Download-->
-<!--                        </a>-->
-<!--                    </td>-->
-
-<!--                    <td>-->
-<!--                        <form th:action="@{/cancelCandidate}" method="post" style="display: inline;" th:if="${candidateStatuses[candidate.id] != 'Đã hủy' && candidateStatuses[candidate.id] != 'Đã phỏng vấn'}">-->
-<!--                            <input type="hidden" name="candidateId" th:value="${candidate.id}">-->
-<!--                            <button type="submit" class="btn btn-primary btn-sm">-->
-<!--                                <i class="bi bi-x-circle"></i> Cancel Candidate-->
-<!--                            </button>-->
-<!--                        </form>-->
-<!--                        <a href="/interviewschedules/detail" class="btn btn-warning btn-sm"-->
-<!--                           th:if="${candidateStatuses[candidate.id] != 'Đang chờ' && candidateStatuses[candidate.id] != 'Đã hủy'}">-->
-<!--                            <i class="bi bi-people-fill"></i> View-->
-<!--                        </a>-->
-<!--                        <button class="btn btn-info btn-sm" onclick="scheduleInterview(this)" th:data-candidate-id="${candidate.id}"-->
-<!--                                th:if="${candidateStatuses[candidate.id] != 'Đã hủy' && candidateStatuses[candidate.id] != 'Đã phỏng vấn'}">-->
-<!--                            <i class="bi bi-calendar-event"></i> Create Schedule-->
-<!--                        </button>-->
-
-<!--                        <a th:href="@{/offers/infoCreate/{id}(id=${candidate.id})}" class="btn btn-secondary btn-sm"-->
-<!--                           th:if="${candidateStatuses[candidate.id] != 'Đang chờ' && candidateStatuses[candidate.id] != 'Đã hủy' && (candidateRatings[candidate.id] == null || candidateRatings[candidate.id] != null && candidateRatings[candidate.id] >= 3)}">-->
-<!--                            <i class="bi bi-arrow-right-circle"></i> Create Offer-->
-<!--                        </a>-->
-<!--                    </td>-->
-<!--                </tr>-->
-<!--                </tbody>-->
                 <tbody>
                 <tr th:each="candidate : ${candidates}">
                     <td th:text="${candidate.name}">Name</td>
@@ -375,10 +246,18 @@
                             <i class="bi bi-calendar-event"></i> Create Schedule
                         </button>
 
+<!--                        <a th:href="@{/offers/infoCreate/{id}(id=${candidate.id})}" class="btn btn-secondary btn-sm"-->
+<!--                           th:if="${candidateStatuses[candidate.id] != 'Đang chờ' && candidateStatuses[candidate.id] != 'Đã hủy' && (candidateRatingsAndComments[candidate.id] == null || candidateRatingsAndComments[candidate.id] != null && candidateRatingsAndComments[candidate.id][1] >= 3)}">-->
+<!--                            <i class="bi bi-arrow-right-circle"></i> Create Offer-->
+<!--                        </a>-->
                         <a th:href="@{/offers/infoCreate/{id}(id=${candidate.id})}" class="btn btn-secondary btn-sm"
-                           th:if="${candidateStatuses[candidate.id] != 'Đang chờ' && candidateStatuses[candidate.id] != 'Đã hủy' && (candidateRatingsAndComments[candidate.id] == null || candidateRatingsAndComments[candidate.id] != null && candidateRatingsAndComments[candidate.id][1] >= 3)}">
+                           th:if="${candidateStatuses[candidate.id] != 'Đang chờ' && candidateStatuses[candidate.id] != 'Đã hủy' &&
+           (candidateRatingsAndComments[candidate.id] == null || candidateRatingsAndComments[candidate.id][0][1] >= 3)}">
                             <i class="bi bi-arrow-right-circle"></i> Create Offer
                         </a>
+
+
+
                     </td>
                 </tr>
                 </tbody>
