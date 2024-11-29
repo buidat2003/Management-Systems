@@ -10,10 +10,16 @@ import java.util.Map;
 
 public interface ReviewsRepository extends JpaRepository<Reviews, Long> {
 
-    @Query("SELECT r.candidate.id, r.rating " +
+//    @Query("SELECT r.candidate.id, r.rating " +
+//            "FROM Reviews r " +
+//            "WHERE r.candidate.id IN :candidateIds")
+//    List<Object[]> findRatingsByCandidateIds(@Param("candidateIds") List<Long> candidateIds);
+
+    @Query("SELECT r.candidate.id, r.rating, r.comment " +
             "FROM Reviews r " +
             "WHERE r.candidate.id IN :candidateIds")
-    List<Object[]> findRatingsByCandidateIds(@Param("candidateIds") List<Long> candidateIds);
+    List<Object[]> findRatingsAndCommentsByCandidateIds(@Param("candidateIds") List<Long> candidateIds);
+
 
     List<Reviews> findByCandidateId(Long candidateId);
 
