@@ -43,7 +43,15 @@ public class ListOfferController {
     public String showOffers(Model model) {
         // Lấy tất cả các offer từ database
         List<Offer> offers = offerService.getAllOffers();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal(); // Lấy đối tượng User đã đăng nhập
+        long createdUserId = user.getId(); // ID của người dùng đang đăng nhập
+        String username = user.getUsername();  // Tên người dùng
+        String role = user.getRole().toString();  // Vai trò của người dùng (nếu có)
 
+        // Thêm thông tin người dùng vào model
+        model.addAttribute("username", username);
+        model.addAttribute("role", role);
         // Thêm danh sách offer vào model để hiển thị trong view
         model.addAttribute("offers", offers);
 
@@ -67,7 +75,15 @@ public class ListOfferController {
 
         // Truy vấn danh sách reviews
         List<Reviews> reviews = reviewsRepository.findByCandidateId(idCandidate);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal(); // Lấy đối tượng User đã đăng nhập
+        long createdUserId = user.getId(); // ID của người dùng đang đăng nhập
+        String username = user.getUsername();  // Tên người dùng
+        String role = user.getRole().toString();  // Vai trò của người dùng (nếu có)
 
+        // Thêm thông tin người dùng vào model
+        model.addAttribute("username", username);
+        model.addAttribute("role", role);
         model.addAttribute("candidate", candidate);
         model.addAttribute("reviews", reviews);
         model.addAttribute("offer", offer);

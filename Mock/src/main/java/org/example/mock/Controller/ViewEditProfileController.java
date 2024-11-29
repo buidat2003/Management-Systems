@@ -3,6 +3,8 @@ package org.example.mock.Controller;
 import org.example.mock.Model.User;
 import org.example.mock.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +24,19 @@ public class ViewEditProfileController {
     // Display user profile based on user ID
     @GetMapping("/profile")
     public String showUserProfile(Model model) {
-        User user = userService.getUserById(1L);  // Get user info by ID (1L is just an example)
-        model.addAttribute("user", user);  // Add user data to model
-        return "Admin/profile";  // Return the profile page
+        // Lấy thông tin xác thực người dùng đăng nhập
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal(); // Lấy đối tượng User đã đăng nhập
+        long createdUserId = user.getId(); // ID của người dùng đang đăng nhập
+
+        // Lấy thông tin người dùng bằng ID
+        User loggedInUser = userService.getUserById(createdUserId);
+
+        // Thêm thông tin người dùng vào model
+        model.addAttribute("user", loggedInUser);
+
+        // Trả về trang profile
+        return "Admin/profile";
     }
 
     // Save updated user profile information
