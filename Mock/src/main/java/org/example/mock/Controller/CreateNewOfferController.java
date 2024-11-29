@@ -55,6 +55,17 @@ public class CreateNewOfferController {
         // Truy vấn danh sách reviews của candidate
         List<Reviews> reviews = reviewsRepository.findByCandidateId(id);
 
+        // Lấy thông tin người dùng đang đăng nhập từ SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();  // Lấy đối tượng User đã đăng nhập
+        long createdUserId = user.getId();  // ID của người dùng đang đăng nhập
+        String username = user.getUsername();  // Tên người dùng
+        String role = user.getRole().toString();  // Vai trò của người dùng (nếu có)
+
+        // Thêm thông tin người dùng vào model
+        model.addAttribute("username", username);
+        model.addAttribute("role", role);
+
         // Thêm dữ liệu vào model để hiển thị trên view
         model.addAttribute("candidate", candidate);
         model.addAttribute("reviews", reviews);
@@ -84,7 +95,12 @@ public class CreateNewOfferController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User user = (User) authentication.getPrincipal(); // Lấy đối tượng User đã đăng nhập
             long createdUserId = user.getId(); // ID của người dùng đang đăng nhập
+            String username = user.getUsername();  // Tên người dùng
+            String role = user.getRole().toString();  // Vai trò của người dùng (nếu có)
 
+            // Thêm thông tin người dùng vào model
+            model.addAttribute("username", username);
+            model.addAttribute("role", role);
             // Convert candidateId và createdUserId to Long
             Long candidateIdLong = Long.parseLong(candidateId);
 

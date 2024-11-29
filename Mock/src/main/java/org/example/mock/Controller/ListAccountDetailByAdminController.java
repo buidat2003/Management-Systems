@@ -4,12 +4,12 @@ import org.example.mock.Model.User;
 import org.example.mock.Repository.UserRepository;
 import org.example.mock.Repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +48,15 @@ public class ListAccountDetailByAdminController {
         if (display != null) {
             users = users.stream().limit(display).toList();
         }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal(); // Lấy đối tượng User đã đăng nhập
+        long createdUserId = user.getId(); // ID của người dùng đang đăng nhập
+        String username = user.getUsername();  // Tên người dùng
+        String role = user.getRole().toString();  // Vai trò của người dùng (nếu có)
 
+        // Thêm thông tin người dùng vào model
+        model.addAttribute("username", username);
+        model.addAttribute("role", role);
         model.addAttribute("users", users);
         return "/Admin/AccountList";
     }
@@ -83,6 +91,24 @@ public class ListAccountDetailByAdminController {
 
         // Chuyển hướng về danh sách người dùng hoặc trang chi tiết người dùng
         return "redirect:/users/{id}/edit"; // Hoặc trang khác nếu cần
+    }
+
+    @PostMapping("/users/{id}/activate")
+    @ResponseBody
+    public ResponseEntity<Void> activateUser(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        user.setStatus(true); // Kích hoạt tài khoản
+        userRepository.save(user);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/users/{id}/deactivate")
+    @ResponseBody
+    public ResponseEntity<Void> deactivateUser(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        user.setStatus(false); // Vô hiệu hóa tài khoản
+        userRepository.save(user);
+        return ResponseEntity.ok().build();
     }
 
 }
