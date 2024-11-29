@@ -63,6 +63,39 @@ public class InterviewCandidateController {
 //
 //        return "Interviewer/interviewcandidate";
 //    }
+//    @GetMapping("/filterCandidates")
+//    public String filterCandidates(
+//            @RequestParam(required = false) String status,
+//            @RequestParam(required = false) Integer experience,
+//            @RequestParam(required = false) String search,
+//            Model model) {
+//
+//        // Lọc danh sách ứng viên
+//        List<Candidate> candidates = candidateService.filterCandidates(status, experience, search);
+//
+//        // Lấy trạng thái mới nhất của từng ứng viên
+//        Map<Long, String> candidateStatuses = candidateService.getLatestStatusByCandidateId(candidates);
+//
+//        // Lấy danh sách reviewer
+//        List<User> interviewers = userService.getInterviewers();
+//
+//        // Lấy tất cả rating của từng ứng viên
+//        List<Long> candidateIds = candidates.stream().map(Candidate::getId).toList();
+//        Map<Long, List<Integer>> candidateRatings = reviewsService.getRatingsByCandidateId(candidateIds);
+//
+//        // Thêm dữ liệu vào model
+//        model.addAttribute("candidates", candidates);
+//        model.addAttribute("candidateStatuses", candidateStatuses);
+//        model.addAttribute("interviewers", interviewers);
+//        model.addAttribute("candidateRatings", candidateRatings); // Thêm danh sách rating vào model
+//
+//        // Thêm các giá trị đã chọn vào model để hiển thị lại trong form
+//        model.addAttribute("selectedStatus", status);
+//        model.addAttribute("selectedExperience", experience);
+//
+//        return "Interviewer/interviewcandidate";
+//    }
+
     @GetMapping("/filterCandidates")
     public String filterCandidates(
             @RequestParam(required = false) String status,
@@ -79,15 +112,15 @@ public class InterviewCandidateController {
         // Lấy danh sách reviewer
         List<User> interviewers = userService.getInterviewers();
 
-        // Lấy tất cả rating của từng ứng viên
+        // Lấy tất cả rating và comment của từng ứng viên
         List<Long> candidateIds = candidates.stream().map(Candidate::getId).toList();
-        Map<Long, List<Integer>> candidateRatings = reviewsService.getRatingsByCandidateId(candidateIds);
+        Map<Long, List<Object[]>> candidateRatingsAndComments = reviewsService.getRatingsAndCommentsByCandidateId(candidateIds);
 
         // Thêm dữ liệu vào model
         model.addAttribute("candidates", candidates);
         model.addAttribute("candidateStatuses", candidateStatuses);
         model.addAttribute("interviewers", interviewers);
-        model.addAttribute("candidateRatings", candidateRatings); // Thêm danh sách rating vào model
+        model.addAttribute("candidateRatingsAndComments", candidateRatingsAndComments); // Thêm danh sách rating và comment vào model
 
         // Thêm các giá trị đã chọn vào model để hiển thị lại trong form
         model.addAttribute("selectedStatus", status);
@@ -95,7 +128,6 @@ public class InterviewCandidateController {
 
         return "Interviewer/interviewcandidate";
     }
-
 
     @Autowired
     private CandidateRepository candidateRepository;

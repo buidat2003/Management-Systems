@@ -14,16 +14,26 @@ public class ReviewsService {
     @Autowired
     private ReviewsRepository reviewRepository;
 
-    public Map<Long, List<Integer>> getRatingsByCandidateId(List<Long> candidateIds) {
-        List<Object[]> results = reviewRepository.findRatingsByCandidateIds(candidateIds);
+//    public Map<Long, List<Integer>> getRatingsByCandidateId(List<Long> candidateIds) {
+//        List<Object[]> results = reviewRepository.findRatingsByCandidateIds(candidateIds);
+//
+//        // Chuyển đổi kết quả từ List<Object[]> thành Map<Long, List<Integer>>
+//        return results.stream()
+//                .collect(Collectors.groupingBy(
+//                        result -> (Long) result[0], // candidateId
+//                        Collectors.mapping(result -> (Integer) result[1], Collectors.toList()) // List of ratings
+//                ));
+//    }
+public Map<Long, List<Object[]>> getRatingsAndCommentsByCandidateId(List<Long> candidateIds) {
+    List<Object[]> results = reviewRepository.findRatingsAndCommentsByCandidateIds(candidateIds);
 
-        // Chuyển đổi kết quả từ List<Object[]> thành Map<Long, List<Integer>>
-        return results.stream()
-                .collect(Collectors.groupingBy(
-                        result -> (Long) result[0], // candidateId
-                        Collectors.mapping(result -> (Integer) result[1], Collectors.toList()) // List of ratings
-                ));
-    }
+    // Chuyển đổi kết quả từ List<Object[]> thành Map<Long, List<Object[]>>
+    return results.stream()
+            .collect(Collectors.groupingBy(
+                    result -> (Long) result[0], // candidateId
+                    Collectors.toList() // Danh sách Object[] chứa rating và comment
+            ));
+}
 
 
 }
